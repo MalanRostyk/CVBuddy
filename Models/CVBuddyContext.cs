@@ -9,12 +9,16 @@ namespace CVBuddy.Models
         {
             
         }
-        public DbSet<User> Users{ get; set; }
-
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    base.OnModelCreating(builder);
-        //    builder.Entity<User>().HasData(new User { Id = "1", UserName = "zbr2k", PasswordHash = "Asdfgh10" });
-        //}
+        public DbSet<User> Users { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Project>()
+                .HasOne(p => p.OneUser)
+                .WithMany(u => u.ManyProjects)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

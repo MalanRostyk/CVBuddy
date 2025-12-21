@@ -20,7 +20,9 @@ namespace CVBuddy
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<CVBuddyContext>()
                 .AddDefaultTokenProviders();
+
             
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

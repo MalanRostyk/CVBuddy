@@ -3,8 +3,10 @@
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
     <Authorized>
+        <a asp-controller="Project" asp-action="GetProject">Get all projects</a>
         <h2>Denna kod här syns för dig som är inloggat @User.Identity.Name</h2>
         <a asp-controller="Account" asp-action="Logout" class="btn-link">Logout</a>
     </Authorized>
 </AuthorizeView>
 </form>
+

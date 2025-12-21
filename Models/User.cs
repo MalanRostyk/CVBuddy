@@ -4,7 +4,6 @@ namespace CVBuddy.Models
 {
     public class User: IdentityUser
     {
-    
-        
+        public IEnumerable<Project> ManyProjects { get; set; }        
     }
 }
