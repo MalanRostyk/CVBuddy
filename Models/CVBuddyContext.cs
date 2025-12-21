@@ -22,6 +22,12 @@ namespace CVBuddy.Models
                 .HasForeignKey<Cv>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<User>()
+                .HasOne(p => p.OneCv)
+                .WithOne(p => p.OneUser)
+                .HasForeignKey<Cv>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<CvProject>().HasKey(cp => new { cp.CvId, cp.Pid });//CVProject har komposit PK(CvId, Pid)
 
             builder.Entity<CvProject>()

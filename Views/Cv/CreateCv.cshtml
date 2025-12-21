@@ -2,7 +2,7 @@
 
 <h1>@ViewBag.Headline</h1>
 
-<form method="post" asp-action="CreateCv">
+<form method="post" asp-action="CreateCv" enctype="multipart/form-data">
 
     <h3>@ViewBag.EducationHLine</h3>                                                        @*Education*@
 
@@ -106,6 +106,12 @@
             <input type="text" name="PersonalCharacteristics[@i]" value="@Model.PersonalCharacteristics[i]" class="border-primary Multi-PersonalCharacteristics"/>
         }
         
+    </div>
+                                                                                             @*ImageFile*@
+    <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
+    <div>
+        <label>Cv Image</label>
+        <input asp-for="ImageFile" type="file" accept="image/*"/>
     </div>
     <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>
 
