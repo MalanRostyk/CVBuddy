@@ -19,19 +19,19 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            LoginViewModel lvm = new LoginViewModel();
-            ViewBag.Login = "login get funkar";
-            return View(lvm);
+            return View(new LoginViewModel());
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel lvm)
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(lvm.UserName, lvm.Password, isPersistent: lvm.RememberMe, lockoutOnFailure: false);
+                var result = await signInManager.PasswordSignInAsync(
+                    lvm.UserName, lvm.Password, isPersistent: lvm.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
-                    
+
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -42,8 +42,7 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            UserRegisterViewModel urvm = new UserRegisterViewModel();
-            return View(urvm);
+            return View(new UserRegisterViewModel());
         }
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel usr)
@@ -51,7 +50,7 @@ namespace CVBuddy.Controllers
             if (ModelState.IsValid)
             {
                 User user = new User();
-                user.UserName = usr.Name;
+                user.UserName = usr.UserName;
                 var result = await userManager.CreateAsync(user, usr.Password);
                 if (result.Succeeded)
                 {

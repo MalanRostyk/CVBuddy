@@ -13,9 +13,13 @@ namespace CVBuddy
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<CVBuddyContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(
+                    builder.Configuration
+                    .GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<CVBuddyContext>().AddDefaultTokenProviders();
+            builder.Services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<CVBuddyContext>()
+                .AddDefaultTokenProviders();
             
             var app = builder.Build();
 
@@ -30,14 +34,14 @@ namespace CVBuddy
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();//Måste komma först
             app.UseAuthorization();
-            app.UseAuthentication();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+                //.WithStaticAssets();
 
             app.Run();
         }

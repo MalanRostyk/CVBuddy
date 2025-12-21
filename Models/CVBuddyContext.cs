@@ -11,10 +11,10 @@ namespace CVBuddy.Models
         }
         public DbSet<User> Users{ get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-            builder.Entity<User>().HasData(new User { Id = "1", UserName = "zbr2k", PasswordHash = "Asdfgh10" });
-        }
+        //protected override void OnModelCreating(ModelBuilder builder)
+        //{
+        //    base.OnModelCreating(builder);
+        //    builder.Entity<User>().HasData(new User { Id = "1", UserName = "zbr2k", PasswordHash = "Asdfgh10" });
+        //}
     }
 }

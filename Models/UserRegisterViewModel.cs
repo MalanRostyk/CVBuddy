@@ -6,18 +6,17 @@ namespace CVBuddy.Models
     {
         [Required(ErrorMessage = "Put name")]
         [StringLength(100, ErrorMessage ="Too long Name")]
-        public string Name { get; set; }
+        public string UserName { get; set; }
 
 
         [Required(ErrorMessage="Put password")]
         [DataType(DataType.Password)]
-        [Compare("ConfirmPassword")]
         public string Password { get; set; }
 
 
         [Required(ErrorMessage = "Confirm password")]
         [DataType(DataType.Password)]
-        [Display(Name ="Confirm password")]
+        [Compare("Password")]//ska matcha password
         public string ConfirmPassword { get; set; }
     }
 }

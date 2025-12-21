@@ -7,17 +7,12 @@ namespace CVBuddy.Controllers
 {
     public class HomeController : Controller
     {
-        
+        //public HomeController() { }
 
-        public HomeController()
-        {
-            
-        }
-        //[Authorize]
+        [Authorize]
         public IActionResult Index()
         {
-            User user = new();
-            return View(user);
+            return View();
         }
 
         
