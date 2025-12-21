@@ -20,5 +20,13 @@ namespace CVBuddy.Controllers
             ViewBag.SkillsHLine = "Enter skills details";
             return View(new Cv());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCv(Cv cv)
+        {
+            await _context.Cvs.AddAsync(cv);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
