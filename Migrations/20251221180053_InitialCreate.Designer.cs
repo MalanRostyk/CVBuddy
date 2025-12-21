@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20251221165348_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20251221180053_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,11 +37,24 @@ namespace CVBuddy.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EduId")
-                        .HasColumnType("int");
-
-                    b.PrimitiveCollection<string>("ExpIds")
+                    b.Property<string>("Company")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HSDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HSProgram")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HighSchool")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageFilePath")
@@ -59,38 +72,12 @@ namespace CVBuddy.Migrations
                     b.Property<int>("ReadCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("SkillsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
+                    b.PrimitiveCollection<string>("SkillList")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Cid");
-
-                    b.HasIndex("EduId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Cvs");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CVInfo.Education", b =>
-                {
-                    b.Property<int>("Eid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Eid"));
-
-                    b.Property<string>("HSDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HSProgram")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HighSchool")
+                    b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UniDate")
@@ -102,67 +89,16 @@ namespace CVBuddy.Migrations
                     b.Property<string>("Univeristy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Eid");
-
-                    b.ToTable("Education");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CVInfo.Experience", b =>
-                {
-                    b.Property<int>("Exid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Exid"));
-
-                    b.Property<string>("Company")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Cid");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.Property<int?>("ExpIds")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Exid");
-
-                    b.HasIndex("ExpIds");
-
-                    b.ToTable("Experience");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CVInfo.Skill", b =>
-                {
-                    b.Property<int>("Sid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Sid"));
-
-                    b.Property<string>("ASkill")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SkillsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Sid");
-
-                    b.HasIndex("SkillsId");
-
-                    b.ToTable("Skill");
+                    b.ToTable("Cvs");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.CvProject", b =>
@@ -401,35 +337,13 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Cv", b =>
                 {
-                    b.HasOne("CVBuddy.Models.CVInfo.Education", "Education")
-                        .WithMany()
-                        .HasForeignKey("EduId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CVBuddy.Models.User", "OneUser")
                         .WithOne("OneCv")
                         .HasForeignKey("CVBuddy.Models.CVInfo.Cv", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Education");
-
                     b.Navigation("OneUser");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CVInfo.Experience", b =>
-                {
-                    b.HasOne("CVBuddy.Models.CVInfo.Cv", null)
-                        .WithMany("Experiences")
-                        .HasForeignKey("ExpIds");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CVInfo.Skill", b =>
-                {
-                    b.HasOne("CVBuddy.Models.CVInfo.Cv", null)
-                        .WithMany("Skills")
-                        .HasForeignKey("SkillsId");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.CvProject", b =>
@@ -505,10 +419,6 @@ namespace CVBuddy.Migrations
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Cv", b =>
                 {
                     b.Navigation("CvProjects");
-
-                    b.Navigation("Experiences");
-
-                    b.Navigation("Skills");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.Project", b =>

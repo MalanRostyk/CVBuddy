@@ -1,4 +1,5 @@
 ﻿using CVBuddy.Models;
+using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVBuddy.Controllers
@@ -13,7 +14,11 @@ namespace CVBuddy.Controllers
 
         public IActionResult CreateCv()
         {
-            return View();
+            ViewBag.Headline = "Create a Cv";
+            ViewBag.EducationHLine = "Enter education details";
+            ViewBag.ExperiencesHLine = "Enter experience details";
+            ViewBag.SkillsHLine = "Enter skills details";
+            return View(new Cv());
         }
     }
 }

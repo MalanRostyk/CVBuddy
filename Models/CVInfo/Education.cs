@@ -2,10 +2,8 @@
 
 namespace CVBuddy.Models.CVInfo
 {
-    public class Education
+    public abstract class Education : Experience
     {
-        [Key]
-        public int Eid { get; set; } // = 1
         public string? HighSchool{ get; set; } // = NTI
         public string? HSProgram{ get; set; } // = Programmering
         public string? HSDate{ get; set; } // = 2020-2023

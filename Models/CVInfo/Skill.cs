@@ -2,11 +2,9 @@
 
 namespace CVBuddy.Models.CVInfo
 {
-    public class Skill
+    public abstract class Skill : Education
     {
-        [Key]
-        public int Sid { get; set; }
-        public string ASkill { get; set; }
+        public List<string> SkillList { get; set; } = new();
         public string? Description{ get; set; }
     }
 }

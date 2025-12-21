@@ -4,24 +4,10 @@ using System.Reflection;
 
 namespace CVBuddy.Models.CVInfo
 {
-    public class Cv
+    public sealed class Cv : Skill
     {
         [Key]
-        public int Cid { get; set; }
-
-        public int SkillsId { get; set; }
-        [ForeignKey(nameof(SkillsId))]
-        public List<Skill> Skills { get; set; }
-        
-        public int EduId { get; set; }
-
-        [ForeignKey(nameof(EduId))]
-        public Education Education { get; set; }
-
-        public List<int> ExpIds { get; set; }
-        [ForeignKey(nameof(ExpIds))]
-        public List<Experience> Experiences{ get; set; }
-
+        public int Cid { get; set; }    
         public List<string> Certificates{ get; set; }
         public List<string> PersonalCharacteristics{ get; set; }
         public string Interests{ get; set; }

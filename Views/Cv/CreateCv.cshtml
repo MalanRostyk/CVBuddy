@@ -1,13 +1,62 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
-<form method="post" asp-action="CreateCv">
-    <label></label>
-    <input type="text"/>
-    <label></label>
-    <input type="text"/>
-    <label></label>
-    <input type="text"/>
-    <label></label>
-    <input type="text"/>
 
-    <button type="submit" class="btn btn-primary">Create</button>
+<h1>@ViewBag.Headline</h1>
+
+<form method="post" asp-action="CreateCv">
+
+    <h3>@ViewBag.EducationHLine</h3>                                                        @*Education*@
+
+    <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
+    <div class="mb-2">
+        <p class="mb-0">Enter what high school you when to.</p>
+        <input type="text" asp-for="HighSchool" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter what high school you studied.</p>
+        <input type="text" asp-for="HSProgram" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+        <input type="text" asp-for="HSDate" class="border-primary" />
+    </div>
+
+    <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
+
+    <div class="mb-2">
+        <p class="mb-0">Enter what university you went to.</p>
+        <input type="text" asp-for="Univeristy" class="border-primary" />
+    </div class="mb-2">
+    <div>
+        <p class="mb-0">Enter what program you studied in university</p>
+        <input type="text" asp-for="UniProgram" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p><br>
+        <input type="text" asp-for="UniDate" class="border-primary" />
+    </div>
+
+
+    
+
+
+
+
+    <h3>@ViewBag.ExperiencesHLine</h3>                                                      @*Experiences*@
+    <div class="mb-2">
+        <p class="mb-0">Enter what high school you when to.</p>
+        <input type="text" asp-for="HighSchool" class="border-primary" />
+    </div>
+
+    <h3>@ViewBag.SkillsHLine</h3>                                                            @*Skills*@
+
+    <div id="Skills-Container">
+        @for (int i = 0; i < @Model.SkillList.Count; i++)
+        {
+            <p class="mb-0">Enter a skill</p>
+            <input type="text" name="SkillList[@i]" value="@Model.SkillList[i]" ="border-primary" />
+
+        }
+    </div>
+            <button type="submit" class="btn btn-primary">Create</button>                           @*Button*@
+
 </form>
