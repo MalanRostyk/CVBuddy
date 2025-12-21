@@ -48,29 +48,39 @@
             <p class="mb-0">Enter a skill</p>
 
             <p class="mb-0">Enter title for skill</p>
-            <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary Multi-Experience" />
+            <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary Multi-Skill" />
             
-            <p class="mb-0">Enter title for skill</p>
-            <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary Multi-Experience" />
+            <p class="mb-0">Enter description for skill</p>
+            <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary Multi-Skill" />
             
-            <p class="mb-0">Enter title for skill</p>
-            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary Multi-Experience" />
+            <p class="mb-0">Enter date for skill</p>
+            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary Multi-Skill" />
 
         }
     </div>
 
                                                                                       @*Experiences*@
-    @* <h3>@ViewBag.ExperiencesHLine</h3> 
+    <h3>@ViewBag.ExperiencesHLine</h3> 
     <div id="Skills-Container">
-        
-        @for (int i = 0; i < @Model.SkillList.Count; i++)
+
+        @for (int i = 0; i < @Model.Experiences.Count; i++)
         {
-            <p class="mb-0">Enter a skill</p>
-            <input type="text" name="SkillList[@i]" value="@Model.SkillList[i]" class="border-primary Multi-Skill"/>
-            <input type="text" name="Description" value="@Model.Description" class="border-primary Multi-Skill"/>
+
+            <p class="mb-0">Enter title for working experience</p>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Title" class="border-primary Multi-Experience"/>
+            
+            <p class="mb-0">Give a short description of the working experience</p>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Description" class="border-primary Multi-Experience"/>
+            
+            <p class="mb-0">What company was this working experience at?</p>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Company" class="border-primary Multi-Experience"/>
+            
+            <p class="mb-0">Enter a the starting and ending date of your working experience(ex: YY-MM-DD to YY-MM-DD)</p>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Date" class="border-primary Multi-Experience"/>
+
 
         }
-        <button type="button" onclick="addSkill()">Add Skill</button> *@
+        <button type="button" onclick="addSkill()">Add Skill</button>
     </div>
             <button type="submit" class="btn btn-primary">Create</button>                           @*Button*@
 
