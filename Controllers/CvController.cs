@@ -1,4 +1,5 @@
 ﻿using CVBuddy.Models;
+using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CVBuddy.Controllers
@@ -14,13 +15,15 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult CreateCv()
         {
-            return View();
+            return View(new Cv());
         }
 
         [HttpPost]
-        public IActionResult CreateCv()
+        public async Task<IActionResult> CreateCv(Cv cv)
         {
-            return View();
+            await _context.Cvs.AddAsync(cv);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -1,1 +1,77 @@
-﻿
+﻿@model CVBuddy.Models.CVInfo.Cv
+
+<h1>@ViewBag.Headline</h1>
+
+<form method="post" asp-action="CreateCv">
+
+    <h3>@ViewBag.EducationHLine</h3>                                                        @*Education*@
+
+    <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
+    <div class="mb-2">
+        <p class="mb-0">Enter what high school you when to.</p>
+        <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter what high school you studied.</p>
+        <input type="text" asp-for="@Model.Education.HSProgram" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+        <input type="text" asp-for="@Model.Education.HSDate" class="border-primary" />
+    </div>
+
+    <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
+
+    <div class="mb-2">
+        <p class="mb-0">Enter what university you went to.</p>
+        <input type="text" asp-for="@Model.Education.Univeristy" class="border-primary" />
+    </div class="mb-2">
+    <div>
+        <p class="mb-0">Enter what program you studied in university</p>
+        <input type="text" asp-for="@Model.Education.UniProgram" class="border-primary" />
+    </div>
+    <div class="mb-2">
+        <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p><br>
+        <input type="text" asp-for="@Model.Education.UniDate" class="border-primary" />
+    </div>
+
+
+    
+
+
+
+
+    <h3>@ViewBag.SkillsHLine</h3>                                                       @*Skills*@
+    <div id="Excperience-Container">
+        @for (int i = 0; i < @Model.Skills.Count; i++)
+        {
+            <p class="mb-0">Enter a skill</p>
+
+            <p class="mb-0">Enter title for skill</p>
+            <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary Multi-Experience" />
+            
+            <p class="mb-0">Enter title for skill</p>
+            <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary Multi-Experience" />
+            
+            <p class="mb-0">Enter title for skill</p>
+            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary Multi-Experience" />
+
+        }
+    </div>
+
+                                                                                      @*Experiences*@
+    @* <h3>@ViewBag.ExperiencesHLine</h3> 
+    <div id="Skills-Container">
+        
+        @for (int i = 0; i < @Model.SkillList.Count; i++)
+        {
+            <p class="mb-0">Enter a skill</p>
+            <input type="text" name="SkillList[@i]" value="@Model.SkillList[i]" class="border-primary Multi-Skill"/>
+            <input type="text" name="Description" value="@Model.Description" class="border-primary Multi-Skill"/>
+
+        }
+        <button type="button" onclick="addSkill()">Add Skill</button> *@
+    </div>
+            <button type="submit" class="btn btn-primary">Create</button>                           @*Button*@
+
+</form>
