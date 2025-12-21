@@ -9,9 +9,8 @@ namespace CVBuddy.Models
         public int Pid { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
-        public User OneUser { get; set; }
+        
+        public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
 
     }
 }

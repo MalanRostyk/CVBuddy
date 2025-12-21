@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CVBuddy.Models.CVInfo;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace CVBuddy.Models
 {
     public class User: IdentityUser
     {
-        public IEnumerable<Project> ManyProjects { get; set; }        
+        public Cv OneCv { get; set; }
     }
 }
