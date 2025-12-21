@@ -26,7 +26,7 @@ namespace CVBuddy.Models.CVInfo
         public List<string> PersonalCharacteristics{ get; set; }
         public string Interests{ get; set; }
         public string ImageFilePath { get; set; }
-        public int ReadCount { get; set; }
+        public int ReadCount { get; set; } //krav
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public User OneUser { get; set; }

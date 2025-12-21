@@ -10,3 +10,35 @@
 </AuthorizeView>
 </form>
 
+<h2>@ViewBag.Headline</h2>
+<table>
+    <tbody>
+        @ViewBag.Cvn.Count
+        @foreach (var cv in ViewBag.Cvn)
+        {
+            <tr>
+                <td>@cv.OneUser.UserName</td>
+                <td>@cv.Experiences</td>
+                <td>
+                    @foreach(var exp in cv.Experiences)
+                    {
+                        @exp.Title
+                    }
+                    
+                </td>
+                <td>@cv.</td>
+                <td>
+                    @foreach(var proj in cv.CvProjects)
+                    {
+                        @proj.OneProject.Title
+                    }
+                </td>
+                <td>
+                    @cv.Education.Univeristy
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-controller="Cv" asp-action="CreateCv">Create Cv</a>
+
