@@ -42,7 +42,7 @@
 
 
     <h3>@ViewBag.SkillsHLine</h3>                                                       @*Skills*@
-    <div id="Excperience-Container">
+    <div id="Skill-Container">
         @for (int i = 0; i < @Model.Skills.Count; i++)
         {
             <p class="mb-0">Enter a skill</p>
@@ -58,10 +58,12 @@
 
         }
     </div>
+    <button type="button" onclick="addSkill()">Add Skill</button>
+
 
                                                                                       @*Experiences*@
     <h3>@ViewBag.ExperiencesHLine</h3> 
-    <div id="Skills-Container">
+    <div id="Experience-Container">
 
         @for (int i = 0; i < @Model.Experiences.Count; i++)
         {
@@ -80,8 +82,57 @@
 
 
         }
-        <button type="button" onclick="addSkill()">Add Skill</button>
     </div>
-            <button type="submit" class="btn btn-primary">Create</button>                           @*Button*@
+    <button type="button" onclick="addExperience()">Add Experience</button>
+
+                                                                                         @*Certificates*@
+    <h3>@ViewBag.CertificatesHLine</h3> 
+    <div class="Certificates-Container">
+        @for (int i = 0; i < @Model.Certificates.Count; i++)
+        {
+            <p class="mb-0">Add certificate</p>
+            <input type="text" name="Certificates[@i]" value="@Model.Certificates[i]" class="border-primary Multi-Certificates"/>
+        }
+        
+    </div>
+    <button type="button" onclick="addCertificate()">Add Certificate</button>
+    
+                                                                                         @*PersonalCharacteristics*@
+    <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
+    <div class="PersonalCharacteristics-Container">
+        @for (int i = 0; i < @Model.PersonalCharacteristics.Count; i++)
+        {
+            <p class="mb-0">Add Personal Characteristics</p>
+            <input type="text" name="PersonalCharacteristics[@i]" value="@Model.PersonalCharacteristics[i]" class="border-primary Multi-PersonalCharacteristics"/>
+        }
+        
+    </div>
+    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <button type="submit" class="btn btn-primary">Create Cv</button>                           @*Button*@
 
 </form>
