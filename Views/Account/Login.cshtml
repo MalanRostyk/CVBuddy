@@ -1,0 +1,35 @@
+﻿@model LoginViewModel
+<h1>@ViewBag.Login</h1>
+<h2>@ViewBag.Login2</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+<form method="post" asp-action="Login">
+    <div class="form-group-row">
+        <div class="col-sm-2">
+            <label>Username:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="UserName" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group-row">
+        <div class="col-sm-2">
+            <label>Password:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Password" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group-row">
+        <div class="offset-sm-2 col-sm-4">
+            <input type="checkbox" title="RememberMe" asp-for="RememberMe" class="form-check"/>
+            <label>Remember me!</label>
+        </div>
+    </div>
+    <div class="form-group-row">
+        <div class="offset-sm-2 col-sm-4">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+    <label>Dont have an account?</label>  
+</form>
+<a asp-action="Register">To register</a>

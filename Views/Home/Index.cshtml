@@ -1,8 +1,10 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+﻿@model User
+<a asp-controller="Account" asp-action="Login">Logg in</a>
+<form method="post" asp-controller="Account" asp-action="Logout">
+<AuthorizeView>
+    <Authorized>
+        <h2>Denna kod här syns för dig som är inloggat @User.Identity.Name</h2>
+        <a asp-controller="Account" asp-action="Logout" class="btn-link">Logout</a>
+    </Authorized>
+</AuthorizeView>
+</form>
