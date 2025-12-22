@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class Big34TH : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -176,11 +176,7 @@ namespace CVBuddy.Migrations
                 {
                     Cid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SkillsId = table.Column<int>(type: "int", nullable: false),
                     EduId = table.Column<int>(type: "int", nullable: false),
-                    ExpIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CertIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PCIds = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Interests = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReadCount = table.Column<int>(type: "int", nullable: false),
@@ -194,6 +190,25 @@ namespace CVBuddy.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Certificates",
+                columns: table => new
+                {
+                    CertId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CertName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CvId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Certificates", x => x.CertId);
+                    table.ForeignKey(
+                        name: "FK_Certificates_Cvs_CvId",
+                        column: x => x.CvId,
+                        principalTable: "Cvs",
+                        principalColumn: "Cid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -218,6 +233,96 @@ namespace CVBuddy.Migrations
                         column: x => x.Pid,
                         principalTable: "Projects",
                         principalColumn: "Pid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Education",
+                columns: table => new
+                {
+                    Eid = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HighSchool = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HSProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HSDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Univeristy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UniProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UniDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CvId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Education", x => x.Eid);
+                    table.ForeignKey(
+                        name: "FK_Education_Cvs_CvId",
+                        column: x => x.CvId,
+                        principalTable: "Cvs",
+                        principalColumn: "Cid",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Experiences",
+                columns: table => new
+                {
+                    Exid = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Company = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CvId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Experiences", x => x.Exid);
+                    table.ForeignKey(
+                        name: "FK_Experiences_Cvs_CvId",
+                        column: x => x.CvId,
+                        principalTable: "Cvs",
+                        principalColumn: "Cid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonalCharacteristics",
+                columns: table => new
+                {
+                    PCId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CharacteristicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CvId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonalCharacteristics", x => x.PCId);
+                    table.ForeignKey(
+                        name: "FK_PersonalCharacteristics_Cvs_CvId",
+                        column: x => x.CvId,
+                        principalTable: "Cvs",
+                        principalColumn: "Cid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Skills",
+                columns: table => new
+                {
+                    Sid = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ASkill = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CvId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skills", x => x.Sid);
+                    table.ForeignKey(
+                        name: "FK_Skills_Cvs_CvId",
+                        column: x => x.CvId,
+                        principalTable: "Cvs",
+                        principalColumn: "Cid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -261,6 +366,11 @@ namespace CVBuddy.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Certificates_CvId",
+                table: "Certificates",
+                column: "CvId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CvProject_Pid",
                 table: "CvProject",
                 column: "Pid");
@@ -271,6 +381,27 @@ namespace CVBuddy.Migrations
                 column: "UserId",
                 unique: true,
                 filter: "[UserId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Education_CvId",
+                table: "Education",
+                column: "CvId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Experiences_CvId",
+                table: "Experiences",
+                column: "CvId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonalCharacteristics_CvId",
+                table: "PersonalCharacteristics",
+                column: "CvId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skills_CvId",
+                table: "Skills",
+                column: "CvId");
         }
 
         /// <inheritdoc />
@@ -292,16 +423,31 @@ namespace CVBuddy.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Certificates");
+
+            migrationBuilder.DropTable(
                 name: "CvProject");
+
+            migrationBuilder.DropTable(
+                name: "Education");
+
+            migrationBuilder.DropTable(
+                name: "Experiences");
+
+            migrationBuilder.DropTable(
+                name: "PersonalCharacteristics");
+
+            migrationBuilder.DropTable(
+                name: "Skills");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Cvs");
+                name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "Cvs");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -43,14 +43,24 @@
         {
             <p class="mb-0">Enter a skill</p>
 
-            <p class="mb-0">Enter title for skill</p>
+            @* <p class="mb-0">Enter title for skill</p>
             <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary" id="Multi-Skill" />
             
             <p class="mb-0">Enter description for skill</p>
             <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary" id="Multi-Skill" />
             
             <p class="mb-0">Enter date for skill</p>
-            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill" />
+            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill" /> *@
+            
+            <p class="mb-0">Enter your skill</p>
+            <input asp-for="@Model.Skills[i].ASkill" type="text" name="Skills[@i]" value="@Model.Skills[i].ASkill" class="border-primary" id="Multi-Skill"/>
+
+            <p class="mb-0">Enter description of skill</p>
+            <input asp-for="@Model.Skills[i].Description" type="text" name="Skills[@i]" value="@Model.Skills[i].Description" class="border-primary" id="Multi-Skill"/>
+
+            <p class="mb-0">Estimate a date for how long you've hade this skill</p>
+            <input asp-for="@Model.Skills[i].Date" type="text" name="Skills[@i]" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill"/>
+
 
         }
     </div>
