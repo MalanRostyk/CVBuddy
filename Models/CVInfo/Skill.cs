@@ -9,7 +9,7 @@ namespace CVBuddy.Models.CVInfo
         public int Sid { get; set; }
         public string ASkill { get; set; }
         public string? Description{ get; set; }
-        public string? Date{ get; set; }
+        public DateTime? Date{ get; set; }
     
         public int CvId { get; set; }
         [ForeignKey(nameof(CvId))]

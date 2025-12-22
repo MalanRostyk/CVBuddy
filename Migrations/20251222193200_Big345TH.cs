@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class Big34TH : Migration
+    public partial class Big345TH : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -176,7 +176,6 @@ namespace CVBuddy.Migrations
                 {
                     Cid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EduId = table.Column<int>(type: "int", nullable: false),
                     Interests = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReadCount = table.Column<int>(type: "int", nullable: false),
@@ -312,7 +311,7 @@ namespace CVBuddy.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ASkill = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

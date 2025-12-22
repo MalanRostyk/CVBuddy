@@ -38,10 +38,14 @@
 
 
     <h3>@ViewBag.SkillsHLine</h3>                                                       @*Skills*@
-    <div id="Skill-Container">
-        @for (int i = 0; i < Model.Skills.Count; i++)
+    <div id="Skill-Container" data-skill-index = "@Model.Skills.Count"> @* <------ *@
+        
+
+
+
+        @* @for (int i = 0; i < Model.Skills.Count; i++)
         {
-            <p class="mb-0">Enter a skill</p>
+            <p class="mb-0">Enter a skill</p> *@
 
             @* <p class="mb-0">Enter title for skill</p>
             <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary" id="Multi-Skill" />
@@ -52,17 +56,18 @@
             <p class="mb-0">Enter date for skill</p>
             <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill" /> *@
             
-            <p class="mb-0">Enter your skill</p>
+@*             <p class="mb-0">Enter your skill</p>
             <input asp-for="@Model.Skills[i].ASkill" type="text" name="Skills[@i]" value="@Model.Skills[i].ASkill" class="border-primary" id="Multi-Skill"/>
 
             <p class="mb-0">Enter description of skill</p>
             <input asp-for="@Model.Skills[i].Description" type="text" name="Skills[@i]" value="@Model.Skills[i].Description" class="border-primary" id="Multi-Skill"/>
 
             <p class="mb-0">Estimate a date for how long you've hade this skill</p>
-            <input asp-for="@Model.Skills[i].Date" type="text" name="Skills[@i]" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill"/>
+            <input asp-for="@Model.Skills[i].Date" type="text" name="Skills[@i]" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill"/> *@
 
 
-        }
+     @*    } *@
+
     </div>
     <button type="button" onclick="addSkill()">Add Skill</button>
 

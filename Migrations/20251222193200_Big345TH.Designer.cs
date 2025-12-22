@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20251222185524_Big34TH")]
-    partial class Big34TH
+    [Migration("20251222193200_Big345TH")]
+    partial class Big345TH
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,9 +51,6 @@ namespace CVBuddy.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Cid"));
-
-                    b.Property<int>("EduId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
@@ -183,8 +180,8 @@ namespace CVBuddy.Migrations
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -571,7 +568,8 @@ namespace CVBuddy.Migrations
 
                     b.Navigation("CvProjects");
 
-                    b.Navigation("Education");
+                    b.Navigation("Education")
+                        .IsRequired();
 
                     b.Navigation("Experiences");
 

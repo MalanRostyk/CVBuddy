@@ -3,30 +3,46 @@
 
 // Write your JavaScript code.
 
-let skillIndex = Model.SkillList.Count();
 
+
+//let skillIndex = Model.SkillList.Count();
+
+//function addSkill() {
+//    let container = document.getElementById("Skill-Container");
+
+//    let input1 = document.createElement("input");
+//    input1.name = "Skills[$(skillIndex)]".ASkill;
+//    input1.idName = "Multi-Skill";
+//    input1.placeholder = "ASkill";
+
+//    let input2 = document.createElement("input");
+//    input2.name = "Skills[$(skillIndex)]".Description;
+//    input2.idName = "Multi-Skill";
+//    input2.placeholder = "Description";
+
+//    let input3 = document.createElement("input");
+//    input3.name = "Skills[$(skillIndex)]".Date;
+//    input3.idName = "Multi-Skill";
+//    input3.placeholder = "Date";
+
+//    container.appendChild(input1);
+//    container.appendChild(input2);
+//    container.appendChild(input3);
+//    skillIndex++;
+//}
+
+
+let container = document.getElementById("Skill-Container");
+let skillIndex = parseInt(container.dataset.skillIndex);
 function addSkill() {
-    let container = document.getElementById("Skill-Container");
-
-    let input1 = document.createElement("input");
-    input1.name = "Skills[$(skillIndex)]".ASkill;
-    input1.idName = "Multi-Skill";
-    input1.placeholder = "ASkill";
-
-    let input2 = document.createElement("input");
-    input2.name = "Skills[$(skillIndex)]".Description;
-    input2.idName = "Multi-Skill";
-    input2.placeholder = "Description";
-
-    let input3 = document.createElement("input");
-    input3.name = "Skills[$(skillIndex)]".Date;
-    input3.idName = "Multi-Skill";
-    input3.placeholder = "Date";
-
-    container.appendChild(input1);
-    container.appendChild(input2);
-    container.appendChild(input3);
+    container.insertAdjacentHTML('beforeend', `<p>Skill Title</p>
+    <input type="text" name="Skills[${skillIndex}].ASkill" class="border-primary"/>
+        <p>Skill Description</p>
+    <input type="text" name="Skills[${skillIndex}].Description" class="border-primary"/>
+        <p>Skill Date</p>
+    <input type="date" name="Skills[${skillIndex}].Date" class="border-primary"/>`);
     skillIndex++;
+
 }
 
 let expIndex = Model.Experiences.Count();

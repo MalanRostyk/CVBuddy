@@ -49,9 +49,6 @@ namespace CVBuddy.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Cid"));
 
-                    b.Property<int>("EduId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
 
@@ -180,8 +177,8 @@ namespace CVBuddy.Migrations
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -568,7 +565,8 @@ namespace CVBuddy.Migrations
 
                     b.Navigation("CvProjects");
 
-                    b.Navigation("Education");
+                    b.Navigation("Education")
+                        .IsRequired();
 
                     b.Navigation("Experiences");
 
