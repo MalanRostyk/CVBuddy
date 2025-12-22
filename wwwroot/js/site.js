@@ -3,7 +3,7 @@
 
 // Write your JavaScript code.
 
-let skillIndex = Model.SkillList.Count;
+let skillIndex = Model.SkillList.Count();
 
 function addSkill() {
     let container = document.getElementById("Skill-Container");
@@ -29,7 +29,7 @@ function addSkill() {
     skillIndex++;
 }
 
-let expIndex = Model.Experiences.Count;
+let expIndex = Model.Experiences.Count();
 function addExperience() {
     let container = document.getElementById("Experience-Container");
 
@@ -61,7 +61,7 @@ function addExperience() {
 }
 
 
-let cerIndex = Model.Certificates.Count;
+let cerIndex = Model.Certificates.Count();
 function addCertificates() {
     
     let container = document.getElementById("Certificates-Container");
@@ -76,7 +76,7 @@ function addCertificates() {
     cerIndex++;
 }
 
-let chaIndex = Model.PersonalCharacteristics.Count;
+let chaIndex = Model.PersonalCharacteristics.Count();
 function addPersonalCharacteristic() {
     let container = document.getElementById("PersonalCharacteristics-Container");
 

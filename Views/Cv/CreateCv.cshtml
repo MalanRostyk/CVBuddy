@@ -83,7 +83,7 @@
 
                                                                                          @*Certificates*@
     <h3>@ViewBag.CertificatesHLine</h3> 
-    <div class="Certificates-Container">
+    <div id="Certificates-Container">
         @for (int i = 0; i < Model.Certificates.Count; i++)
         {
             <p class="mb-0">Add certificate</p>
@@ -95,7 +95,7 @@
     
                                                                                          @*PersonalCharacteristics*@
     <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
-    <div class="PersonalCharacteristics-Container">
+    <div id="PersonalCharacteristics-Container">
         @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
         {
             <p class="mb-0">Add Personal Characteristics</p>
