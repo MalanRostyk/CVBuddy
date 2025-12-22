@@ -35,7 +35,7 @@ namespace CVBuddy.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            ViewBag.Login = "login post fnkar";
+            ViewBag.Login = "login post fnkar inte";
             return View(lvm);
         }
 

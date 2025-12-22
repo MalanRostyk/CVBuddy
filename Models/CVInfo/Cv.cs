@@ -11,26 +11,31 @@ namespace CVBuddy.Models.CVInfo
 
         public int SkillsId { get; set; }
         [ForeignKey(nameof(SkillsId))]
-        public List<Skill> Skills { get; set; }
+        public List<Skill> Skills { get; set; } = new();
         
         public int EduId { get; set; }
 
         [ForeignKey(nameof(EduId))]
         public Education Education { get; set; }
 
-        public List<int> ExpIds { get; set; }
+        public List<int> ExpIds { get; set; } = new();
         [ForeignKey(nameof(ExpIds))]
-        public List<Experience> Experiences{ get; set; }
+        public List<Experience> Experiences { get; set; } = new();
 
-        public List<string> Certificates{ get; set; }
-        public List<string> PersonalCharacteristics{ get; set; }
-        public string Interests{ get; set; }
+        public List<int> CertIds { get; set; } = new();
+        [ForeignKey(nameof(CertIds))]
+        public List<Certificate> Certificates{ get; set; } = new();
+        public List<int> PCIds { get; set; } = new();
+        [ForeignKey(nameof(PCIds))]
+        public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();
+        public string? Interests{ get; set; }
         public string? ImageFilePath { get; set; }
-        public FormFile? ImageFile { get; set; }
+        [NotMapped]
+        public IFormFile ImageFile { get; set; } 
         public int ReadCount { get; set; }
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         [ForeignKey(nameof(UserId))]
-        public User OneUser { get; set; }
+        public User? OneUser { get; set; }
         public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
     }
 }

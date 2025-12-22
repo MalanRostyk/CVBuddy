@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace CVBuddy.Controllers
 {
@@ -21,16 +22,22 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
-            var uploadFolder = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot/CvImages");
 
-            Directory.CreateDirectory(uploadFolder);
+            if (cv.ImageFile == null || cv.ImageFile.Length == 0)
+            {
+                ModelState.AddModelError("ImageFile", "Please upload an image");
+                ViewBag.eror = "Please upload an image";
+                return View(cv);
+            }
+            Debug.WriteLine("PASERADE IF SATSEN");
+            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            Directory.CreateDirectory(uploadeFolder);
 
-            var fileName = Guid.NewGuid() + Path.GetExtension(cv.ImageFile.FileName);
-            var filePath = Path.Combine(uploadFolder, fileName);
+            var ext = Path.GetExtension(cv.ImageFile.FileName);//null
+            var fileName = Guid.NewGuid().ToString() + ext;
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            var filePath = Path.Combine(uploadeFolder, fileName);
+            using(var stream = new FileStream(filePath, FileMode.Create))
             {
                 await cv.ImageFile.CopyToAsync(stream);
             }
