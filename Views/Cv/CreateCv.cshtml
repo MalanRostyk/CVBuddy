@@ -1,6 +1,7 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 
 <h1>@ViewBag.Headline</h1>
+@Html.ValidationSummary
 
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
 
@@ -36,25 +37,20 @@
     </div>
 
 
-    
-
-
-
-
     <h3>@ViewBag.SkillsHLine</h3>                                                       @*Skills*@
     <div id="Skill-Container">
-        @for (int i = 0; i < @Model.Skills.Count; i++)
+        @for (int i = 0; i < Model.Skills.Count; i++)
         {
             <p class="mb-0">Enter a skill</p>
 
             <p class="mb-0">Enter title for skill</p>
-            <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary Multi-Skill" />
+            <input type="text" name="TitleList[@i]" value="@Model.Skills[i].ASkill" class="border-primary" id="Multi-Skill" />
             
             <p class="mb-0">Enter description for skill</p>
-            <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary Multi-Skill" />
+            <input type="text" name="Description" value="@Model.Skills[i].Description" class="border-primary" id="Multi-Skill" />
             
             <p class="mb-0">Enter date for skill</p>
-            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary Multi-Skill" />
+            <input type="text" name="Date" value="@Model.Skills[i].Date" class="border-primary" id="Multi-Skill" />
 
         }
     </div>
@@ -65,20 +61,20 @@
     <h3>@ViewBag.ExperiencesHLine</h3> 
     <div id="Experience-Container">
 
-        @for (int i = 0; i < @Model.Experiences.Count; i++)
+        @for (int i = 0; i < Model.Experiences.Count; i++)
         {
 
             <p class="mb-0">Enter title for working experience</p>
-            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Title" class="border-primary Multi-Experience"/>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Title" class="border-primary" id="Multi-Experience"/>
             
             <p class="mb-0">Give a short description of the working experience</p>
-            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Description" class="border-primary Multi-Experience"/>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Description" class="border-primary" id="Multi-Experience"/>
             
             <p class="mb-0">What company was this working experience at?</p>
-            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Company" class="border-primary Multi-Experience"/>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Company" class="border-primary" id="Multi-Experience"/>
             
             <p class="mb-0">Enter a the starting and ending date of your working experience(ex: YY-MM-DD to YY-MM-DD)</p>
-            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Date" class="border-primary Multi-Experience"/>
+            <input type="text" name="Experiences[@i]" value="@Model.Experiences[i].Date" class="border-primary" id="Multi-Experience"/>
 
 
         }
@@ -88,57 +84,35 @@
                                                                                          @*Certificates*@
     <h3>@ViewBag.CertificatesHLine</h3> 
     <div class="Certificates-Container">
-        @for (int i = 0; i < @Model.Certificates.Count; i++)
+        @for (int i = 0; i < Model.Certificates.Count; i++)
         {
             <p class="mb-0">Add certificate</p>
-            <input type="text" name="Certificates[@i]" value="@Model.Certificates[i]" class="border-primary Multi-Certificates"/>
+            <input type="text" name="Certificates[@i]" value="@Model.Certificates[i].CertName" class="border-primary" id=" Multi-Certificates"/>
         }
         
     </div>
-    <button type="button" onclick="addCertificate()">Add Certificate</button>
+    <button type="button" onclick="addCertificates()">Add Certificate</button>
     
                                                                                          @*PersonalCharacteristics*@
     <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
     <div class="PersonalCharacteristics-Container">
-        @for (int i = 0; i < @Model.PersonalCharacteristics.Count; i++)
+        @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
         {
             <p class="mb-0">Add Personal Characteristics</p>
-            <input type="text" name="PersonalCharacteristics[@i]" value="@Model.PersonalCharacteristics[i]" class="border-primary Multi-PersonalCharacteristics"/>
+            <input type="text" name="PersonalCharacteristics[@i]" value="@Model.PersonalCharacteristics[i].CharacteristicName" class="border-primary" id="Multi-PersonalCharacteristics"/>
         }
         
     </div>
-                                                                                             @*ImageFile*@
-    <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
+    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                         @*ImageFile*@
+    
+    
+    <h3>Upload your image</h3> 
     <div>
         <label>Cv Image</label>
-        <input asp-for="ImageFile" type="file" accept="image/*"/>
+        <input asp-for="ImageFile" type="file" accept="CvImages/*"/>
+        @Html.ValidationMessageFor(m => m.ImageFile)
     </div>
-    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <button type="submit" class="btn btn-primary">Create Cv</button>                           @*Button*@
-
+    
 </form>
