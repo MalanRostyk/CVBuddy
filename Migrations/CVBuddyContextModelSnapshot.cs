@@ -219,14 +219,14 @@ namespace CVBuddy.Migrations
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Pid")
+                    b.Property<int>("ProjId")
                         .HasColumnType("int");
 
-                    b.HasKey("CvId", "Pid");
+                    b.HasKey("CvId", "ProjId");
 
-                    b.HasIndex("Pid");
+                    b.HasIndex("ProjId");
 
-                    b.ToTable("CvProject");
+                    b.ToTable("CvProjects");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
@@ -239,15 +239,41 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("Enddate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PublisDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Pid");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProjId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ProjId");
+
+                    b.HasIndex("ProjId");
+
+                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
@@ -534,13 +560,32 @@ namespace CVBuddy.Migrations
 
                     b.HasOne("CVBuddy.Models.Project", "OneProject")
                         .WithMany("CvProjects")
-                        .HasForeignKey("Pid")
+                        .HasForeignKey("ProjId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("OneCv");
 
                     b.Navigation("OneProject");
+                });
+
+            modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
+                {
+                    b.HasOne("CVBuddy.Models.Project", "Project")
+                        .WithMany("ProjectUsers")
+                        .HasForeignKey("ProjId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CVBuddy.Models.User", "User")
+                        .WithMany("ProjectUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -615,12 +660,16 @@ namespace CVBuddy.Migrations
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
                 {
                     b.Navigation("CvProjects");
+
+                    b.Navigation("ProjectUsers");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
                 {
                     b.Navigation("OneCv")
                         .IsRequired();
+
+                    b.Navigation("ProjectUsers");
                 });
 #pragma warning restore 612, 618
         }

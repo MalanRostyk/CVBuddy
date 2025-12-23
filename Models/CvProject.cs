@@ -9,8 +9,8 @@ namespace CVBuddy.Models
         [ForeignKey(nameof(CvId))]
         public Cv OneCv { get; set; }
 
-        public int Pid { get; set; }
-        [ForeignKey(nameof(Pid))]
+        public int ProjId { get; set; }
+        [ForeignKey(nameof(ProjId))]
         public Project OneProject { get; set; }
     }
 }

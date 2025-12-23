@@ -10,7 +10,7 @@ namespace CVBuddy.Models
         {
             
         }
-        public  DbSet<User> Users { get; set; } //override för att kunna läggat till User entiteten
+        public DbSet<User> Users { get; set; } //override för att kunna läggat till User entiteten
         public DbSet<Project> Projects { get; set; }
         public DbSet<Cv> Cvs { get; set; }
         public DbSet<Skill> Skills { get; set; }
@@ -18,6 +18,8 @@ namespace CVBuddy.Models
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<PersonalCharacteristic> PersonalCharacteristics { get; set; }
         public DbSet<Interest> Interests { get; set; }
+        public DbSet<CvProject> CvProjects { get; set; }
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -51,7 +53,7 @@ namespace CVBuddy.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
             //Cv > Project (M-M via CvProject)
-            builder.Entity<CvProject>().HasKey(cp => new { cp.CvId, cp.Pid });//CVProject har komposit PK(CvId, Pid)
+            builder.Entity<CvProject>().HasKey(cp => new { cp.CvId, cp.ProjId });//CVProject har komposit PK(CvId, Pid)
 
             //One Cv har många CvProjects
             builder.Entity<CvProject>()
@@ -64,7 +66,7 @@ namespace CVBuddy.Models
             builder.Entity<CvProject>()
                 .HasOne(p => p.OneProject)
                 .WithMany(p => p.CvProjects)
-                .HasForeignKey(p => p.Pid)
+                .HasForeignKey(p => p.ProjId)
                 .OnDelete(DeleteBehavior.Cascade);
 
 
