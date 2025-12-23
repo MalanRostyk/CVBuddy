@@ -10,7 +10,7 @@ namespace CVBuddy.Models
         {
             
         }
-        public DbSet<User> Users { get; set; }
+        public  DbSet<User> Users { get; set; } //override för att kunna läggat till User entiteten
         public DbSet<Project> Projects { get; set; }
         public DbSet<Cv> Cvs { get; set; }
         public DbSet<Skill> Skills { get; set; }
@@ -19,10 +19,29 @@ namespace CVBuddy.Models
         public DbSet<PersonalCharacteristic> PersonalCharacteristics { get; set; }
         public DbSet<Interest> Interests { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
             base.OnModelCreating(builder);
+
+
+            //User > Project (M-M via ProjectUser)
+            builder.Entity<ProjectUser>().HasKey(pu => new { pu.UserId, pu.ProjId });
+            //One Project har många ProjectUsers
+            builder.Entity<ProjectUser>()
+                .HasOne(p => p.Project)
+                .WithMany(pu => pu.ProjectUsers)
+                .HasForeignKey(p => p.ProjId)
+                .OnDelete(DeleteBehavior.Cascade);
+            //One User har många ProjectUsers
+            builder.Entity<ProjectUser>()
+                .HasOne(u => u.User)
+                .WithMany(pu => pu.ProjectUsers)
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
 
             //user > Cv
             builder.Entity<User>()

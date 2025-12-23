@@ -6,14 +6,13 @@ using System.Net.WebSockets;
 
 namespace CVBuddy.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : HomeController
     {
-        private UserManager<User> userManager;
         private SignInManager<User> signInManager;
-        public AccountController(UserManager<User> um, SignInManager<User> sm)
+
+        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> s) : base(u, c)
         {
-            userManager = um;
-            signInManager = sm;
+            signInManager = s;
         }
 
         [HttpGet]
@@ -51,7 +50,7 @@ namespace CVBuddy.Controllers
             {
                 User user = new User();
                 user.UserName = usr.UserName;
-                var result = await userManager.CreateAsync(user, usr.Password);
+                var result = await _userManager.CreateAsync(user, usr.Password);
                 if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, isPersistent: true);

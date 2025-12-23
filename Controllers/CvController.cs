@@ -6,14 +6,10 @@ using System.Diagnostics;
 
 namespace CVBuddy.Controllers
 {
-    public class CvController : Controller
+    public class CvController : HomeController
     {
-        private readonly CVBuddyContext _context;
-        private readonly UserManager<User> _userManager;
-        public CvController(UserManager<User> userManager, CVBuddyContext c)
+        public CvController(UserManager<User> u, CVBuddyContext c) : base(u, c)
         {
-            _context = c;
-            _userManager = userManager;
         }
 
         [HttpGet]
