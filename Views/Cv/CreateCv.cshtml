@@ -1,7 +1,7 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 
 
-@* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV REPRESENTERAS ME "-A", EXEMPELVIS "hejDå" blir "hej-då". *@
+
 
 
 
@@ -64,12 +64,21 @@
     <div id="Certificates-Container" data-certificates-index = "@Model.Certificates.Count">
     </div>
     <button type="button" onclick="addCertificates()">Add Certificate</button>
-    
+
+
+    @* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV REPRESENTERAS ME "-a", EXEMPELVIS "PersonalCharacteristics" blir "Personal-characteristics". *@
                                                                                          @*PersonalCharacteristics*@
     <h3>@ViewBag.PersonalCharacteristicsHLine</h3> 
     <div id="PersonalCharacteristics-Container"  data-personalcharacteristics-index = "@Model.PersonalCharacteristics.Count">
     </div>
-    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                         @*ImageFile*@
+    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                     @*PersonalCharacteristics*@
+    
+        
+        
+    <h3>@ViewBag.InterestsHLine</h3> 
+    <div id="Interests-Container"  data-interests-index = "@Model.Interests.Count">
+    </div>
+    <button type="button" onclick="addInterests()">Add an interest</button>                                                                                         @*ImageFile*@
     
     
     <h3>Upload your image</h3> 

@@ -21,10 +21,10 @@ namespace CVBuddy.Models.CVInfo
         public List<Certificate> Certificates{ get; set; } = new();
        
         public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();
-        
-        
-        
-        public string? Interests{ get; set; }
+
+
+
+        public List<Interest> Interests { get; set; } = new();
         public string? ImageFilePath { get; set; }
 
         [NotMapped]

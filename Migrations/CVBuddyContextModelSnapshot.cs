@@ -55,9 +55,6 @@ namespace CVBuddy.Migrations
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Interests")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("ReadCount")
                         .HasColumnType("int");
 
@@ -143,6 +140,28 @@ namespace CVBuddy.Migrations
                     b.HasIndex("CvId");
 
                     b.ToTable("Experiences");
+                });
+
+            modelBuilder.Entity("CVBuddy.Models.CVInfo.Interest", b =>
+                {
+                    b.Property<int>("InterestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InterestId"));
+
+                    b.Property<int>("CvId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InterestName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InterestId");
+
+                    b.HasIndex("CvId");
+
+                    b.ToTable("Interests");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.CVInfo.PersonalCharacteristic", b =>
@@ -472,6 +491,17 @@ namespace CVBuddy.Migrations
                     b.Navigation("Cv");
                 });
 
+            modelBuilder.Entity("CVBuddy.Models.CVInfo.Interest", b =>
+                {
+                    b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
+                        .WithMany("Interests")
+                        .HasForeignKey("CvId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cv");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.CVInfo.PersonalCharacteristic", b =>
                 {
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
@@ -574,6 +604,8 @@ namespace CVBuddy.Migrations
                         .IsRequired();
 
                     b.Navigation("Experiences");
+
+                    b.Navigation("Interests");
 
                     b.Navigation("PersonalCharacteristics");
 

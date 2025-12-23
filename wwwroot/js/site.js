@@ -90,6 +90,14 @@ function addPersonalCharacteristic() {
     personalCharacteristicsIndex++;
 }
 
+let containerInterests = document.getElementById("Interests-Container");
+let interestsIndex = parseInt(containerInterests.dataset.interestsIndex);
+function addInterests() {
+    containerInterests.insertAdjacentHTML('beforeend', `<p class="mb-0">Add your interest(s)</p>
+            <input type="text" name="Interests[${interestsIndex}].InterestName" class="border-primary"/>`);
+    interestsIndex++;
+}
+
 
 
 

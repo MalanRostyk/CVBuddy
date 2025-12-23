@@ -17,6 +17,7 @@ namespace CVBuddy.Models
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<PersonalCharacteristic> PersonalCharacteristics { get; set; }
+        public DbSet<Interest> Interests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -79,6 +80,12 @@ namespace CVBuddy.Models
             builder.Entity<PersonalCharacteristic>()
                 .HasOne(p => p.Cv)
                 .WithMany(p => p.PersonalCharacteristics)
+                .HasForeignKey(p => p.CvId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Interest>()
+                .HasOne(p => p.Cv)
+                .WithMany(p => p.Interests)
                 .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
