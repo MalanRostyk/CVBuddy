@@ -10,7 +10,7 @@ namespace CVBuddy.Models.CVInfo
         public string CharacteristicName { get; set; }
 
         public int CvId { get; set; }
-        [ForeignKey("CvId")]
+        [ForeignKey(nameof(CvId))]
         public Cv Cv { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace CVBuddy.Models.CVInfo
     public class Certificate
     {
         [Key]
-        public string CertId { get; set; }
+        public int CertId { get; set; }
         public string CertName { get; set; }
 
         public int CvId { get; set; }

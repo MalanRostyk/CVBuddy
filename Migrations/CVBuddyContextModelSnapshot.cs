@@ -24,8 +24,11 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>
                 {
-                    b.Property<string>("CertId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CertId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CertId"));
 
                     b.Property<string>("CertName")
                         .IsRequired()
@@ -122,12 +125,14 @@ namespace CVBuddy.Migrations
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
