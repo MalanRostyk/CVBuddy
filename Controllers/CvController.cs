@@ -1,5 +1,6 @@
 ﻿using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,9 +9,11 @@ namespace CVBuddy.Controllers
     public class CvController : Controller
     {
         private readonly CVBuddyContext _context;
-        public CvController(CVBuddyContext c)
+        private readonly UserManager<User> _userManager;
+        public CvController(UserManager<User> userManager, CVBuddyContext c)
         {
             _context = c;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -42,6 +45,9 @@ namespace CVBuddy.Controllers
                 await cv.ImageFile.CopyToAsync(stream);
             }
             cv.ImageFilePath = "/CvImages/" + fileName;
+
+            //Tilldela user id till cv för realtion
+            cv.UserId = _userManager.GetUserId(User);
 
             await _context.Cvs.AddAsync(cv);
             await _context.SaveChangesAsync();

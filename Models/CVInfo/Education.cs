@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CVBuddy.Models.CVInfo
 {
@@ -13,5 +14,8 @@ namespace CVBuddy.Models.CVInfo
         public string? UniProgram { get; set; } // = Computer Science
         public string? UniDate { get; set; } // = 2023-
 
+        public int CvId { get; set; }
+        [ForeignKey(nameof(CvId))]
+        public Cv Cv { get; set; }
     }
 }
