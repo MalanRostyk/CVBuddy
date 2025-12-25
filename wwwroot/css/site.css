@@ -1,7 +1,3 @@
-html {
-    font-size: 14px;
-}
-
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -12,14 +8,17 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+html, body {
+    height: 100%;
+}
+
 html {
-  position: relative;
-  min-height: 100%;
+  font-size: 14px;
 }
 
 body {
-    margin-bottom: 60px;
-    background: url("C:\Users\david\Desktop\CVBuddy-master\CVBuddy\wwwroot\CvImages\33a2fba4-c7c5-42a4-be13-7d73fe327e43.PNG");
+    display: flex;
+    flex-direction: column;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
