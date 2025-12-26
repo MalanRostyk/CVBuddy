@@ -3,6 +3,7 @@ using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace CVBuddy.Controllers
@@ -65,10 +66,22 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReadCv(Cv cv)
+        public IActionResult ReadCv(int Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
-            //Tilldelar tillhörande CvInfo objekt till cv
 
+            var cv = _context.Cvs
+                .Include(cv => cv.Education)
+                .Include(cv => cv.Experiences)
+                .Include(cv => cv.Skills)
+                .Include(cv => cv.Certificates)
+                .Include(cv => cv.PersonalCharacteristics)
+                .Include(cv => cv.Interests)
+                .Include(cv => cv.OneUser)
+                .Include(cv => cv.CvProjects)
+                .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
+                .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+
+            var user = cv.UserId;
 
             ViewBag.Headline = "Cv";
             ViewBag.HeadlineExperiences = "Experiences";
@@ -77,7 +90,7 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlineCertificates = "Certificates";
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
-            return View();
+            return View(cv);
         }
     }
 }

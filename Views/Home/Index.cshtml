@@ -30,7 +30,7 @@
                     <td>@item.UserName</td>
                     <td>@item.OneCv.ReadCount</td>
                     <td>
-                        <a asp-controller="Cv" asp-Action="ReadCv">See Cv</a>
+                        <a asp-controller="Cv" asp-Action="ReadCv" asp-route-Cid="@item.OneCv.Cid" >See Cv</a>
                     </td>
                 </tr>
             }

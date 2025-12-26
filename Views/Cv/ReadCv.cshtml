@@ -1,6 +1,7 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
-
-<h1 class="mb-4">@ViewBag.Headline</h1>
+<a asp-controller="Home" asp-action="Index">Back to Home</a>
+<a asp-controller="Home" asp-action="Index">Message this Person</a>
+<h1 class="mb-4">@ViewBag.Headline - @Model.OneUser.UserName</h1>
 <h2>@ViewBag.HeadlineExperiences</h2>
 <h2>@ViewBag.HeadlineEducation</h2>
 <h2>@ViewBag.HeadlineSkill</h2>
