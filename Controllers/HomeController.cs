@@ -22,11 +22,11 @@ namespace CVBuddy.Controllers
             var users = _context.Users.ToList();
             var cvs = _context.Cvs.ToList();
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                foreach(var cv in cvs)
+                foreach (var cv in cvs)
                 {
-                    if (user.OneCv.Cid == cv.Cid)
+                    if (user.OneCv?.Cid != null && user.OneCv.Cid == cv.Cid)
                         user.OneCv.Cid = cv.Cid;
                 }
             }

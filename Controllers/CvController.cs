@@ -82,6 +82,9 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
                     .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+
+                cv.ReadCount++;
+                _context.Update<Cv>(cv);
             }
             else//I else hämtas den inloggade användarens Cv, för "My Cv"
             {
@@ -97,9 +100,10 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.OneUser)
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)
-                    .FirstOrDefault(cv => cv.UserId == userId);
+                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
             }
                 
+            
 
             if (cv == null)
                 NotFound(); //Error meddelande som stoppar krasch, not found 404
