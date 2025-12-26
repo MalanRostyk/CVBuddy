@@ -1,4 +1,5 @@
-﻿using CVBuddy.Models;
+﻿using Azure.Messaging;
+using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,19 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult CreateCv()
         {
+            bool cvFound = false;
+            var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
+            var userId = _userManager.GetUserId(User);
+
+            foreach (var cvUserId in cvsList)
+            {
+                if (cvUserId == userId)
+                    cvFound = true;
+            }
+            if (cvFound)
+            {
+                return RedirectToAction("Index", "Home");//Användaren kommer tillbaka till startsidan om de redan har ett cv, Lägg till ett meddelande eller avaktiver knapp eller något, Testad och funkar!
+            }
             return View(new Cv());
         }
 

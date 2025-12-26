@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class fsdfoij : Migration
+    public partial class Aftercvcheck : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
