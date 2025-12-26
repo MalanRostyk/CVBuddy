@@ -43,15 +43,43 @@
     @foreach(var skill in Model.Skills)
     {
         <div class="mb-2">
-            <p>Skill: @skill.ASkill</p>
-            <p>Description of skill: @(skill.Description ?? "")</p>
-            <p>Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
+            <h5>Skill</h5>
+            <p class="mb-0">Skill: @skill.ASkill</p>
+            <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
+            <p class="mb-0">Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
+        </div>
+    }
+</div>
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineCertificates</h2>
+    <h5>My certificates</h5>
+    @foreach(var certificate in Model.Certificates)
+    {
+        <div class="mb-2">
+            <p class="mb-0">Certificate: @certificate.CertName</p>
         </div>
     }
 </div>
 
+<div class="mb-4">
+    <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
+    <h5>My personal characteristics</h5>
+    @foreach(var personalCharacteristics in Model.PersonalCharacteristics)
+    {
+        <div class="mb-2">
+            <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
+        </div>
+    }
+</div>
 
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineInterest</h2>
+    <h5 class="mb-0">These are my interests</h5>
+    @foreach (var interest in Model.Interests)
+    {
+        <div class="mb-2">
+            <p class="mb-0">@interest.InterestName</p>
+        </div>
+    }
+</div>
 
-<h2>@ViewBag.HeadlineCertificates</h2>
-<h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
-<h2>@ViewBag.HeadlineInterest</h2>
