@@ -66,22 +66,43 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReadCv(int Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
+        public IActionResult ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
+            Cv? cv;
+            if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
+            {
+                cv = _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .Include(cv => cv.CvProjects)
+                    .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
+                    .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+            }
+            else//I else hämtas den inloggade användarens Cv, för "My Cv"
+            {
+                var userId = _userManager.GetUserId(User);
 
-            var cv = _context.Cvs
-                .Include(cv => cv.Education)
-                .Include(cv => cv.Experiences)
-                .Include(cv => cv.Skills)
-                .Include(cv => cv.Certificates)
-                .Include(cv => cv.PersonalCharacteristics)
-                .Include(cv => cv.Interests)
-                .Include(cv => cv.OneUser)
-                .Include(cv => cv.CvProjects)
-                .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
-                .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+                cv = _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .Include(cv => cv.CvProjects)
+                    .ThenInclude(cp => cp.OneProject)
+                    .FirstOrDefault(cv => cv.UserId == userId);
+            }
+                
 
-            var user = cv.UserId;
+            if (cv == null)
+                NotFound(); //Error meddelande som stoppar krasch, not found 404
 
             ViewBag.Headline = "Cv";
             ViewBag.HeadlineExperiences = "Experiences";
