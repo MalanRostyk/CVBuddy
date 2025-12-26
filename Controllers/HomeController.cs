@@ -18,7 +18,21 @@ namespace CVBuddy.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            return View();
+            //Allt detta för att en Users OneCv är null i Viewens foreach, så tilldelar manuellt en User sin OneCv
+            var users = _context.Users.ToList();
+            var cvs = _context.Cvs.ToList();
+
+            foreach(var user in users)
+            {
+                foreach(var cv in cvs)
+                {
+                    if (user.OneCv.Cid == cv.Cid)
+                        user.OneCv.Cid = cv.Cid;
+                }
+            }
+
+            ViewBag.CvIndexHeadline = "Recent Cvs";
+            return View(users);//För att ge Users till Index view, så Model inte är NULL
         }
 
     }

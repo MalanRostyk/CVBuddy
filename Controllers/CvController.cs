@@ -63,5 +63,21 @@ namespace CVBuddy.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public IActionResult ReadCv(Cv cv)
+        {
+            //Tilldelar tillhörande CvInfo objekt till cv
+
+
+            ViewBag.Headline = "Cv";
+            ViewBag.HeadlineExperiences = "Experiences";
+            ViewBag.HeadlineEducation = "Education";
+            ViewBag.HeadlineSkill = "Skills";
+            ViewBag.HeadlineCertificates = "Certificates";
+            ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+            ViewBag.HeadlineInterest = "Interests";
+            return View();
+        }
     }
 }

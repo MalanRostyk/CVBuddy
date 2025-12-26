@@ -1,6 +1,4 @@
-﻿@model User
-
-
+﻿@model IEnumerable<User>
 
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
@@ -12,4 +10,31 @@
     </Authorized>
 </AuthorizeView>
 </form>
+
+
+<h2>@ViewBag.CvIndexHeadline</h2>
+<table>
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Cv</td>
+            <td>Buttons</td>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model != null && Model.Any())
+        {
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>@item.OneCv.ReadCount</td>
+                    <td>
+                        <a asp-controller="Cv" asp-Action="ReadCv">See Cv</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
