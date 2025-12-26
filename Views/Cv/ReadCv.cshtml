@@ -6,9 +6,10 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineExperiences</h2>
+
     @foreach (var experience in Model.Experiences)
     {
-        <div class="mb-2">
+        <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
             <p class="mb-0">Title: @experience.Title</p>
             <p class="mb-0">Company: @experience.Company</p>
             <p class="mb-0">Description: @experience.Description</p>

@@ -9,16 +9,16 @@
 
     <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
     <div class="mb-2">
-        <p class="mb-0">Enter what high school you when to.</p>
+        <p class="mb-0">Enter what high school you whent to.</p>
         <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
     </div>
     <div class="mb-2">
-        <p class="mb-0">Enter what high school you studied.</p>
+        <p class="mb-0">Enter what program you studied in high school.</p>
         <input type="text" asp-for="@Model.Education.HSProgram" class="border-primary" />
     </div>
     <div class="mb-2">
         <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
-        <input type="text" asp-for="@Model.Education.HSDate" class="border-primary" />
+        <input type="date" asp-for="@Model.Education.HSDate" class="border-primary" />
     </div>
 
     <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
@@ -33,7 +33,7 @@
     </div>
     <div class="mb-2">
         <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p><br>
-        <input type="text" asp-for="@Model.Education.UniDate" class="border-primary" />
+        <input type="date" asp-for="@Model.Education.UniDate" class="border-primary" />
     </div>
 
     <h3>@ViewBag.SkillsHLine</h3>                                                       @*Skills*@
