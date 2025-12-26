@@ -19,67 +19,79 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineEducation</h2>
-    <div class="mb-2">
-        @if (Model.Education.HighSchool != null)
-        {
+    @if (Model.Education.HighSchool != null)
+    {
+        <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
             <h5>High School</h5>
             <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
             <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
             <p class="mb-0">Date: @(Model.Education.HSDate ?? "")</p>
-        }
-    </div>
-    <div class="mb-2">
-        @if (Model.Education.Univeristy != null)
-        {
+        </div>
+    }
+    @if (Model.Education.Univeristy != null)
+    {
+        <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
             <h5>University</h5>
             <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
             <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
             <p class="mb-0">Date: @(Model.Education.UniDate ?? "")</p>
-        }
-    </div>
+        </div>
+    }
+    
 </div>
 <div class="mb-4">
     <h2>@ViewBag.HeadlineSkill</h2>
-    @foreach(var skill in Model.Skills)
-    {
-        <div class="mb-2">
-            <h5>Skill</h5>
-            <p class="mb-0">Skill: @skill.ASkill</p>
-            <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
-            <p class="mb-0">Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
-        </div>
-    }
+    <div style="display: flex; justify-content: flex-start;">
+        @foreach (var skill in Model.Skills)
+        {
+            <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
+                <p class="mb-0">Skill: @skill.ASkill</p>
+                <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
+                <p class="mb-0">Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
+            </div>
+        }
+    </div>
+    
 </div>
 <div class="mb-4">
     <h2>@ViewBag.HeadlineCertificates</h2>
     <h5>My certificates</h5>
-    @foreach(var certificate in Model.Certificates)
-    {
-        <div class="mb-2">
-            <p class="mb-0">Certificate: @certificate.CertName</p>
-        </div>
-    }
+    <div style="display: flex; justify-content: flex-start;">
+        @foreach (var certificate in Model.Certificates)
+        {
+            <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
+                <p class="mb-0">Certificate: @certificate.CertName</p>
+            </div>
+        }
+    </div>
+    
 </div>
 
-<div class="mb-4">
+<div class="mb-4"">
     <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
     <h5>My personal characteristics</h5>
-    @foreach(var personalCharacteristics in Model.PersonalCharacteristics)
-    {
-        <div class="mb-2">
-            <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
-        </div>
-    }
+    <div style="display: flex; justify-content: flex-start;">
+        @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
+        {
+            <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
+                <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
+            </div>
+        }
+    </div>
+
 </div>
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineInterest</h2>
     <h5 class="mb-0">These are my interests</h5>
-    @foreach (var interest in Model.Interests)
-    {
-        <div class="mb-2">
-            <p class="mb-0">@interest.InterestName</p>
-        </div>
-    }
+    <div style="display: flex; justify-content: flex-start;">
+        @foreach (var interest in Model.Interests)
+        {
+            <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
+                <p class="mb-0">@interest.InterestName</p>
+            </div>
+        }
+    </div>
+    
 </div>
 
