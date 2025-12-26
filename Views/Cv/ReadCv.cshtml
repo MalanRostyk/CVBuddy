@@ -1,10 +1,57 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 <a asp-controller="Home" asp-action="Index">Back to Home</a>
 <a asp-controller="Home" asp-action="Index">Message this Person</a>
+
 <h1 class="mb-4">@ViewBag.Headline - @Model.OneUser.UserName</h1>
-<h2>@ViewBag.HeadlineExperiences</h2>
-<h2>@ViewBag.HeadlineEducation</h2>
-<h2>@ViewBag.HeadlineSkill</h2>
+
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineExperiences</h2>
+    @foreach (var experience in Model.Experiences)
+    {
+        <div class="mb-2">
+            <b class="mb-0">Title: @experience.Title</b>
+            <p class="mb-0">Company: @experience.Company</p>
+            <p class="mb-0">Description: @experience.Description</p>
+            <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
+        </div>
+    }
+</div>
+
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineEducation</h2>
+    <div class="mb-2">
+        @if (Model.Education.HighSchool != null)
+        {
+            <h5>High School</h5>
+            <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
+            <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
+            <p class="mb-0">Date: @(Model.Education.HSDate ?? "")</p>
+        }
+    </div>
+    <div class="mb-2">
+        @if (Model.Education.Univeristy != null)
+        {
+            <h5>University</h5>
+            <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
+            <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
+            <p class="mb-0">Date: @(Model.Education.UniDate ?? "")</p>
+        }
+    </div>
+</div>
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineSkill</h2>
+    @foreach(var skill in Model.Skills)
+    {
+        <div class="mb-2">
+            <p>Skill: @skill.ASkill</p>
+            <p>Description of skill: @(skill.Description ?? "")</p>
+            <p>Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
+        </div>
+    }
+</div>
+
+
+
 <h2>@ViewBag.HeadlineCertificates</h2>
 <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
 <h2>@ViewBag.HeadlineInterest</h2>
