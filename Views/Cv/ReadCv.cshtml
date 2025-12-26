@@ -9,7 +9,7 @@
     @foreach (var experience in Model.Experiences)
     {
         <div class="mb-2">
-            <b class="mb-0">Title: @experience.Title</b>
+            <p class="mb-0">Title: @experience.Title</p>
             <p class="mb-0">Company: @experience.Company</p>
             <p class="mb-0">Description: @experience.Description</p>
             <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
@@ -83,7 +83,7 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineInterest</h2>
-    <h5 class="mb-0">These are my interests</h5>
+    <h5>These are my interests</h5>
     <div style="display: flex; justify-content: flex-start;">
         @foreach (var interest in Model.Interests)
         {
