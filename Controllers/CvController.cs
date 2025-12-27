@@ -77,7 +77,7 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
             Cv? cv;
-            var userId = _userManager.GetUserId(User);
+            
             if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
             {
                 cv = _context.Cvs
@@ -96,19 +96,9 @@ namespace CVBuddy.Controllers
             }
             else//I else hämtas den inloggade användarens Cv, för "My Cv"
             {
-                
 
-                cv = _context.Cvs
-                    .Include(cv => cv.Education)
-                    .Include(cv => cv.Experiences)
-                    .Include(cv => cv.Skills)
-                    .Include(cv => cv.Certificates)
-                    .Include(cv => cv.PersonalCharacteristics)
-                    .Include(cv => cv.Interests)
-                    .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
-                    .ThenInclude(cp => cp.OneProject)
-                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
+
+                cv = await GetLoggedInUsersCv();
             }
                 
             
@@ -125,6 +115,40 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlineInterest = "Interests";
             ViewBag.HeadlineProjects = "Projects";
             return View(cv);
+        }
+
+        private async Task<Cv> GetLoggedInUsersCv()
+        {
+            var userId = _userManager.GetUserId(User);
+            Cv? cv = _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .Include(cv => cv.CvProjects)
+                    .ThenInclude(cp => cp.OneProject)
+                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
+            if (cv == null)
+                NotFound();
+
+            return cv;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCv()
+        {
+            var cv = await GetLoggedInUsersCv();
+            if(cv != null)
+            {
+                return View(cv);
+            }
+            else
+            {
+                return RedirectToAction("CreateCv"); 
+            }
         }
     }
 }
