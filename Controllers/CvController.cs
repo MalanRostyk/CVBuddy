@@ -148,7 +148,7 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlineCertificates = "Certificates";
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
-            ViewBag.HeadlineProjects = "Projects";
+
             var cv = await GetLoggedInUsersCv();
             if(cv != null)
             {
@@ -163,20 +163,69 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
-            if (!ModelState.IsValid)
-                return View(cv);
+            var cvOldVersion = await GetLoggedInUsersCv();
 
-
-            var cvMedGammaltState = _context.Cvs
-                .Where(cv => cv.Cid == cv.Cid).FirstOrDefault();
-
-            if (cvMedGammaltState == null)
+            if (cvOldVersion == null)
                 return NotFound();
 
-            cvMedGammaltState.Interests[0].InterestName = cv.Interests[0].InterestName;
+            //if (!ModelState.IsValid)
+            //    return View(cvOldVersion);
+
+            cvOldVersion.ReadCount = cv.ReadCount;
+            cvOldVersion.UserId = cv.UserId;
+            cvOldVersion.ImageFilePath = cv.ImageFilePath;
+
+            //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
+
+            //Experiences
+            for(int i = 0; i < cvOldVersion.Experiences.Count; i++)
+            {
+                cvOldVersion.Experiences[i].Title = cv.Experiences[i].Title;
+                cvOldVersion.Experiences[i].Description = cv.Experiences[i].Description;
+                cvOldVersion.Experiences[i].Company = cv.Experiences[i].Company;
+                cvOldVersion.Experiences[i].StartDate = cv.Experiences[i].StartDate;
+                cvOldVersion.Experiences[i].EndDate = cv.Experiences[i].EndDate;
+            }
+
+            //Education
+            cvOldVersion.Education.HighSchool = cv.Education.HighSchool;
+            cvOldVersion.Education.HSProgram = cv.Education.HSProgram;
+            cvOldVersion.Education.HSDate = cv.Education.HSDate;
+
+            cvOldVersion.Education.Univeristy = cv.Education.Univeristy;
+            cvOldVersion.Education.UniProgram = cv.Education.UniProgram;
+            cvOldVersion.Education.UniDate = cv.Education.UniDate;
+
+            //Skills
+            for (int i = 0; i < cvOldVersion.Skills.Count; i++)
+            {
+                cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
+                cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
+                cvOldVersion.Skills[i].Date = cv.Skills[i].Date;
+            }
+
+            //Interests
+            for (int i = 0; i < cvOldVersion.Interests.Count; i++)
+            {
+                cvOldVersion.Interests[i].InterestName = cv.Interests[i].InterestName;
+            }
+
+
+            //Certificates
+            for (int i = 0; i < cvOldVersion.Certificates.Count; i++)
+            {
+                cvOldVersion.Certificates[i].CertName = cv.Certificates[i].CertName;
+            }
+
+
+            //PersonalCharacteristics
+            for (int i = 0; i < cvOldVersion.PersonalCharacteristics.Count; i++)
+            {
+                cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
+            }
 
             await _context.SaveChangesAsync();
-            
+
             return RedirectToAction("Index", "Home");
         }
     }

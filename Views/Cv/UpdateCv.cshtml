@@ -4,8 +4,15 @@
 
 <form asp-action="UpdateCv" method="post" enctype="multipart/form-data">
     
+    <input type="hidden" asp-for="Cid" /> @* För att få med Cv:ts id så att det inte autoinkrementeras och hela databasen förstörs *@
+    <input type="hidden" asp-for="ReadCount" /> 
+    <input type="hidden" asp-for="UserId" /> 
+
+
     <h3>@ViewBag.HeadlineImage</h3>
     <div class="mb-4">
+        <input type="hidden" asp-for="ImageFilePath" />
+
         <div class="mb-2">
             Image: <input asp-for="ImageFile" type="file" accept="CvImages/*" />
 
@@ -15,24 +22,27 @@
 
     <h3>@ViewBag.HeadlineExperiences</h3>                                                        @* Experiences *@
     <div class="mb-4">
-        @foreach (var experience in Model.Experiences)
+        @for (int i = 0; i < Model.Experiences.Count; i++)
         {
+            <input type="hidden" asp-for="Experiences[i].Exid" />
+            <input type="hidden" asp-for="Experiences[i].CvId" />
+
             <div class="mb-4">
                 <div class="mb-2">
-                    Title: <input asp-for="@experience.Title" type="text" value="@experience.Title" />
+                    Title: <input asp-for="Experiences[i].Title" type="text" value="@Model.Experiences[i].Title" />
                 </div>
                 <div class="mb-2">
-                    Company: <input asp-for="@experience.Description" type="text" value="@(experience.Description ?? "")" /> @* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
+                    Company: <input asp-for="Experiences[i].Description" type="text" value="@(Model.Experiences[i].Description ?? "")" /> @* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
 
                 </div>
                 <div class="mb-2">
-                    Description: <input asp-for="@experience.Company" type="text" value="@experience.Company" />
+                    Description: <input asp-for="Experiences[i].Company" type="text" value="@Model.Experiences[i].Company" />
                 </div>
                 <div class="mb-2">
-                    Start date: <input asp-for="@experience.StartDate" type="date" value="@experience.StartDate" /> @* DATE VALUE FUNKAR EJ *@
+                    Start date: <input asp-for="Experiences[i].StartDate" type="date" value="@Model.Experiences[i].StartDate" /> @* DATE VALUE FUNKAR EJ *@
                 </div>
                 <div class="mb-2">
-                    End date: <input asp-for="@experience.EndDate" type="date" value="@experience.EndDate" />
+                    End date: <input asp-for="Experiences[i].EndDate" type="date" value="@Model.Experiences[i].EndDate" />
                 </div>
             </div>
         }
@@ -41,17 +51,20 @@
 
     <h3>@ViewBag.HeadlineEducation</h3>                                                          @* Education *@
     <div class="mb-4">
+        
+        <input type="hidden" asp-for="Education.Eid" />
+        <input type="hidden" asp-for="Education.CvId" />
 
         <div class="mb-4">
             <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
             <div class="mb-2">
-                High School: <input asp-for="@Model.Education.HighSchool" type="text" value="@Model.Education.HighSchool" />
+                High School: <input asp-for="Education.HighSchool" type="text" value="@Model.Education.HighSchool" />
             </div>
             <div class="mb-2">
-                Program: <input asp-for="@Model.Education.HSProgram" type="text" value="@Model.Education.HSProgram" />
+                Program: <input asp-for="Education.HSProgram" type="text" value="@Model.Education.HSProgram" />
             </div>
             <div class="mb-2">
-                Date: <input asp-for="@Model.Education.HSDate" type="text" value="@Model.Education.HSDate" />
+                Date: <input asp-for="Education.HSDate" type="date" value="@Model.Education.HSDate" />
             </div>
         </div>
 
@@ -59,13 +72,13 @@
         <div class="mb-4">
             <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
             <div class="mb-2">
-                University: <input asp-for="@Model.Education.Univeristy" type="text" value="@Model.Education.Univeristy" />
+                University: <input asp-for="Education.Univeristy" type="text" value="@Model.Education.Univeristy" />
             </div>
             <div class="mb-2">
-                Program: <input asp-for="@Model.Education.UniProgram" type="text" value="@Model.Education.UniProgram" />
+                Program: <input asp-for="Education.UniProgram" type="text" value="@Model.Education.UniProgram" />
             </div>
             <div class="mb-2">
-                Date: <input asp-for="@Model.Education.UniDate" type="date" value="@Model.Education.UniDate" />
+                Date: <input asp-for="Education.UniDate" type="date" value="@Model.Education.UniDate" />
             </div>
         </div>
     </div>
@@ -73,39 +86,47 @@
 
     <h3>@ViewBag.HeadlineSkill</h3>                                                              @* Skill *@
     <div class="mb-4">
-        @foreach (var skill in Model.Skills)
+        @for (int i = 0; i < Model.Skills.Count; i++)
         {
+            <input type="hidden" asp-for="Skills[i].Sid" />
+            <input type="hidden" asp-for="Skills[i].CvId" />
+
             <div class="mb-4">
                 <div class="mb-2">
-                    Skill: <input asp-for="@skill.ASkill" type="text" value="@skill.ASkill" />
+                    Skill: <input asp-for="Skills[i].ASkill" type="text" value="@Model.Skills[i].ASkill" />
                 </div>
                 <div class="mb-2">
-                    Description: <input asp-for="@skill.Description" type="text" value="@(skill.Description ?? "")" />
+                    Description: <input asp-for="Skills[i].Description" type="text" value="@(@Model.Skills[i].Description ?? "")" />
                 </div>
                 <div class="mb-2">
-                    Skill Since: <input asp-for="@skill.Date" type="date" value="@skill.Date" />
+                    Skill Since: <input asp-for="Skills[i].Date" type="date" value="@Model.Skills[i].Date" />
                 </div>
             </div>
         }
     </div>
     <h3>@ViewBag.HeadlineCertificates</h3>                                                       @* Certificates *@
     <div class="mb-4">
-        @foreach (var certificate in Model.Certificates)
+        @for (int i = 0; i < Model.Certificates.Count; i++)
         {
+            <input type="hidden" asp-for="Certificates[i].CertId" />
+            <input type="hidden" asp-for="Certificates[i].CvId" />
             <div class="mb-4">
                 <div class="mb-2">
-                    Cerificate: <input asp-for="@certificate.CertName" type="text" value="@certificate.CertName" />
+                    Cerificate: <input asp-for="Certificates[i].CertName" type="text" value="@Model.Certificates[i].CertName" />
                 </div>
             </div>
         }
     </div>
     <h3>@ViewBag.HeadlinePersonalCharacteristics</h3>                                            @* PersonalCharacteristics *@
     <div class="mb-4">
-        @foreach (var personalCharacteristic in Model.PersonalCharacteristics)
+        @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
         {
+            <input type="hidden" asp-for="PersonalCharacteristics[i].PCId" />
+            <input type="hidden" asp-for="PersonalCharacteristics[i].CvId" />
+
             <div class="mb-4">
                 <div class="mb-2">
-                    Personal Characteristic: <input asp-for="@personalCharacteristic.CharacteristicName" type="text" value="@personalCharacteristic.CharacteristicName" />
+                    Personal Characteristic: <input asp-for="PersonalCharacteristics[i].CharacteristicName" type="text" value="@Model.PersonalCharacteristics[i].CharacteristicName" />
                 </div>
             </div>
         }
@@ -123,36 +144,8 @@
             </div>
         }
     </div>
-    @* <div class="mb-4">
-        @foreach (var interest in Model.Interests)
-        {
-            <div class="mb-4">
-                <div class="mb-2">
-                    Cerificate: <input asp-for="@interest.InterestName" type="text" value="@interest.InterestName" />
-                </div>
-            </div>
-        }
-    </div> *@
-    <h3>@ViewBag.HeadlineProjects</h3>                                                           @* Projects *@
-    <div class="mb-4">
-        @foreach (var cvProjects in Model.CvProjects)
-        {
-            <div class="mb-4">
-                <div class="mb-2">
-                    Title: <input asp-for="@cvProjects.OneProject.Title" type="text" value="@cvProjects.OneProject.Title" />
-                </div>
-                <div class="mb-2">
-                    Description: <input asp-for="@cvProjects.OneProject.Description" type="text" value="@(cvProjects.OneProject.Description ?? "")" />
-                </div>
-                <div class="mb-2">
-                    Start Date: <input asp-for="@cvProjects.OneProject.StartDate" type="date" value="@cvProjects.OneProject.Title" />
-                </div>
-                <div class="mb-2">
-                    End Date: <input asp-for="@cvProjects.OneProject.Enddate" type="date" value="@cvProjects.OneProject.Title" />
-                </div>
-            </div>
-        }
-    </div>
+
+
 
     <button type="submit" class="btn btn-primary">Save changes</button>
 </form>
