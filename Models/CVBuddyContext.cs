@@ -20,8 +20,7 @@ namespace CVBuddy.Models
         public DbSet<Interest> Interests { get; set; }
         public DbSet<CvProject> CvProjects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
-
-
+        public DbSet<Address> Adresses { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
@@ -110,6 +109,12 @@ namespace CVBuddy.Models
                 .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //Address > User 1:1 
+            builder.Entity<User>()
+                .HasOne(u => u.OneAddress)
+                .WithOne(a => a.OneUser)
+                .HasForeignKey<Address>(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

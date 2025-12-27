@@ -1,7 +1,34 @@
-﻿@model User
-
-<h3>Funkar</h3>
+﻿@model CVBuddy.Models.User
 
 <div>
-    <h2>@Model.UserName</h2>
+    <h2>Welcome back @Model.UserName</h2>
+    <label>User name</label>
+    <p>@Model.UserName</p>
+
+    <label>First name</label>
+    <p>@Model.FirstName</p>
+
+    <label>Last name</label>
+    <p>@Model.LastName</p>
+
+    <label>Email</label>
+    <p>@Model.Email</p>
+
+    <label>Phone number</label>
+    <p>@Model.PhoneNumber</p>
+
+    <label>Address</label>
+    @if(Model.OneAddress != null){
+    <p>@Model.OneAddress.Country</p>
+    <p>@Model.OneAddress.City</p>
+        <p>@Model.OneAddress.Street</p>
+    }
+    else
+    {
+        <pc class="text-muted fst-italic">No address registered</pc>
+    }
+</div>
+<div>
+    <a asp-action="UpdateUser" asp-route-id="@Model.Id" class="btn btn-primary">Edit personal information</a>
+    
 </div>
