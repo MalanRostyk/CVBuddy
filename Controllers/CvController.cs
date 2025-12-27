@@ -17,6 +17,14 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult CreateCv()
         {
+            ViewBag.Headline = "Cv";
+            ViewBag.HeadlineExperiences = "Experiences";
+            ViewBag.HeadlineEducation = "Education";
+            ViewBag.HeadlineSkill = "Skills";
+            ViewBag.HeadlineCertificates = "Certificates";
+            ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+            ViewBag.HeadlineInterest = "Interests";
+
             bool cvFound = false;
             var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
             var userId = _userManager.GetUserId(User);
