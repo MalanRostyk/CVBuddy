@@ -48,7 +48,7 @@
             <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
                 <p class="mb-0">Skill: @skill.ASkill</p>
                 <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
-                <p class="mb-0">Skill since: @(skill.Date.Value.ToShortDateString() ?? "Unspecified")</p>
+                <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
             </div>
         }
     </div>
