@@ -140,6 +140,14 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
+            ViewBag.Headline = "Cv";
+            ViewBag.HeadlineExperiences = "Experiences";
+            ViewBag.HeadlineEducation = "Education";
+            ViewBag.HeadlineSkill = "Skills";
+            ViewBag.HeadlineCertificates = "Certificates";
+            ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+            ViewBag.HeadlineInterest = "Interests";
+            ViewBag.HeadlineProjects = "Projects";
             var cv = await GetLoggedInUsersCv();
             if(cv != null)
             {
@@ -147,7 +155,7 @@ namespace CVBuddy.Controllers
             }
             else
             {
-                return RedirectToAction("CreateCv"); 
+                return RedirectToAction("CreateCv"); //Om man inte har ett cv än så kommer man till CreateCv
             }
         }
     }
