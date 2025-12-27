@@ -69,6 +69,7 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
             Cv? cv;
+            var userId = _userManager.GetUserId(User);
             if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
             {
                 cv = _context.Cvs
@@ -82,12 +83,12 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
                     .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
-
-                await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid);
+               
+                await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
             }
             else//I else hämtas den inloggade användarens Cv, för "My Cv"
             {
-                var userId = _userManager.GetUserId(User);
+                
 
                 cv = _context.Cvs
                     .Include(cv => cv.Education)

@@ -1,8 +1,11 @@
-using System.Diagnostics;
 using CVBuddy.Models;
+using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace CVBuddy.Controllers
 {
@@ -16,21 +19,26 @@ namespace CVBuddy.Controllers
             _context = c;
         }
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //Allt detta för att en Users OneCv är null i Viewens foreach, så tilldelar manuellt en User sin OneCv
-            var users = _context.Users.ToList();
-            var cvs = _context.Cvs.ToList();
+            //var users = _context.Users.ToList();
+            //var cvs = _context.Cvs.ToList();
 
-            foreach (var user in users)
-            {
-                foreach (var cv in cvs)
-                {
-                    if (user.OneCv?.Cid != null && user.OneCv.Cid == cv.Cid)
-                        user.OneCv.Cid = cv.Cid;
-                }
-            }
+            //foreach (var user in users)
+            //{
+            //    foreach (var cv in cvs)
+            //    {
+            //        if (user.OneCv?.Cid != null && user.OneCv.Cid == cv.Cid)
+            //            user.OneCv.Cid = cv.Cid;
+            //    }
+            //}
 
+            var users = await _context.Users //Mindre kod gör samma utan valideringen
+                .Include(u => u.OneCv)
+                .Include(u => u.ProjectUsers)
+                .ThenInclude(pu => pu.Project)
+                .ToListAsync();
             ViewBag.CvIndexHeadline = "Recent Cvs";
             return View(users);//För att ge Users till Index view, så Model inte är NULL
         }
