@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using System.Transactions;
 
 namespace CVBuddy.Controllers
@@ -21,10 +22,18 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateProject()
+        public async Task<IActionResult> CreateProject()
         {
             ViewBag.ProjectCreateHeadline = "Create a Project";
-            return View(new Project());
+
+            var user = await _userManager.GetUserAsync(User);
+
+            //Lägga till sig själv i projektet som deltagare innan det skapas
+            Project newProj = new();
+
+            newProj.UsersInProject.Add(user);
+            return View(newProj); //Att lägga till sig själv isom participant i ett projekt när det skapas funkar inte eftersom att Project.UsersInproject inte Serialiseras
+            //Vill ej ändra model innan vi har mergeat tillsammans
         }
 
         [HttpPost]

@@ -115,6 +115,7 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlineCertificates = "Certificates";
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
+            ViewBag.HeadlineProjects = "Projects";
             return View(cv);
         }
     }

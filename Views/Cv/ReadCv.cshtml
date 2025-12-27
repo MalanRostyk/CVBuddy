@@ -93,6 +93,30 @@
             </div>
         }
     </div>
-    
+</div>
+
+<div class="mb-4">
+    <h2>@ViewBag.HeadlineProjects</h2>
+    <h5>I have participated in these projects</h5>
+    <div style="display: flex; justify-content: flex-start;">
+        @foreach (var cvProject in Model.CvProjects)
+        {
+            <div class="mb-0" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
+                <p class="mb-0">Title: @cvProject.OneProject.Title</p>
+                <p class="mb-0">Description: @(cvProject.OneProject.Description ?? "Not described")</p>
+                <p class="mb-0">Date: @cvProject.OneProject.StartDate.ToShortDateString() <b>-</b> @(cvProject.OneProject.Enddate?.ToShortDateString() ?? "Ongoing")</p>
+                <p class="mb-0">Participants:
+                    @foreach(var participant in cvProject.OneProject.UsersInProject)
+                    {
+                        <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid #38294f; border-radius: 2em; background-color: #af7cfc;">
+                            <p class="mb-0'">@participant.UserName</p>
+                        </div>
+                    }
+                </p>
+                <p class="mb-0">Participant count: @cvProject.OneProject.UsersInProject.Count</p>
+                
+            </div>
+        }
+    </div>
 </div>
 
