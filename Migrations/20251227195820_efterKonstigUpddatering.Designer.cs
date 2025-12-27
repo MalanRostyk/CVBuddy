@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20251226161358_After-cv-check")]
-    partial class Aftercvcheck
+    [Migration("20251227195820_efterKonstigUpddatering")]
+    partial class efterKonstigUpddatering
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -141,6 +141,7 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateCv()
         {
             ViewBag.Headline = "Cv";
+            ViewBag.HeadlineImage = "Image";
             ViewBag.HeadlineExperiences = "Experiences";
             ViewBag.HeadlineEducation = "Education";
             ViewBag.HeadlineSkill = "Skills";
@@ -157,6 +158,26 @@ namespace CVBuddy.Controllers
             {
                 return RedirectToAction("CreateCv"); //Om man inte har ett cv än så kommer man till CreateCv
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCv(Cv cv)
+        {
+            if (!ModelState.IsValid)
+                return View(cv);
+
+
+            var cvMedGammaltState = _context.Cvs
+                .Where(cv => cv.Cid == cv.Cid).FirstOrDefault();
+
+            if (cvMedGammaltState == null)
+                return NotFound();
+
+            cvMedGammaltState.Interests[0].InterestName = cv.Interests[0].InterestName;
+
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("Index", "Home");
         }
     }
 }
