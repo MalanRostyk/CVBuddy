@@ -8,35 +8,47 @@
     <h3>@ViewBag.HeadlineEducation</h3>                                                        @*Education*@
 
     <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
-    <div class="mb-2">
-        <p class="mb-0">Enter what high school you whent to.</p>
-        <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
+    <div class="mb-3">
+
+        <div class="mb-2">
+            <p class="mb-0">Enter what high school you whent to.</p>
+            <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
+        </div>
+
+        <div class="mb-2">
+            <p class="mb-0">Enter what program you studied in high school.</p>
+            <input type="text" asp-for="@Model.Education.HSProgram" class="border-primary" />
+        </div>
+
+        <div class="mb-2">
+            <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+            <input type="date" asp-for="@Model.Education.HSDate" class="border-primary" />
+        </div>
+
     </div>
-    <div class="mb-2">
-        <p class="mb-0">Enter what program you studied in high school.</p>
-        <input type="text" asp-for="@Model.Education.HSProgram" class="border-primary" />
-    </div>
-    <div class="mb-2">
-        <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
-        <input type="date" asp-for="@Model.Education.HSDate" class="border-primary" />
-    </div>
+
 
     <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
+    <div class="mb-3">
+        <div class="mb-2">
+            <p class="mb-0">Enter what university you went to.</p>
+            <input type="text" asp-for="@Model.Education.Univeristy" class="border-primary" />
+        </div>
 
-    <div class="mb-2">
-        <p class="mb-0">Enter what university you went to.</p>
-        <input type="text" asp-for="@Model.Education.Univeristy" class="border-primary" />
-    </div class="mb-2">
-    <div>
-        <p class="mb-0">Enter what program you studied in university</p>
-        <input type="text" asp-for="@Model.Education.UniProgram" class="border-primary" />
-    </div>
-    <div class="mb-2">
-        <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p>
-        <input type="date" asp-for="@Model.Education.UniDate" class="border-primary" />
-    </div>
+        <div class="mb-2">
+            <p class="mb-0">Enter what program you studied in university</p>
+            <input type="text" asp-for="@Model.Education.UniProgram" class="border-primary" />
+        </div>
 
-    <h3>@ViewBag.HeadlineSkill</h3>@* HIttas ej *@                                                        @*Skills*@
+        <div class="mb-2">
+            <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+            <input type="date" asp-for="@Model.Education.UniDate" class="border-primary" />
+        </div>
+    </div>
+  
+
+
+    <h3>@ViewBag.HeadlineSkill</h3>                                               @*Skills*@
     <div id="Skill-Container" data-skill-index = "@Model.Skills.Count"> @* <------ *@
     </div>
     <button type="button" onclick="addSkill()">Add Skill</button>
@@ -45,7 +57,7 @@
     <div id="Experience-Container" data-experience-index = "@Model.Experiences.Count">
 
     </div>
-    <button type="button" onclick="addExperience()">Add Experience</button>                                                                            @*Certificates*@
+    <button type="button" onclick="addExperience()">Add Experience</button>       @*Certificates*@
 
     <h3>@ViewBag.HeadlineCertificates</h3> 
     <div id="Certificates-Container" data-certificates-index = "@Model.Certificates.Count">
@@ -53,7 +65,7 @@
     <button type="button" onclick="addCertificates()">Add Certificate</button>
 
     @* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV REPRESENTERAS MED "-a", EXEMPELVIS "PersonalCharacteristics" blir "Personal-characteristics". *@
-                                                                                         @*PersonalCharacteristics*@
+                                                                                  @*PersonalCharacteristics*@
     <h3>@ViewBag.HeadlinePersonalCharacteristics</h3> 
     <div id="PersonalCharacteristics-Container"  data-personalcharacteristics-index = "@Model.PersonalCharacteristics.Count">
     </div>
@@ -62,7 +74,7 @@
     <h3>@ViewBag.HeadlineInterest</h3> 
     <div id="Interests-Container"  data-interests-index = "@Model.Interests.Count">
     </div>
-    <button type="button" onclick="addInterests()">Add an interest</button>                              @*ImageFile*@
+    <button type="button" onclick="addInterests()">Add an interest</button>        @*ImageFile*@
     
     <h3>Upload your image</h3> 
     <div>
@@ -71,6 +83,6 @@
         @Html.ValidationMessageFor(m => m.ImageFile)
     </div>
 
-    <button type="submit" class="btn btn-primary">Create Cv</button>                                      @*Button*@
+    <button type="submit" class="btn btn-primary">Create Cv</button>                @*Button*@
     
 </form>
