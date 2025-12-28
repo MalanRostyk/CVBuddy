@@ -242,16 +242,18 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult DeleteCv(int Cid)
+        public async Task<IActionResult> DeleteCv(int Cid)
         {
-            Cv cv = _context.Cvs.Find(Cid);
+            //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
+            Cv cv = await GetLoggedInUsersCvAsync();
             return View(cv);
         }
 
         [HttpPost]
-        public IActionResult DeleteCv()
+        public IActionResult DeleteCv(Cv cv)
         {
-            
+            _context.Cvs.Remove(cv);
+            _context.SaveChanges();
             return RedirectToAction("Index", "Home");
         }
     }
