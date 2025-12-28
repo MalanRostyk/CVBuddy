@@ -87,8 +87,12 @@ namespace CVBuddy.Controllers
                 try
                 {
                     var usersCv = await GetLoggedInUsersCvAsync();
-                    if (cv?.UserId != usersCv?.UserId)
+                    ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
+                    if (ViewBag.NotLoggedInUsersCv)
+                    {
                         await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
+                    }
+                        
                 }
                 catch(NullReferenceException noCv)
                 {
@@ -240,6 +244,8 @@ namespace CVBuddy.Controllers
                 ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
             //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
             Cv cv = await GetLoggedInUsersCvAsync();
+
+            
             return View(cv);
         }
 
