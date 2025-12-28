@@ -51,7 +51,7 @@ namespace CVBuddy.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Adresses");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>

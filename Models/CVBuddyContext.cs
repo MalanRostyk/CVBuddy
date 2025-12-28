@@ -20,7 +20,7 @@ namespace CVBuddy.Models
         public DbSet<Interest> Interests { get; set; }
         public DbSet<CvProject> CvProjects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
-        public DbSet<Address> Adresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
