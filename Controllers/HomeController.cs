@@ -40,8 +40,34 @@ namespace CVBuddy.Controllers
                 .Include(u => u.ProjectUsers)
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
+
+            var usersCv = await GetLoggedInUsersCvAsync();
+            ViewBag.HasCv = usersCv != null;
+            
+            
             ViewBag.CvIndexHeadline = "Recent Cvs";
             return View(users);//För att ge Users till Index view, så Model inte är NULL
+        }
+
+        private async Task<Cv> GetLoggedInUsersCvAsync()
+        {
+
+            var userId = _userManager.GetUserId(User);
+            Cv? cv = _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .Include(cv => cv.CvProjects)
+                    .ThenInclude(cp => cp.OneProject)
+                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
+            if (cv == null)
+                NotFound();
+
+            return cv;
         }
 
     }
