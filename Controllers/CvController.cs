@@ -77,6 +77,7 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
             Cv? cv;
+
             
             if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
             {
@@ -91,14 +92,24 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
                     .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
-               
-                await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
+
+
+                try
+                {
+                    var usersCv = await GetLoggedInUsersCvAsync();
+                    if (cv?.UserId != usersCv?.UserId)
+                        await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
+                }
+                catch(NullReferenceException noCv)
+                {
+                    Debug.WriteLine("User has no cv, or cv was not found");
+                }
+                    
+
             }
             else//I else hämtas den inloggade användarens Cv, för "My Cv"
             {
-
-
-                cv = await GetLoggedInUsersCv();
+                cv = await GetLoggedInUsersCvAsync();
             }
                 
             
@@ -117,8 +128,9 @@ namespace CVBuddy.Controllers
             return View(cv);
         }
 
-        private async Task<Cv> GetLoggedInUsersCv()
+        private async Task<Cv> GetLoggedInUsersCvAsync()
         {
+
             var userId = _userManager.GetUserId(User);
             Cv? cv = _context.Cvs
                     .Include(cv => cv.Education)
@@ -149,7 +161,7 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
 
-            var cv = await GetLoggedInUsersCv();
+            var cv = await GetLoggedInUsersCvAsync();
             if(cv != null)
             {
                 return View(cv);
@@ -163,7 +175,7 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
-            var cvOldVersion = await GetLoggedInUsersCv();
+            var cvOldVersion = await GetLoggedInUsersCvAsync();
 
             if (cvOldVersion == null)
                 return NotFound();
