@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<User>
 
+
+
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
     <Authorized>
@@ -9,7 +11,7 @@
                 {
                     <a asp-controller="Cv" asp-action="UpdateCv">Update My Cv</a>
                     <a asp-controller="Cv" asp-action="ReadCv">My Cv</a>
-                <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
+                    <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
                 }
                 else
                 {
@@ -22,7 +24,6 @@
     </Authorized>
 </AuthorizeView>
 </form>
-
 
 <h2>@ViewBag.CvIndexHeadline</h2>
 <table class="table table-dark">

@@ -240,5 +240,19 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public IActionResult DeleteCv(int Cid)
+        {
+            Cv cv = _context.Cvs.Find(Cid);
+            return View(cv);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCv()
+        {
+            
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
