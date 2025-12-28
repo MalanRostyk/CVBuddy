@@ -2,151 +2,73 @@
 
 <h1>@ViewBag.Headline</h1>
 
+<div class="mb-4"><q><i>@ViewBag.WarningMessage</i></q></div>
+
 <form asp-action="DeleteCv" method="post" enctype="multipart/form-data">
 
     <input type="hidden" asp-for="Cid" /> @* För att få med Cv:ts id så att det inte autoinkrementeras och hela databasen förstörs *@
     <input type="hidden" asp-for="ReadCount" />
     <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="ImageFilePath" />
+    <input asp-for="ImageFile" type="hidden" accept="CvImages/*" />
 
+    @* Experiences *@
+    @for (int i = 0; i < Model.Experiences.Count; i++)
+    {
+        <input type="hidden" asp-for="Experiences[i].Exid" />
+        <input type="hidden" asp-for="Experiences[i].CvId" />
+        <input asp-for="Experiences[i].Title" type="hidden" value="@Model.Experiences[i].Title" />
+        <input asp-for="Experiences[i].Description" type="hidden" value="@(Model.Experiences[i].Description ?? "")" />@* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
+        <input asp-for="Experiences[i].Company" type="hidden" value="@Model.Experiences[i].Company" />
+        <input asp-for="Experiences[i].StartDate" type="hidden" value="@Model.Experiences[i].StartDate" /> @* DATE VALUE FUNKAR EJ *@   
+        <input asp-for="Experiences[i].EndDate" type="hidden" value="@Model.Experiences[i].EndDate" />
+    }
 
-    <h3>@ViewBag.HeadlineImage</h3>
-    <div class="mb-4">
-        <input type="hidden" asp-for="ImageFilePath" />
+    @* Education *@
+    <input type="hidden" asp-for="Education.Eid" />
+    <input type="hidden" asp-for="Education.CvId" />
+    <input asp-for="Education.HighSchool" type="hidden" value="@Model.Education.HighSchool" />
+    <input asp-for="Education.HSProgram" type="hidden" value="@Model.Education.HSProgram" />
+    <input asp-for="Education.HSDate" type="hidden" value="@Model.Education.HSDate" />
+    <input asp-for="Education.Univeristy" type="hidden" value="@Model.Education.Univeristy" />
+    <input asp-for="Education.UniProgram" type="hidden" value="@Model.Education.UniProgram" />
+    <input asp-for="Education.UniDate" type="hidden" value="@Model.Education.UniDate" />
 
-        <div class="mb-2">
-            Image: <input asp-for="ImageFile" type="file" accept="CvImages/*" readonly="readonly"/>
+    @* Skill *@
+    @for (int i = 0; i < Model.Skills.Count; i++)
+    {
+        <input type="hidden" asp-for="Skills[i].Sid" />
+        <input type="hidden" asp-for="Skills[i].CvId" />
+        <input asp-for="Skills[i].ASkill" type="hidden" value="@Model.Skills[i].ASkill" />
+        <input asp-for="Skills[i].Description" type="hidden" value="@(@Model.Skills[i].Description ?? "")" />
+        <input asp-for="Skills[i].Date" type="hidden" value="@Model.Skills[i].Date" />
 
-        </div>
-    </div>
+    }
 
+    @* Certificates *@
+    @for (int i = 0; i < Model.Certificates.Count; i++)
+    {
+        <input type="hidden" asp-for="Certificates[i].CertId" />
+        <input type="hidden" asp-for="Certificates[i].CvId" />
+        <input asp-for="Certificates[i].CertName" type="hidden" value="@Model.Certificates[i].CertName" />
+    }
 
-    <h3>@ViewBag.HeadlineExperiences</h3>                                                        @* Experiences *@
-    <div class="mb-4">
-        @for (int i = 0; i < Model.Experiences.Count; i++)
-        {
-            <input type="hidden" asp-for="Experiences[i].Exid" />
-            <input type="hidden" asp-for="Experiences[i].CvId" />
+    @* PersonalCharacteristics *@
+    @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
+    {
+        <input type="hidden" asp-for="PersonalCharacteristics[i].PCId" />
+        <input type="hidden" asp-for="PersonalCharacteristics[i].CvId" />
+        <input asp-for="PersonalCharacteristics[i].CharacteristicName" type="hidden" value="@Model.PersonalCharacteristics[i].CharacteristicName" />
+    }
 
-            <div class="mb-4">
-                <div class="mb-2">
-                    Title: <input asp-for="Experiences[i].Title" type="text" value="@Model.Experiences[i].Title" readonly="readonly" />
-                </div>
-                <div class="mb-2">
-                    Company: <input asp-for="Experiences[i].Description" type="text" value="@(Model.Experiences[i].Description ?? "")" readonly="readonly" /> @* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
+    @* Interest *@
+    @for (int i = 0; i < Model.Interests.Count; i++)
+    {
+        <input type="hidden" asp-for="Interests[i].InterestId" /> @* Måste finnas med för att dem ska finnas i Modelstate vid Post, syns ej i sidan *@
+        <input type="hidden" asp-for="Interests[i].CvId" />
+        <input asp-for="Interests[i].InterestName" type="hidden" value="@Model.Interests[i].InterestName" />
+    }
 
-                </div>
-                <div class="mb-2">
-                    Description: <input asp-for="Experiences[i].Company" type="text" value="@Model.Experiences[i].Company" readonly="readonly" />
-                </div>
-                <div class="mb-2">
-                    Start date: <input asp-for="Experiences[i].StartDate" type="date" value="@Model.Experiences[i].StartDate" readonly="readonly" /> @* DATE VALUE FUNKAR EJ *@
-                </div>
-                <div class="mb-2">
-                    End date: <input asp-for="Experiences[i].EndDate" type="date" value="@Model.Experiences[i].EndDate" readonly="readonly" />
-                </div>
-            </div>
-        }
-    </div>
-
-
-    <h3>@ViewBag.HeadlineEducation</h3>                                                          @* Education *@
-    <div class="mb-4">
-
-        <input type="hidden" asp-for="Education.Eid" />
-        <input type="hidden" asp-for="Education.CvId" />
-
-        <div class="mb-4">
-            <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
-            <div class="mb-2">
-                High School: <input asp-for="Education.HighSchool" type="text" value="@Model.Education.HighSchool" readonly="readonly" />
-            </div>
-            <div class="mb-2">
-                Program: <input asp-for="Education.HSProgram" type="text" value="@Model.Education.HSProgram" readonly="readonly" />
-            </div>
-            <div class="mb-2">
-                Date: <input asp-for="Education.HSDate" type="date" value="@Model.Education.HSDate" readonly="readonly" />
-            </div>
-        </div>
-
-
-        <div class="mb-4">
-            <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
-            <div class="mb-2">
-                University: <input asp-for="Education.Univeristy" type="text" value="@Model.Education.Univeristy" readonly="readonly" />
-            </div>
-            <div class="mb-2">
-                Program: <input asp-for="Education.UniProgram" type="text" value="@Model.Education.UniProgram" readonly="readonly" />
-            </div>
-            <div class="mb-2">
-                Date: <input asp-for="Education.UniDate" type="date" value="@Model.Education.UniDate" readonly="readonly" />
-            </div>
-        </div>
-    </div>
-
-
-    <h3>@ViewBag.HeadlineSkill</h3>                                                              @* Skill *@
-    <div class="mb-4">
-        @for (int i = 0; i < Model.Skills.Count; i++)
-        {
-            <input type="hidden" asp-for="Skills[i].Sid" />
-            <input type="hidden" asp-for="Skills[i].CvId" />
-
-            <div class="mb-4">
-                <div class="mb-2">
-                    Skill: <input asp-for="Skills[i].ASkill" type="text" value="@Model.Skills[i].ASkill" readonly="readonly" />
-                </div>
-                <div class="mb-2">
-                    Description: <input asp-for="Skills[i].Description" type="text" value="@(@Model.Skills[i].Description ?? "")" readonly="readonly" />
-                </div>
-                <div class="mb-2">
-                    Skill Since: <input asp-for="Skills[i].Date" type="date" value="@Model.Skills[i].Date" readonly="readonly" />
-                </div>
-            </div>
-        }
-    </div>
-    <h3>@ViewBag.HeadlineCertificates</h3>                                                       @* Certificates *@
-    <div class="mb-4">
-        @for (int i = 0; i < Model.Certificates.Count; i++)
-        {
-            <input type="hidden" asp-for="Certificates[i].CertId" />
-            <input type="hidden" asp-for="Certificates[i].CvId" />
-            <div class="mb-4">
-                <div class="mb-2">
-                    Cerificate: <input asp-for="Certificates[i].CertName" type="text" value="@Model.Certificates[i].CertName" readonly="readonly" />
-                </div>
-            </div>
-        }
-    </div>
-    <h3>@ViewBag.HeadlinePersonalCharacteristics</h3>                                            @* PersonalCharacteristics *@
-    <div class="mb-4">
-        @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
-        {
-            <input type="hidden" asp-for="PersonalCharacteristics[i].PCId" readonly="readonly" />
-            <input type="hidden" asp-for="PersonalCharacteristics[i].CvId" readonly="readonly" />
-
-            <div class="mb-4">
-                <div class="mb-2">
-                    Personal Characteristic: <input asp-for="PersonalCharacteristics[i].CharacteristicName" type="text" value="@Model.PersonalCharacteristics[i].CharacteristicName" readonly="readonly" />
-                </div>
-            </div>
-        }
-    </div>
-    <h3>@ViewBag.HeadlineInterest</h3>                                                           @* Interest *@
-    <div class="mb-4">
-        @for (int i = 0; i < Model.Interests.Count; i++)
-        {
-            <input type="hidden" asp-for="Interests[i].InterestId" /> @* Måste finnas med för att dem ska finnas i Modelstate vid Post, syns ej i sidan *@
-            <input type="hidden" asp-for="Interests[i].CvId" />
-            <div class="mb-4">
-                <div class="mb-2">
-                    Interest: <input asp-for="Interests[i].InterestName" type="text" value="@Model.Interests[i].InterestName" readonly="readonly" />
-                </div>
-            </div>
-        }
-    </div>
-
-
-
-    <input type="submit" value="DeleteCv" class="btn-danger"/>
+    <button type="submit" class="btn btn-danger">Delete</button>
 </form>
 

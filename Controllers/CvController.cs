@@ -4,6 +4,7 @@ using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 
 namespace CVBuddy.Controllers
@@ -25,19 +26,8 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
 
-            bool cvFound = false;
             var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
             var userId = _userManager.GetUserId(User);
-
-            foreach (var cvUserId in cvsList)
-            {
-                if (cvUserId == userId)
-                    cvFound = true;
-            }
-            if (cvFound)
-            {
-                return RedirectToAction("Index", "Home");//Användaren kommer tillbaka till startsidan om de redan har ett cv, Lägg till ett meddelande eller avaktiver knapp eller något, Testad och funkar!
-            }
             return View(new Cv());
         }
 
@@ -244,6 +234,10 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteCv(int Cid)
         {
+
+            ViewBag.Headline = "Delete Cv";
+            ViewBag.WarningMessage = "Are you sure you wan't to delete your Cv? This will permanently delete your Cv but" +
+                ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
             //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
             Cv cv = await GetLoggedInUsersCvAsync();
             return View(cv);
