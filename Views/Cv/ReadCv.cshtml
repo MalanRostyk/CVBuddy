@@ -1,6 +1,6 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 
-@if (!ViewBag.NotLoggedInUsersCv)
+@if (ViewBag.NotLoggedInUsersCv != true)
 {
     <a asp-controller="Cv" asp-action="DeleteCv" asp-route-Cid="@Model.Cid">DELETE</a>
 }
