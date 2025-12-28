@@ -39,7 +39,18 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject(Project proj)
         {
-            await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
+            User? user = await _userManager.GetUserAsync(User);
+            if(user != null)
+            {
+                proj.UsersInProject.Add(user);//Lägg till user i projektet som participant för participant count
+            }
+            else
+            {
+                return NotFound();
+            }
+
+
+                await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
             await _context.SaveChangesAsync(); //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
             //eftersom att Pid tilldelas först när den har serialiserats till Db
 
@@ -51,6 +62,7 @@ namespace CVBuddy.Controllers
             {
                 ProjId = projId,
                 CvId = cvId
+                
             });
 
             await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
