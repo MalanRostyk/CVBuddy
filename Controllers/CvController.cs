@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
+using System.IO;
 
 namespace CVBuddy.Controllers
 {
@@ -192,18 +193,23 @@ namespace CVBuddy.Controllers
             //if (!ModelState.IsValid)
             //    return View(cvOldVersion);
 
+            if (!IsValidFileSize(cv.ImageFile.Length))
+                return RedirectToAction("UpdateCv", "Cv");
+
+            if (System.IO.File.Exists(cvOldVersion.ImageFilePath))
+                System.IO.File.Delete(cvOldVersion.ImageFilePath);
+
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
             
 
-            var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            //var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
 
             var newFileName = Guid.NewGuid() + Path.GetExtension(cv.ImageFile.FileName);
             var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
             var fullPath = Path.Combine(directory, newFileName);
 
-            if (!IsValidFileSize(cv.ImageFile.Length))
-                return RedirectToAction("UpdateCv", "Cv");
+            
 
             using (var fs = new FileStream(fullPath, FileMode.Create))
             {
