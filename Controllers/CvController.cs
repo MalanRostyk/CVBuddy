@@ -58,7 +58,12 @@ namespace CVBuddy.Controllers
             //Tilldela user id till cv för realtion
             cv.UserId = _userManager.GetUserId(User);
 
-            await _context.Cvs.AddAsync(cv);
+            //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
+            //long imageSize = cv.ImageFile.Length;
+            //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
+            //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
+
+                await _context.Cvs.AddAsync(cv);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -179,8 +184,24 @@ namespace CVBuddy.Controllers
 
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
-            cvOldVersion.ImageFilePath = cv.ImageFilePath;
+            cvOldVersion.ImageFile = cv.ImageFile;
+            //cvOldVersion.ImageFilePath = cv.ImageFilePath;
 
+            var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+
+            var newFileName = Guid.NewGuid() + Path.GetExtension(cv.ImageFile.FileName);
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            var fullPath = Path.Combine(directory, newFileName);
+
+            using (var fs = new FileStream(fullPath, FileMode.Create))
+            {
+                await cv.ImageFile.CopyToAsync(fs);
+            }
+
+            cvOldVersion.ImageFilePath = "/CvImages/" + newFileName;
+
+
+                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldVersion.ImageFilePath + " ----- " + cv.ImageFilePath);
             //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
 
             //Experiences
