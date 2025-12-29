@@ -196,8 +196,7 @@ namespace CVBuddy.Controllers
             if (!IsValidFileSize(cv.ImageFile.Length))
                 return RedirectToAction("UpdateCv", "Cv");
 
-            if (System.IO.File.Exists(cvOldVersion.ImageFilePath))
-                System.IO.File.Delete(cvOldVersion.ImageFilePath);
+            
 
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
@@ -209,7 +208,38 @@ namespace CVBuddy.Controllers
             var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
             var fullPath = Path.Combine(directory, newFileName);
 
+            Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + cvOldVersion.ImageFilePath);
+
+            //Gamla verisionen av cvt har ImageFile = null, så för att få gamla FileName så extraheras det från ImageFilePath
             
+            string[]? cvOldFileImageNameArray = null;
+
+            if (cvOldVersion.ImageFilePath != null)
+            {
+                cvOldFileImageNameArray = cvOldVersion.ImageFilePath.Split("/");
+
+                if (cvOldFileImageNameArray.Length != 0)
+                {
+                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+
+
+                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+                    if (System.IO.File.Exists(finalCvFilePath))
+                    {
+                        System.IO.File.Delete(finalCvFilePath);
+                    }
+                    //System.IO.File.Delete(cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+
+                }
+            }
+
+
+
 
             using (var fs = new FileStream(fullPath, FileMode.Create))
             {
