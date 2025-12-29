@@ -1,6 +1,6 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 
-@if (ViewBag.NotLoggedInUsersCv != true)
+@if (ViewBag.NotLoggedInUsersCv != true) @* bolean uttrycket använder inte !bool för att det är inte ett uttryck tydligen så jag körde bool != true *@
 {
     <a asp-controller="Cv" asp-action="DeleteCv" asp-route-Cid="@Model.Cid">DELETE</a>
 }
