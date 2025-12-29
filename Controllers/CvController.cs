@@ -171,6 +171,16 @@ namespace CVBuddy.Controllers
             }
         }
 
+        public bool IsValidFileSize(long fileSizeInBits)
+        {
+            long fiveMB = 5 * 1024 * 1024;
+
+            if (fileSizeInBits <= fiveMB && fileSizeInBits != 0) //Kan ej vara null, longs standardvärde är 0 
+                return true;
+            return false;
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
@@ -184,8 +194,7 @@ namespace CVBuddy.Controllers
 
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
-            cvOldVersion.ImageFile = cv.ImageFile;
-            //cvOldVersion.ImageFilePath = cv.ImageFilePath;
+            
 
             var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
 
@@ -193,15 +202,17 @@ namespace CVBuddy.Controllers
             var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
             var fullPath = Path.Combine(directory, newFileName);
 
+            if (!IsValidFileSize(cv.ImageFile.Length))
+                return RedirectToAction("UpdateCv", "Cv");
+
             using (var fs = new FileStream(fullPath, FileMode.Create))
             {
                 await cv.ImageFile.CopyToAsync(fs);
             }
 
+            cvOldVersion.ImageFile = cv.ImageFile;
             cvOldVersion.ImageFilePath = "/CvImages/" + newFileName;
 
-
-                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldVersion.ImageFilePath + " ----- " + cv.ImageFilePath);
             //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
 
             //Experiences
