@@ -210,36 +210,37 @@ namespace CVBuddy.Controllers
 
             Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + cvOldVersion.ImageFilePath);
 
+
+
             //Gamla verisionen av cvt har ImageFile = null, så för att få gamla FileName så extraheras det från ImageFilePath
-            
-            string[]? cvOldFileImageNameArray = null;
 
-            if (cvOldVersion.ImageFilePath != null)
-            {
-                cvOldFileImageNameArray = cvOldVersion.ImageFilePath.Split("/");
+            //string[]? cvOldFileImageNameArray = null;
 
-                if (cvOldFileImageNameArray.Length != 0)
-                {
-                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+            //if (cvOldVersion.ImageFilePath != null)
+            //{
+            //    cvOldFileImageNameArray = cvOldVersion.ImageFilePath.Split("/");
 
-
-                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
-
-                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
-
-                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
-                    if (System.IO.File.Exists(finalCvFilePath))
-                    {
-                        System.IO.File.Delete(finalCvFilePath);
-                    }
-                    //System.IO.File.Delete(cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
-                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
-
-                }
-            }
+            //    if (cvOldFileImageNameArray.Length != 0)
+            //    {
+            //        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
 
 
+            //        string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
 
+            //        string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+            //        //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+            //        if (System.IO.File.Exists(finalCvFilePath))
+            //        {
+            //            System.IO.File.Delete(finalCvFilePath);
+            //        }
+            //        //System.IO.File.Delete(cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+            //        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+
+            //    }
+            //}
+
+            DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
 
             using (var fs = new FileStream(fullPath, FileMode.Create))
             {
@@ -301,6 +302,40 @@ namespace CVBuddy.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool DeleteOldImageLocally(Cv cvOld)
+        {
+            string[]? cvOldFileImageNameArray = null;
+
+            if (cvOld.ImageFilePath != null)
+            {
+                cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
+
+                if (cvOldFileImageNameArray.Length != 0)
+                {
+                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+
+
+                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+                    if (System.IO.File.Exists(finalCvFilePath))
+                    {
+                        System.IO.File.Delete(finalCvFilePath);
+                        Debug.WriteLine("Old image was found. Bör ha try catch oså!");
+                        return true;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Old image could not be found");
+                    }
+                        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
+                }
+            }
+            return false;
         }
 
         [HttpGet]
