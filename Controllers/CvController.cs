@@ -18,6 +18,14 @@ namespace CVBuddy.Controllers
         {
         }
 
+        private bool IsValidExtension(string extension)
+        {
+            string ext = extension.ToLower();
+            if (ext == ".png" || ext == ".jpg" || ext == ".jfif" || ext == ".webp")
+                return true;
+            return false;
+        }
+
         [HttpGet]
         public IActionResult CreateCv()
         {
@@ -50,26 +58,36 @@ namespace CVBuddy.Controllers
             Directory.CreateDirectory(uploadeFolder);
 
             var ext = Path.GetExtension(cv.ImageFile.FileName);//null
-            var fileName = Guid.NewGuid().ToString() + ext;
 
-            var filePath = Path.Combine(uploadeFolder, fileName);
-            using(var stream = new FileStream(filePath, FileMode.Create))
+            if (IsValidExtension(ext))
             {
-                await cv.ImageFile.CopyToAsync(stream);
-            }
-            cv.ImageFilePath = "/CvImages/" + fileName;
+                var fileName = Guid.NewGuid().ToString() + ext;
 
-            //Tilldela user id till cv för realtion
-            cv.UserId = _userManager.GetUserId(User);
+                var filePath = Path.Combine(uploadeFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await cv.ImageFile.CopyToAsync(stream);
+                }
+                cv.ImageFilePath = "/CvImages/" + fileName;
 
-            //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
-            //long imageSize = cv.ImageFile.Length;
-            //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
-            //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
+                //Tilldela user id till cv för realtion
+                cv.UserId = _userManager.GetUserId(User);
+
+                //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
+                //long imageSize = cv.ImageFile.Length;
+                //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
+                //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
 
                 await _context.Cvs.AddAsync(cv);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return View(cv);
+            }
+
+            
         }
 
         [HttpGet]
@@ -234,7 +252,6 @@ namespace CVBuddy.Controllers
                 return true;
             return false;
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
