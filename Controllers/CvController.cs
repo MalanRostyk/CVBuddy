@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.PortableExecutable;
 
 namespace CVBuddy.Controllers
 {
@@ -117,14 +118,35 @@ namespace CVBuddy.Controllers
             if (cv == null)
                 NotFound(); //Error meddelande som stoppar krasch, not found 404
 
+
+            //För headlines om det finns något att visa under headlinen
             ViewBag.Headline = "Cv";
-            ViewBag.HeadlineExperiences = "Experiences";
-            ViewBag.HeadlineEducation = "Education";
-            ViewBag.HeadlineSkill = "Skills";
-            ViewBag.HeadlineCertificates = "Certificates";
-            ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
-            ViewBag.HeadlineInterest = "Interests";
+
+            if(cv?.Experiences.Count > 0)
+                ViewBag.HeadlineExperiences = "Experiences";
+
+            if(cv?.Education != null)//när ett Cv skapas utan education, så skapas ända en education rad med null i fälten enligt if satsen nedan
+            {
+                var cvEdu = cv.Education;
+                if (cvEdu.HighSchool != null || cvEdu.HSProgram != null || cvEdu.HSDate != null || cvEdu.Univeristy != null || cvEdu.UniProgram != null || cvEdu.UniDate != null)
+                    ViewBag.HeadlineEducation = "Education";
+            }
+            
+            if(cv?.Skills.Count > 0)
+                ViewBag.HeadlineSkill = "Skills";
+
+            if (cv?.Certificates.Count > 0)
+                ViewBag.HeadlineCertificates = "Certificates";
+
+            if (cv?.PersonalCharacteristics.Count > 0)
+                ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+
+            if (cv?.Interests.Count > 0)
+                ViewBag.HeadlineInterest = "Interests";
+
+            if(cv?.CvProjects.Count > 0)
             ViewBag.HeadlineProjects = "Projects";
+
             return View(cv);
         }
 
