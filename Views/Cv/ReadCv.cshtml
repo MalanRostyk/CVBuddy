@@ -33,7 +33,7 @@
     @if (Model.Education.HighSchool != null)
     {
         <div class="mb-2" style="padding: 10px 20px; margin: 0 20px; border: 2px solid black; border-radius: 2em; background-color: #7abfeb;">
-            <h5>High School</h5>
+            <h5>HighSchool</h5>
             <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
             <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
             <p class="mb-0">Date: @(Model.Education.HSDate ?? "")</p>
@@ -66,7 +66,7 @@
 </div>
 <div class="mb-4">
     <h2>@ViewBag.HeadlineCertificates</h2>
-    <h5>My certificates</h5>
+    <h5>@ViewBag.HeadlineCertificates</h5>
     <div style="display: flex; justify-content: flex-start;">
         @foreach (var certificate in Model.Certificates)
         {
@@ -80,7 +80,7 @@
 
 <div class="mb-4"">
     <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
-    <h5>My personal characteristics</h5>
+    <h5>@ViewBag.HeadlinePersonalCharacteristicsSmall</h5>
     <div style="display: flex; justify-content: flex-start;">
         @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
         {
@@ -94,7 +94,7 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineInterest</h2>
-    <h5>These are my interests</h5>
+    <h5>@ViewBag.HeadlineInterestSmall</h5>
     <div style="display: flex; justify-content: flex-start;">
         @foreach (var interest in Model.Interests)
         {
@@ -107,7 +107,7 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineProjects</h2>
-    <h5>I have participated in these projects</h5>
+    <h5>@ViewBag.HeadlineProjectsSmall</h5>
     <div style="display: flex; justify-content: flex-start;">
         @foreach (var cvProject in Model.CvProjects)
         {

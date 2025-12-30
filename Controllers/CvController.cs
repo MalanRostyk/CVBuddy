@@ -122,30 +122,60 @@ namespace CVBuddy.Controllers
             //För headlines om det finns något att visa under headlinen
             ViewBag.Headline = "Cv";
 
+            //Experiences
             if(cv?.Experiences.Count > 0)
-                ViewBag.HeadlineExperiences = "Experiences";
-
-            if(cv?.Education != null)//när ett Cv skapas utan education, så skapas ända en education rad med null i fälten enligt if satsen nedan
             {
-                var cvEdu = cv.Education;
-                if (cvEdu.HighSchool != null || cvEdu.HSProgram != null || cvEdu.HSDate != null || cvEdu.Univeristy != null || cvEdu.UniProgram != null || cvEdu.UniDate != null)
-                    ViewBag.HeadlineEducation = "Education";
+                ViewBag.HeadlineExperiences = "Experiences";
+            }
+
+            //Education
+            bool hasEducation = false;
+            var cvEdu = cv?.Education;
+
+            if(cvEdu?.HighSchool != null || cvEdu?.HSProgram != null || cvEdu?.HSDate != null)
+                hasEducation = true;
+
+            if(cvEdu?.Univeristy != null || cvEdu?.UniProgram != null || cvEdu?.UniDate != null)
+                hasEducation = true;
+
+            if (hasEducation)
+                ViewBag.HeadlineEducation = "Education";
+
+            //Skills
+            if (cv?.Skills.Count > 0)
+            {
+                ViewBag.HeadlineSkill = "Skills";
+            }
+                
+            //Certificates
+            if (cv?.Certificates.Count > 0)
+            {
+                ViewBag.HeadlineCertificates = "Certificates";
+                ViewBag.HeadlineCertificatesSmall = "My Certificates";
+            }
+
+            //Personal Characteristics
+            if (cv?.PersonalCharacteristics.Count > 0)
+            {
+                ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+                ViewBag.HeadlinePersonalCharacteristicsSmall = "My personal characteristics";
+
+            }
+
+            //Interests
+            if (cv?.Interests.Count > 0)
+            {
+                ViewBag.HeadlineInterest = "Interests";
+                ViewBag.HeadlineInterestSmall = "These are my interests";
+            }
+                
+            //Projects
+            if(cv?.CvProjects.Count > 0)
+            {
+                ViewBag.HeadlineProjects = "Projects";
+                ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
             }
             
-            if(cv?.Skills.Count > 0)
-                ViewBag.HeadlineSkill = "Skills";
-
-            if (cv?.Certificates.Count > 0)
-                ViewBag.HeadlineCertificates = "Certificates";
-
-            if (cv?.PersonalCharacteristics.Count > 0)
-                ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
-
-            if (cv?.Interests.Count > 0)
-                ViewBag.HeadlineInterest = "Interests";
-
-            if(cv?.CvProjects.Count > 0)
-            ViewBag.HeadlineProjects = "Projects";
 
             return View(cv);
         }
