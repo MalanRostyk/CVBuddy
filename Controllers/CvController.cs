@@ -408,6 +408,7 @@ namespace CVBuddy.Controllers
         public IActionResult DeleteCv(Cv cv)
         {
             _context.Cvs.Remove(cv);
+            DeleteOldImageLocally(cv);
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
         }
