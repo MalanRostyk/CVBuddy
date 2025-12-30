@@ -59,35 +59,32 @@ namespace CVBuddy.Controllers
 
             var ext = Path.GetExtension(cv.ImageFile.FileName);//null
 
-            if (IsValidExtension(ext))
-            {
-                var fileName = Guid.NewGuid().ToString() + ext;
-
-                var filePath = Path.Combine(uploadeFolder, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await cv.ImageFile.CopyToAsync(stream);
-                }
-                cv.ImageFilePath = "/CvImages/" + fileName;
-
-                //Tilldela user id till cv för realtion
-                cv.UserId = _userManager.GetUserId(User);
-
-                //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
-                //long imageSize = cv.ImageFile.Length;
-                //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
-                //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
-
-                await _context.Cvs.AddAsync(cv);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
+            if (!IsValidExtension(ext))
                 return View(cv);
-            }
 
-            
+            var fileName = Guid.NewGuid().ToString() + ext;
+
+            var filePath = Path.Combine(uploadeFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await cv.ImageFile.CopyToAsync(stream);
+            }
+            cv.ImageFilePath = "/CvImages/" + fileName;
+
+            //Tilldela user id till cv för realtion
+            cv.UserId = _userManager.GetUserId(User);
+
+            //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
+            //long imageSize = cv.ImageFile.Length;
+            //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
+            //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
+
+            await _context.Cvs.AddAsync(cv);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+
+
+
         }
 
         [HttpGet]
@@ -276,7 +273,7 @@ namespace CVBuddy.Controllers
 
                 var extension = Path.GetExtension(cv.ImageFile.FileName);
 
-                if (!(extension.ToLower() == ".jpg" || extension.ToLower() == ".png" || extension.ToLower() == ".webp" || extension.ToLower() == ".jfif"))
+                if (!IsValidExtension(extension))
                     return View(cv);
                
                 var newFileName = Guid.NewGuid() + extension;
