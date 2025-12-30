@@ -1,7 +1,7 @@
 ﻿@model LoginViewModel
 <h1>@ViewBag.Login</h1>
 <h2>@ViewBag.Login2</h2>
-<div asp-validation-summary="All" class="text-danger"></div>
+@* <div asp-validation-summary="All" class="text-danger"></div> *@
 <form method="post" asp-action="Login">
     <div class="form-group-row">
         <div class="col-sm-2">
@@ -10,6 +10,7 @@
         <div class="col-sm-4">
             <input asp-for="UserName" class="form-control"/>
         </div>
+        <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
     <div class="form-group-row">
         <div class="col-sm-2">
@@ -18,6 +19,7 @@
         <div class="col-sm-4">
             <input asp-for="Password" class="form-control"/>
         </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="form-group-row">
         <div class="offset-sm-2 col-sm-4">
@@ -25,6 +27,7 @@
             <label>Remember me!</label>
         </div>
     </div>
+    <span class="text-danger">@ViewBag.Validation</span>
     <div class="form-group-row">
         <div class="offset-sm-2 col-sm-4">
             <button type="submit" class="btn btn-primary">Login</button>

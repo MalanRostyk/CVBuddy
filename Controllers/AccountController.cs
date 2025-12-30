@@ -34,7 +34,7 @@ namespace CVBuddy.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            ViewBag.Login = "login post fnkar inte";
+            ViewBag.Validation = "Password or username are incorect!";
             return View(lvm);
         }
 
