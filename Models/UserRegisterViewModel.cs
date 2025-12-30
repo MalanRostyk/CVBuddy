@@ -4,8 +4,26 @@ namespace CVBuddy.Models
 {
     public class UserRegisterViewModel
     {
-        [Required(ErrorMessage = "Put name")]
-        [StringLength(100, ErrorMessage ="Too long Name")]
+
+
+        [Required(ErrorMessage = "Must enter first name")]
+        [StringLength(100, ErrorMessage = "Too long first Name, max 72 characters")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Must enter last name")]
+        [StringLength(100, ErrorMessage = "Too long last Name, max 72 characters")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Enter email")]
+        [StringLength(100, ErrorMessage = "Too long last Name, max 100 characters")]
+        public string Email { get; set; }
+        
+        [Required(ErrorMessage = "Must enter date of birth")]
+        public DateTime DateOfBirth { get; set; }
+        
+        
+        [Required(ErrorMessage = "Must enter username")]
+        [StringLength(36, ErrorMessage = "Too long username, max 36 characters")]
         public string UserName { get; set; }
 
 
