@@ -1,34 +1,53 @@
 ﻿@model CVBuddy.Models.User
 
-<div>
-    <h2>Welcome back @Model.UserName</h2>
-    <label>User name</label>
-    <p>@Model.UserName</p>
+<div class="d-flex justify-content-center align-items-center min-vh-90">
+    <div class="col-md-6 col-lg-4">
 
-    <label>First name</label>
-    <p>@Model.FirstName</p>
+        <h3 class="text-center mb-4">Welcome back @Model.UserName</h3>
 
-    <label>Last name</label>
-    <p>@Model.LastName</p>
+        <h5>Personal information</h5>
 
-    <label>Email</label>
-    <p>@Model.Email</p>
+        <div class="mb-3">
+            <p><b>User name: </b>@Model.UserName</p>
+        </div>
 
-    <label>Phone number</label>
-    <p>@Model.PhoneNumber</p>
+        <div class="mb-3">
+            <p><b>First name: </b>@Model.FirstName</p>
+        </div>
 
-    <label>Address</label>
-    @if(Model.OneAddress != null){
-    <p>@Model.OneAddress.Country</p>
-    <p>@Model.OneAddress.City</p>
-        <p>@Model.OneAddress.Street</p>
-    }
-    else
-    {
-        <pc class="text-muted fst-italic">No address registered</pc>
-    }
-</div>
-<div>
-    <a asp-action="UpdateUser" asp-route-id="@Model.Id" class="btn btn-primary">Edit personal information</a>
+        <div class="mb-3">
+            <p><b>Last name: </b>@Model.LastName</p>
+        </div>
+
+        <h5>Contact information</h5>
+
+        <div class="mb-3">
+            <p><b>Email: </b>@Model.Email</p>
+        </div>
+
+        <div class="mb-3">
+            <p><b>Phone number: </b>@Model.PhoneNumber</p>
+        </div>
+
+        <div class="mb-3">
+            <h5>Address information</h5>
+            @if (Model.OneAddress != null)
+            {
+                <p><b>Country: </b>@Model.OneAddress.Country</p>
+                <p><b>City: </b>@Model.OneAddress.City</p>
+                <p><b>Street: </b>@Model.OneAddress.Street</p>
+            }
+            else
+            {
+                <p class="text-muted fst-italic">No address registered</p>
+            }
+        </div>
+               
+        <div>
+            <a asp-action="UpdateUser" asp-route-id="@Model.Id" class="btn btn-primary">Edit personal information</a>
+        </div>
+    </div>
     
+
 </div>
+    
