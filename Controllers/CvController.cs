@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection.PortableExecutable;
@@ -20,13 +21,14 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult CreateCv()
         {
-            ViewBag.Headline = "Cv";
-            ViewBag.HeadlineExperiences = "Experiences";
-            ViewBag.HeadlineEducation = "Education";
-            ViewBag.HeadlineSkill = "Skills";
-            ViewBag.HeadlineCertificates = "Certificates";
-            ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
-            ViewBag.HeadlineInterest = "Interests";
+            //Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall
+            //ViewBag.Headline = "Cv";
+            //ViewBag.HeadlineExperiences = "Experiences";
+            //ViewBag.HeadlineEducation = "Education";
+            //ViewBag.HeadlineSkill = "Skills";
+            //ViewBag.HeadlineCertificates = "Certificates";
+            //ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+            //ViewBag.HeadlineInterest = "Interests";
 
             var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
             var userId = _userManager.GetUserId(User);
@@ -406,7 +408,7 @@ namespace CVBuddy.Controllers
 
         [HttpPost]
         public IActionResult DeleteCv(Cv cv)
-        {
+         {
             _context.Cvs.Remove(cv);
             DeleteOldImageLocally(cv);
             _context.SaveChanges();

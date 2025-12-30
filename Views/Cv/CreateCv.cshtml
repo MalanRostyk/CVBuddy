@@ -1,17 +1,19 @@
 ﻿@model CVBuddy.Models.CVInfo.Cv
 
-<h1>@ViewBag.Headline</h1>
+@* <h1>@ViewBag.Headline</h1> *@
+<h1>Create your Cv</h1>
 @Html.ValidationSummary
 
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
 
-    <h3>@ViewBag.HeadlineEducation</h3>                                                        @*Education*@
+    @* <h3>@ViewBag.HeadlineEducation</h3>  *@                                                       @*Education*@
+    <h3>Education</h3> @* Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall *@
 
     <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
     <div class="mb-3">
 
         <div class="mb-2">
-            <p class="mb-0">Enter what high school you whent to.</p>
+            <p class="mb-0">Enter what high school you went to.</p>
             <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
         </div>
 
@@ -21,7 +23,7 @@
         </div>
 
         <div class="mb-2">
-            <p class="mb-0">Enter a the starting and ending date of you high school attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+            <p class="mb-0">Enter what date you finished high school<i>- you can skip this if you have'nt finished high school yet.</i></p>
             <input type="date" asp-for="@Model.Education.HSDate" class="border-primary" />
         </div>
 
@@ -41,37 +43,42 @@
         </div>
 
         <div class="mb-2">
-            <p class="mb-0">Enter a the starting and ending date of you university attendance(ex: YY-MM-DD to YY-MM-DD)</p>
+            <p class="mb-0">Enter what date you finished university <i>- you can skip this if you have'nt finished university yet.</i></p>
             <input type="date" asp-for="@Model.Education.UniDate" class="border-primary" />
         </div>
     </div>
   
 
 
-    <h3>@ViewBag.HeadlineSkill</h3>                                               @*Skills*@
+    @* <h3>@ViewBag.HeadlineSkill</h3> *@                                               @*Skills*@
+    <h3>Skills</h3>
     <div id="Skill-Container" data-skill-index = "@Model.Skills.Count"> @* <------ *@
     </div>
     <button type="button" onclick="addSkill()">Add Skill</button>
                                                                                   @*Experiences*@
-    <h3>@ViewBag.HeadlineExperiences</h3> 
+    @* <h3>@ViewBag.HeadlineExperiences</h3> *@ 
+    <h3>Experiences</h3> 
     <div id="Experience-Container" data-experience-index = "@Model.Experiences.Count">
 
     </div>
     <button type="button" onclick="addExperience()">Add Experience</button>       @*Certificates*@
 
-    <h3>@ViewBag.HeadlineCertificates</h3> 
+    @* <h3>@ViewBag.HeadlineCertificates</h3>  *@
+    <h3>Certificates</h3> 
     <div id="Certificates-Container" data-certificates-index = "@Model.Certificates.Count">
     </div>
     <button type="button" onclick="addCertificates()">Add Certificate</button>
 
     @* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV REPRESENTERAS MED "-a", EXEMPELVIS "PersonalCharacteristics" blir "Personal-characteristics". *@
                                                                                   @*PersonalCharacteristics*@
-    <h3>@ViewBag.HeadlinePersonalCharacteristics</h3> 
+    @* <h3>@ViewBag.HeadlinePersonalCharacteristics</h3>  *@
+    <h3>Personal Characteristics</h3> 
     <div id="PersonalCharacteristics-Container"  data-personalcharacteristics-index = "@Model.PersonalCharacteristics.Count">
     </div>
     <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                     @*PersonalCharacteristics*@
        
-    <h3>@ViewBag.HeadlineInterest</h3> 
+    @* <h3>@ViewBag.HeadlineInterest</h3>  *@
+    <h3>Interest</h3> 
     <div id="Interests-Container"  data-interests-index = "@Model.Interests.Count">
     </div>
     <button type="button" onclick="addInterests()">Add an interest</button>        @*ImageFile*@
@@ -79,7 +86,8 @@
     <h3>Upload your image</h3> 
     <div>
         <label>Cv Image</label>
-        <input asp-for="ImageFile" type="file" accept="images/*" class="link-primary"/>
+        <input asp-for="ImageFile" type="file" accept="images/*" class="form-control" style="background-color: #e6efff;" />
+
         @Html.ValidationMessageFor(m => m.ImageFile)
     </div>
 
