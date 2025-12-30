@@ -7,6 +7,12 @@ namespace CVBuddy.Models.CVInfo
 {
     public class Cv
     {
+
+        //Tydligen sp ska de saker som inte är nullable markeras som Required,
+        //eftersom att Mvc tolkar det som required men det inte riktigt är
+        //det viket innebär att Modelstate kan bli ogiltigt invalid
+
+        //Btw ändrade ImageFile till nullable efter detta
         [Key]
         public int Cid { get; set; }
 

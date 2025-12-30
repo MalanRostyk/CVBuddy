@@ -36,7 +36,7 @@
             <h5>HighSchool</h5>
             <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
             <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
-            <p class="mb-0">Date: @(Model.Education.HSDate ?? "")</p>
+            <p class="mb-0">Date: @(Model.Education.HSDate ?? "Ongoing")</p>
         </div>
     }
     @if (Model.Education.Univeristy != null)
@@ -45,7 +45,7 @@
             <h5>University</h5>
             <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
             <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
-            <p class="mb-0">Date: @(Model.Education.UniDate ?? "")</p>
+            <p class="mb-0">Date: @(Model.Education.UniDate ?? "Ongoing")</p>
         </div>
     }
     
