@@ -156,9 +156,8 @@ namespace CVBuddy.Controllers
                 {
                     //Om transaktionen inte lyckades, tas tillagda bilden bort lokalt här i samband med en rollback
                     DeleteOldImageLocally(cv);
-
                     await transaction.RollbackAsync();
-                    throw;
+                    return NotFound(e);
                 }
             }
         }
@@ -201,8 +200,8 @@ namespace CVBuddy.Controllers
 
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
-                if (cv == null)
-                    NotFound(); //Error meddelande som stoppar krasch, not found 404
+                if (cv?.OneUser == null)
+                    return NotFound("This cvs user could not be found");
 
                 ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
 
