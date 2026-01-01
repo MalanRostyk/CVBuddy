@@ -288,7 +288,7 @@ namespace CVBuddy.Controllers
             }
             else
             {
-                return RedirectToAction("CreateCv"); //Om man inte har ett cv än så kommer man till CreateCv
+                return NotFound();
             }
         }
 
