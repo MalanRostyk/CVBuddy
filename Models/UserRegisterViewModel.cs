@@ -17,6 +17,10 @@ namespace CVBuddy.Models
         [Required(ErrorMessage = "Enter email")]
         [StringLength(100, ErrorMessage = "Too long last Name, max 100 characters")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "Enter your phone number")]
+        [StringLength(100, ErrorMessage = "Too long last Name, max 12")]
+        public string PhoneNumber { get; set; }
               
         
         [Required(ErrorMessage = "Must enter username")]
