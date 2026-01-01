@@ -23,7 +23,10 @@
     </div>
 
     <div style="float: right; font-size: 1.5em;">
-        <i class="fa-regular fa-message"></i>
+        @if (ViewBag.NotLoggedInUsersCv == true)
+        {
+            <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-message"></i></a>
+        }
     </div>
 </div>
 
