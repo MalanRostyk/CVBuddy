@@ -281,6 +281,8 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
 
+            //Ingen transaktion
+
             var cv = await GetLoggedInUsersCvAsync();
             if(cv != null)
             {
@@ -323,10 +325,8 @@ namespace CVBuddy.Controllers
                 var newFileName = Guid.NewGuid() + extension;
                 var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 var fullPath = Path.Combine(directory, newFileName);
-
-                Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + cvOldVersion.ImageFilePath);
                 
-                DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
+                
 
                 using (var fs = new FileStream(fullPath, FileMode.Create))
                 {
@@ -386,7 +386,9 @@ namespace CVBuddy.Controllers
                 cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
             }
 
+
             await _context.SaveChangesAsync();
+            DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
 
             return RedirectToAction("Index", "Home");
         }
