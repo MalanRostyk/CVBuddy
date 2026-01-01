@@ -27,6 +27,68 @@ namespace CVBuddy.Controllers
             return false;
         }
 
+        private async Task<Cv> GetLoggedInUsersCvAsync()
+        {
+            //Ingen transaktion, Select statements(dvs, await _context...) är atomära, om ej i sekvens, behövs ej transaktion
+            var userId = _userManager.GetUserId(User); //Datan kommer från db men man läser inte från Db i realtid, utan man hämtar det från inloggningscontexten, via ClaimsPrincipal, dvs user laddas vid inloggningen, läggs till i ClaimsPrincipal. Kan ej vara opålitlig. Därmet endast en read operation görs
+            Cv? cv = await _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .Include(cv => cv.CvProjects)
+                    .ThenInclude(cp => cp.OneProject)
+                    .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+
+            if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
+                throw new NullReferenceException("Users Cv was not found");
+
+            return cv;
+        }
+
+        private bool IsValidFileSize(long fileSizeInBits)
+        {
+            long fiveMB = 5 * 1024 * 1024;
+
+            if (fileSizeInBits <= fiveMB && fileSizeInBits != 0) //Kan ej vara null, longs standardvärde är 0 
+                return true;
+            return false;
+        }
+
+        private bool DeleteOldImageLocally(Cv cvOld)
+        {
+            string[]? cvOldFileImageNameArray = null;
+
+            if (cvOld.ImageFilePath != null)
+            {
+                cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
+
+                if (cvOldFileImageNameArray.Length != 0)
+                {
+
+                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+                    if (System.IO.File.Exists(finalCvFilePath))
+                    {
+                        System.IO.File.Delete(finalCvFilePath);
+                        Debug.WriteLine("Old image was found. Bör ha try catch oså!");
+                        return true;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Path to an image to be deleted, was not found. Did you move it?");
+                    }
+                }
+            }
+            return false;
+        }
+
         [HttpGet]
         public IActionResult CreateCv()
         {
@@ -39,6 +101,7 @@ namespace CVBuddy.Controllers
             //ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             //ViewBag.HeadlineInterest = "Interests";
 
+            //Ej behov av transaktion, av samma anledning som för GetLoggedInUsersCvAsync()
             var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
             var userId = _userManager.GetUserId(User);
             return View(new Cv());
@@ -47,6 +110,7 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
+            //I createCv beövs transaktion även om det bara är en write operation som sker, för att vi kräver här att alla CvInfo objekt, som i AddAsync() skapar Flera INSERT operationer de måste lyckas och misslyckas tillsammans
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
@@ -90,6 +154,9 @@ namespace CVBuddy.Controllers
                 }
                 catch(Exception e)
                 {
+                    //Om transaktionen inte lyckades, tas tillagda bilden bort lokalt här i samband med en rollback
+                    DeleteOldImageLocally(cv);
+
                     await transaction.RollbackAsync();
                     throw;
                 }
@@ -100,11 +167,12 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
             Cv? cv;
-
-            
-            if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
+            try
             {
-                cv = _context.Cvs
+                if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
+                {
+                    //  Är inte Logged in Users cv som ska hämtas här, detta cv är det som ska visas
+                    cv = _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
                     .Include(cv => cv.Skills)
@@ -117,132 +185,92 @@ namespace CVBuddy.Controllers
                     .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
 
 
-                try
-                {
-                    var usersCv = await GetLoggedInUsersCvAsync();
+
+                    var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
                     ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
                     if (ViewBag.NotLoggedInUsersCv)
                     {
                         //Ingen transaktion, Enskild Update-statements är atomära, sätter Row lock. Applikationen använder en lokal databas, alltså inga samtidiga updates kommer göras här. EJ ett problem
                         await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
                     }
-                        
                 }
-                catch(NullReferenceException noCv)
+                else//I else hämtas den inloggade användarens Cv, för "My Cv"
                 {
-                    Debug.WriteLine("User has no cv, or cv was not found");
+                    cv = await GetLoggedInUsersCvAsync();
                 }
-                    
 
+                //För headlines om det finns något att visa under headlinen
+                ViewBag.Headline = "Cv";
+                if (cv == null)
+                    NotFound(); //Error meddelande som stoppar krasch, not found 404
+
+                ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
+
+                //Experiences
+                if (cv?.Experiences.Count > 0)
+                {
+                    ViewBag.HeadlineExperiences = "Experiences";
+                }
+
+                //Education
+                bool hasEducation = false;
+                var cvEdu = cv?.Education;
+
+                if (cvEdu?.HighSchool != null || cvEdu?.HSProgram != null || cvEdu?.HSDate != null)
+                    hasEducation = true;
+
+                if (cvEdu?.Univeristy != null || cvEdu?.UniProgram != null || cvEdu?.UniDate != null)
+                    hasEducation = true;
+
+                if (hasEducation)
+                    ViewBag.HeadlineEducation = "Education";
+
+                //Skills
+                if (cv?.Skills.Count > 0)
+                {
+                    ViewBag.HeadlineSkill = "Skills";
+                }
+
+                //Certificates
+                if (cv?.Certificates.Count > 0)
+                {
+                    ViewBag.HeadlineCertificates = "Certificates";
+                    ViewBag.HeadlineCertificatesSmall = "My Certificates";
+                }
+
+                //Personal Characteristics
+                if (cv?.PersonalCharacteristics.Count > 0)
+                {
+                    ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+                    ViewBag.HeadlinePersonalCharacteristicsSmall = "My personal characteristics";
+
+                }
+
+                //Interests
+                if (cv?.Interests.Count > 0)
+                {
+                    ViewBag.HeadlineInterest = "Interests";
+                    ViewBag.HeadlineInterestSmall = "These are my interests";
+                }
+
+                //Projects
+                if (cv?.CvProjects.Count > 0)
+                {
+                    ViewBag.HeadlineProjects = "Projects";
+                    ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
+                }
             }
-            else//I else hämtas den inloggade användarens Cv, för "My Cv"
+            catch(Exception e)
             {
-                cv = await GetLoggedInUsersCvAsync();
+                return NotFound(e);
             }
-
-
-
-
-            //För headlines om det finns något att visa under headlinen
-            ViewBag.Headline = "Cv";
-            if (cv == null)
-                NotFound(); //Error meddelande som stoppar krasch, not found 404
-
-            ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
-
-            //Experiences
-            if(cv?.Experiences.Count > 0)
-            {
-                ViewBag.HeadlineExperiences = "Experiences";
-            }
-
-            //Education
-            bool hasEducation = false;
-            var cvEdu = cv?.Education;
-
-            if(cvEdu?.HighSchool != null || cvEdu?.HSProgram != null || cvEdu?.HSDate != null)
-                hasEducation = true;
-
-            if(cvEdu?.Univeristy != null || cvEdu?.UniProgram != null || cvEdu?.UniDate != null)
-                hasEducation = true;
-
-            if (hasEducation)
-                ViewBag.HeadlineEducation = "Education";
-
-            //Skills
-            if (cv?.Skills.Count > 0)
-            {
-                ViewBag.HeadlineSkill = "Skills";
-            }
-                
-            //Certificates
-            if (cv?.Certificates.Count > 0)
-            {
-                ViewBag.HeadlineCertificates = "Certificates";
-                ViewBag.HeadlineCertificatesSmall = "My Certificates";
-            }
-
-            //Personal Characteristics
-            if (cv?.PersonalCharacteristics.Count > 0)
-            {
-                ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
-                ViewBag.HeadlinePersonalCharacteristicsSmall = "My personal characteristics";
-
-            }
-
-            //Interests
-            if (cv?.Interests.Count > 0)
-            {
-                ViewBag.HeadlineInterest = "Interests";
-                ViewBag.HeadlineInterestSmall = "These are my interests";
-            }
-                
-            //Projects
-            if(cv?.CvProjects.Count > 0)
-            {
-                ViewBag.HeadlineProjects = "Projects";
-                ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
-            }
+            
             
 
             return View(cv);
         }
 
-        private async Task<Cv> GetLoggedInUsersCvAsync()
-        {
-            //Även fast det är en sekvens av read operationer, så krävs en transaktion här för att annan logik baseras på att den är konsistent, på read operation only transaktion gör ingen rollback
-            Cv? cv;
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var userId = _userManager.GetUserId(User);
-                    cv = _context.Cvs
-                            .Include(cv => cv.Education)
-                            .Include(cv => cv.Experiences)
-                            .Include(cv => cv.Skills)
-                            .Include(cv => cv.Certificates)
-                            .Include(cv => cv.PersonalCharacteristics)
-                            .Include(cv => cv.Interests)
-                            .Include(cv => cv.OneUser)
-                            .Include(cv => cv.CvProjects)
-                            .ThenInclude(cp => cp.OneProject)
-                            .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
-
-                    if (cv == null)
-                        throw new NullReferenceException($"Users cv could not be found.");
-                    return cv;
-                }
-                catch(Exception e)
-                {
-                    NotFound(e);
-                }
-            }
-            
-            
-
-            
-        }
+        
 
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
@@ -267,14 +295,7 @@ namespace CVBuddy.Controllers
             }
         }
 
-        public bool IsValidFileSize(long fileSizeInBits)
-        {
-            long fiveMB = 5 * 1024 * 1024;
-
-            if (fileSizeInBits <= fiveMB && fileSizeInBits != 0) //Kan ej vara null, longs standardvärde är 0 
-                return true;
-            return false;
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
@@ -373,39 +394,7 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private bool DeleteOldImageLocally(Cv cvOld)
-        {
-            string[]? cvOldFileImageNameArray = null;
 
-            if (cvOld.ImageFilePath != null)
-            {
-                cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
-
-                if (cvOldFileImageNameArray.Length != 0)
-                {
-                    Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
-
-
-                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
-
-                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
-
-                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
-                    if (System.IO.File.Exists(finalCvFilePath))
-                    {
-                        System.IO.File.Delete(finalCvFilePath);
-                        Debug.WriteLine("Old image was found. Bör ha try catch oså!");
-                        return true;
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Old image could not be found");
-                    }
-                        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1]);
-                }
-            }
-            return false;
-        }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCv(int Cid)
