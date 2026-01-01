@@ -3,6 +3,7 @@ using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -46,45 +47,53 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
-
-            if (cv.ImageFile == null || cv.ImageFile.Length == 0)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                ModelState.AddModelError("ImageFile", "Please upload an image");
-                ViewBag.eror = "Please upload an image";
-                return View(cv);
+                try
+                {
+                    if (cv.ImageFile == null || cv.ImageFile.Length == 0)
+                    {
+                        ModelState.AddModelError("ImageFile", "Please upload an image");
+                        ViewBag.eror = "Please upload an image";
+                        return View(cv);
+                    }
+                    Debug.WriteLine("PASERADE IF SATSEN");
+                    var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                    Directory.CreateDirectory(uploadeFolder);
+
+                    var ext = Path.GetExtension(cv.ImageFile.FileName);//null
+
+                    if (!IsValidExtension(ext))
+                        return View(cv);
+
+                    var fileName = Guid.NewGuid().ToString() + ext;
+
+                    var filePath = Path.Combine(uploadeFolder, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await cv.ImageFile.CopyToAsync(stream);
+                    }
+                    cv.ImageFilePath = "/CvImages/" + fileName;
+
+                    //Tilldela user id till cv för realtion
+                    cv.UserId = _userManager.GetUserId(User);
+
+                    //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
+                    //long imageSize = cv.ImageFile.Length;
+                    //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
+                    //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
+
+                    await _context.Cvs.AddAsync(cv);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch(Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
-            Debug.WriteLine("PASERADE IF SATSEN");
-            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-            Directory.CreateDirectory(uploadeFolder);
-
-            var ext = Path.GetExtension(cv.ImageFile.FileName);//null
-
-            if (!IsValidExtension(ext))
-                return View(cv);
-
-            var fileName = Guid.NewGuid().ToString() + ext;
-
-            var filePath = Path.Combine(uploadeFolder, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await cv.ImageFile.CopyToAsync(stream);
-            }
-            cv.ImageFilePath = "/CvImages/" + fileName;
-
-            //Tilldela user id till cv för realtion
-            cv.UserId = _userManager.GetUserId(User);
-
-            //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
-            //long imageSize = cv.ImageFile.Length;
-            //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
-            //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
-
-            await _context.Cvs.AddAsync(cv);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-
-
-
         }
 
         [HttpGet]
