@@ -123,6 +123,7 @@ namespace CVBuddy.Controllers
                     ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
                     if (ViewBag.NotLoggedInUsersCv)
                     {
+                        //Ingen transaktion, Enskild Update-statements är atomära, sätter Row lock. Applikationen använder en lokal databas, alltså inga samtidiga updates kommer göras här. EJ ett problem
                         await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
                     }
                         
@@ -209,23 +210,38 @@ namespace CVBuddy.Controllers
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
+            //Även fast det är en sekvens av read operationer, så krävs en transaktion här för att annan logik baseras på att den är konsistent, på read operation only transaktion gör ingen rollback
+            Cv? cv;
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var userId = _userManager.GetUserId(User);
+                    cv = _context.Cvs
+                            .Include(cv => cv.Education)
+                            .Include(cv => cv.Experiences)
+                            .Include(cv => cv.Skills)
+                            .Include(cv => cv.Certificates)
+                            .Include(cv => cv.PersonalCharacteristics)
+                            .Include(cv => cv.Interests)
+                            .Include(cv => cv.OneUser)
+                            .Include(cv => cv.CvProjects)
+                            .ThenInclude(cp => cp.OneProject)
+                            .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
 
-            var userId = _userManager.GetUserId(User);
-            Cv? cv = _context.Cvs
-                    .Include(cv => cv.Education)
-                    .Include(cv => cv.Experiences)
-                    .Include(cv => cv.Skills)
-                    .Include(cv => cv.Certificates)
-                    .Include(cv => cv.PersonalCharacteristics)
-                    .Include(cv => cv.Interests)
-                    .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
-                    .ThenInclude(cp => cp.OneProject)
-                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
-            if (cv == null)
-                NotFound();
+                    if (cv == null)
+                        throw new NullReferenceException($"Users cv could not be found.");
+                    return cv;
+                }
+                catch(Exception e)
+                {
+                    NotFound(e);
+                }
+            }
+            
+            
 
-            return cv;
+            
         }
 
         [HttpGet]
