@@ -52,7 +52,6 @@ namespace CVBuddy.Controllers
                 user.FirstName = usr.FirstName;
                 user.LastName = usr.LastName;
                 user.Email = usr.Email;
-                user.DateOfBirth = usr.DateOfBirth;
                 user.UserName = usr.UserName;
                 var result = await _userManager.CreateAsync(user, usr.Password);
                 if (result.Succeeded)

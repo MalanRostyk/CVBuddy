@@ -16,9 +16,6 @@ namespace CVBuddy.Models
         [Required]
         public string LastName{ get; set; }
 
-        [Required]
-        public DateTime DateOfBirth { get; set; }
-
         public string GetFullName()
         {
             return $"{FirstName} {LastName}";
