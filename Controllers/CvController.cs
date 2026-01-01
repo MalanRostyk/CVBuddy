@@ -62,30 +62,33 @@ namespace CVBuddy.Controllers
         {
             string[]? cvOldFileImageNameArray = null;
 
-            if (cvOld.ImageFilePath != null)
+            try
             {
-                cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
-
-                if (cvOldFileImageNameArray.Length != 0)
+                if (cvOld.ImageFilePath != null)
                 {
+                    cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
 
-                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
-
-                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
-
-                    //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
-                    if (System.IO.File.Exists(finalCvFilePath))
+                    if (cvOldFileImageNameArray.Length != 0)
                     {
-                        System.IO.File.Delete(finalCvFilePath);
-                        Debug.WriteLine("Old image was found. Bör ha try catch oså!");
-                        return true;
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Path to an image to be deleted, was not found. Did you move it?");
+
+                        string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+
+                        string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+                        //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+                        if (System.IO.File.Exists(finalCvFilePath))
+                        {
+                            System.IO.File.Delete(finalCvFilePath);
+                            Debug.WriteLine("Old image was found. Bör ha try catch oså!");
+                            return true;
+                        }
                     }
                 }
+            }catch(Exception e)
+            {
+                throw;
             }
+            
             return false;
         }
 
@@ -118,7 +121,7 @@ namespace CVBuddy.Controllers
                     ViewBag.eror = "Please upload an image";
                     return View(cv);
                 }
-                Debug.WriteLine("PASERADE IF SATSEN");
+
                 var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 Directory.CreateDirectory(uploadeFolder);
 
@@ -138,11 +141,6 @@ namespace CVBuddy.Controllers
 
                 //Tilldela user id till cv för realtion
                 cv.UserId = _userManager.GetUserId(User);
-
-                //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
-                //long imageSize = cv.ImageFile.Length;
-                //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
-                //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
 
                 await _context.Cvs.AddAsync(cv);
                 await _context.SaveChangesAsync();
@@ -277,7 +275,6 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
 
-            //Ingen transaktion
 
             var cv = await GetLoggedInUsersCvAsync();
             if(cv != null)
@@ -321,8 +318,8 @@ namespace CVBuddy.Controllers
                 var newFileName = Guid.NewGuid() + extension;
                 var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 var fullPath = Path.Combine(directory, newFileName);
-                
-                
+
+                DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
 
                 using (var fs = new FileStream(fullPath, FileMode.Create))
                 {
@@ -382,9 +379,9 @@ namespace CVBuddy.Controllers
                 cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
             }
 
-
+            
             await _context.SaveChangesAsync();
-            DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
+            
 
             return RedirectToAction("Index", "Home");
         }
@@ -408,9 +405,16 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public IActionResult DeleteCv(Cv cv)
          {
-            _context.Cvs.Remove(cv);
-            DeleteOldImageLocally(cv);
-            _context.SaveChanges();
+            try
+            {
+                _context.Cvs.Remove(cv);
+                DeleteOldImageLocally(cv);
+                _context.SaveChanges();
+            }catch(Exception e)
+            {
+                return NotFound(e);
+            }
+            
             return RedirectToAction("Index", "Home");
         }
     }

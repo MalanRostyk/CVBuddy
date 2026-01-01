@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260101171936_withPhoneNumber")]
-    partial class withPhoneNumber
+    [Migration("20260101212319_withPhoneNumbera")]
+    partial class withPhoneNumbera
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
