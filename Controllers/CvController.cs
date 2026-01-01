@@ -110,55 +110,51 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
-            //I createCv beövs transaktion även om det bara är en write operation som sker, för att vi kräver här att alla CvInfo objekt, som i AddAsync() skapar Flera INSERT operationer de måste lyckas och misslyckas tillsammans
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            try
             {
-                try
+                if (cv.ImageFile == null || cv.ImageFile.Length == 0)
                 {
-                    if (cv.ImageFile == null || cv.ImageFile.Length == 0)
-                    {
-                        ModelState.AddModelError("ImageFile", "Please upload an image");
-                        ViewBag.eror = "Please upload an image";
-                        return View(cv);
-                    }
-                    Debug.WriteLine("PASERADE IF SATSEN");
-                    var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-                    Directory.CreateDirectory(uploadeFolder);
-
-                    var ext = Path.GetExtension(cv.ImageFile.FileName);//null
-
-                    if (!IsValidExtension(ext))
-                        return View(cv);
-
-                    var fileName = Guid.NewGuid().ToString() + ext;
-
-                    var filePath = Path.Combine(uploadeFolder, fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await cv.ImageFile.CopyToAsync(stream);
-                    }
-                    cv.ImageFilePath = "/CvImages/" + fileName;
-
-                    //Tilldela user id till cv för realtion
-                    cv.UserId = _userManager.GetUserId(User);
-
-                    //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
-                    //long imageSize = cv.ImageFile.Length;
-                    //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
-                    //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
-
-                    await _context.Cvs.AddAsync(cv);
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return RedirectToAction("Index", "Home");
+                    ModelState.AddModelError("ImageFile", "Please upload an image");
+                    ViewBag.eror = "Please upload an image";
+                    return View(cv);
                 }
-                catch(Exception e)
+                Debug.WriteLine("PASERADE IF SATSEN");
+                var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                Directory.CreateDirectory(uploadeFolder);
+
+                var ext = Path.GetExtension(cv.ImageFile.FileName);//null
+
+                if (!IsValidExtension(ext))
+                    return View(cv);
+
+                var fileName = Guid.NewGuid().ToString() + ext;
+
+                var filePath = Path.Combine(uploadeFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    //Om transaktionen inte lyckades, tas tillagda bilden bort lokalt här i samband med en rollback
-                    DeleteOldImageLocally(cv);
-                    await transaction.RollbackAsync();
-                    return NotFound(e);
+                    await cv.ImageFile.CopyToAsync(stream);
                 }
+                cv.ImageFilePath = "/CvImages/" + fileName;
+
+                //Tilldela user id till cv för realtion
+                cv.UserId = _userManager.GetUserId(User);
+
+                //Validera filsotrlek för bilden, förberedde lite validering för filstorleken. Sedan så Validation message i CreateCv
+                //long imageSize = cv.ImageFile.Length;
+                //if (imageSize > (5 * 1024 * 1024)) // 5 * 1024 = 5 kb, 5KB * 1024 = 5MB
+                //    ViewBag.FileSizeToBig = $"The maximum filesize for your image must be lesst than 5MB! The image you tried to upload is {cv.ImageFile.Length}.";
+
+                await _context.Cvs.AddAsync(cv);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception e)
+            {
+                //Om transaktionen inte lyckades, tas tillagda bilden bort lokalt här i samband med en rollback
+                DeleteOldImageLocally(cv);
+
+                return NotFound(e);
             }
         }
 
