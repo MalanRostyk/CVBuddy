@@ -264,8 +264,6 @@ namespace CVBuddy.Controllers
             {
                 return NotFound(e);
             }
-            
-            
 
             return View(cv);
         }
