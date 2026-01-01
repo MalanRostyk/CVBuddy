@@ -58,7 +58,7 @@
                         <a class="nav-link" asp-controller="User" asp-action="GetUser"><i class="fa-solid fa-user"></i>   My Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="" asp-action=""><i class="fa-solid fa-file"></i>   My CV</a>@* Länk till cv *@
+                        <a class="nav-link" asp-controller="" asp-action=""><i class="fa-solid fa-file"></i>   My CV</a>@* Länk till cv, om finns ingen cv, utskrift, och knapp skapa cv *@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="" asp-action=""><i class="fa-solid fa-diagram-project"></i>   My Projects</a>@* lista med projekt,vid varje projekt knapp update/delete *@
@@ -73,6 +73,7 @@
             </aside>
             <main role="main" class="col-md-9 col-lg-10 p-4">
                 @RenderBody()
+                
             </main>
         </div>
         

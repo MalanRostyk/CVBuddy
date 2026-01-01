@@ -1,7 +1,12 @@
 ﻿@model User
 
 
-
+<form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Search by name..." />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
     <Authorized>
