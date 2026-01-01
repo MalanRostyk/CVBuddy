@@ -129,15 +129,16 @@ namespace CVBuddy.Controllers
             {
                 cv = await GetLoggedInUsersCvAsync();
             }
-                
-            
 
-            if (cv == null)
-                NotFound(); //Error meddelande som stoppar krasch, not found 404
+
 
 
             //För headlines om det finns något att visa under headlinen
             ViewBag.Headline = "Cv";
+            if (cv == null)
+                NotFound(); //Error meddelande som stoppar krasch, not found 404
+
+            ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
 
             //Experiences
             if(cv?.Experiences.Count > 0)
