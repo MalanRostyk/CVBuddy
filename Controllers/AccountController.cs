@@ -65,7 +65,15 @@ namespace CVBuddy.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logout)
+        {
+            ViewBag.LogoutAreYouSure = "Are you sure you want to log out?";
+            return View(); 
+        }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();

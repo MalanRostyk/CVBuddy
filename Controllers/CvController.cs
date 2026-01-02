@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging;
 using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -92,6 +93,7 @@ namespace CVBuddy.Controllers
             return false;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult CreateCv()
         {

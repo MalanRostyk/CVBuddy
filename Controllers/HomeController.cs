@@ -18,7 +18,7 @@ namespace CVBuddy.Controllers
             _userManager = u;
             _context = c;
         }
-        [Authorize]
+
         public async Task<IActionResult> Index()
         {
             //Allt detta för att en Users OneCv är null i Viewens foreach, så tilldelar manuellt en User sin OneCv

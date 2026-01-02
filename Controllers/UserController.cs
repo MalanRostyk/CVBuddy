@@ -8,6 +8,7 @@ namespace CVBuddy.Controllers
 {
     public class UserController : HomeController
     {
+
         private readonly SignInManager<User> _signInManager;
         public UserController(UserManager<User> u, CVBuddyContext c, SignInManager<User> signInManager) : base(u, c)
         {
