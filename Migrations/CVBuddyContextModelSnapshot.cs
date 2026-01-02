@@ -22,6 +22,41 @@ namespace CVBuddy.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CVBuddy.Models.Address", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>
                 {
                     b.Property<int>("CertId")
@@ -482,6 +517,17 @@ namespace CVBuddy.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CVBuddy.Models.Address", b =>
+                {
+                    b.HasOne("CVBuddy.Models.User", "OneUser")
+                        .WithOne("OneAddress")
+                        .HasForeignKey("CVBuddy.Models.Address", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OneUser");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>
                 {
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
@@ -674,6 +720,9 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
                 {
+                    b.Navigation("OneAddress")
+                        .IsRequired();
+
                     b.Navigation("OneCv")
                         .IsRequired();
 
