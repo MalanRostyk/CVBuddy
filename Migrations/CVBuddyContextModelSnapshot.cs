@@ -551,7 +551,7 @@ namespace CVBuddy.Migrations
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
                         .WithOne("Education")
                         .HasForeignKey("CVBuddy.Models.CVInfo.Education", "CvId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cv");

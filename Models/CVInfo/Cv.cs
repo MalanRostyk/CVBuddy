@@ -7,20 +7,26 @@ namespace CVBuddy.Models.CVInfo
 {
     public class Cv
     {
+
+        //Tydligen sp ska de saker som inte är nullable markeras som Required,
+        //eftersom att Mvc tolkar det som required men det inte riktigt är
+        //det viket innebär att Modelstate kan bli ogiltigt invalid
+
+        //Btw ändrade ImageFile till nullable efter detta
         [Key]
         public int Cid { get; set; }
 
+        //Nullable kommentarer för att annars kan inte ett cv skapas utan respektive egenskap, därmed db får falsk data om inte kan lämnas tomt
+        public List<Skill> Skills { get; set; } = new(); //Objekt i List borde vara nullable
 
-        public List<Skill> Skills { get; set; } = new();
-        
 
-        public Education Education { get; set; }
+        public Education Education { get; set; } //Borde vara nullable
 
-        public List<Experience> Experiences { get; set; } = new();
+        public List<Experience> Experiences { get; set; } = new(); //Objekt i List borde vara nullable
 
-        public List<Certificate> Certificates{ get; set; } = new();
-       
-        public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();
+        public List<Certificate> Certificates{ get; set; } = new();//Objekt i List borde vara nullable
+
+        public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();//Objekt i List borde vara nullable
 
 
 
@@ -28,13 +34,13 @@ namespace CVBuddy.Models.CVInfo
         public string? ImageFilePath { get; set; }
 
         [NotMapped]
-        public IFormFile ImageFile { get; set; } 
+        public IFormFile ImageFile { get; set; } //Borde vara nullable
         public int ReadCount { get; set; }
         public string? UserId { get; set; } //Vart null
 
         //[NotMapped]
         [ForeignKey(nameof(UserId))]
-        public User? OneUser { get; set; } //tilldelas?
+        public User? OneUser { get; set; } //varför nullable, ett cv måste ha en ägare
         public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
     }
 }
