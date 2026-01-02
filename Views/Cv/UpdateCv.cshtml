@@ -21,7 +21,7 @@
 
 
     <h3>@ViewBag.HeadlineExperiences</h3>                                                        @* Experiences *@
-    <div class="mb-4">
+    <div class="mb-4" id="Experience-Container" data-experience-index="@Model.Experiences.Count">
         @for (int i = 0; i < Model.Experiences.Count; i++)
         {
             <input type="hidden" asp-for="Experiences[i].Exid" />
@@ -47,6 +47,8 @@
             </div>
         }
     </div>
+    <button type="button" onclick="addExperience()">Add Ecperience</button>
+
 
 
     <h3>@ViewBag.HeadlineEducation</h3>                                                          @* Education *@
@@ -105,11 +107,11 @@
             </div>
         }
                                                                                            @*PersonalCharacteristics*@
-
     </div>
     <button type="button" onclick="addSkill()">Add Skill</button>
+
     <h3>@ViewBag.HeadlineCertificates</h3>                                                       @* Certificates *@
-    <div class="mb-4">
+    <div class="mb-4" id="Certificates-Container" data-certificates-index="@Model.Certificates.Count">
         @for (int i = 0; i < Model.Certificates.Count; i++)
         {
             <input type="hidden" asp-for="Certificates[i].CertId" />
@@ -121,8 +123,10 @@
             </div>
         }
     </div>
+    <button type="button" onclick="addCertificates()">Add Cerificate</button>
+
     <h3>@ViewBag.HeadlinePersonalCharacteristics</h3>                                            @* PersonalCharacteristics *@
-    <div class="mb-4">
+    <div class="mb-4" id="PersonalCharacteristics-Container" data-personalcharacteristics-index="@Model.PersonalCharacteristics.Count">
         @for (int i = 0; i < Model.PersonalCharacteristics.Count; i++)
         {
             <input type="hidden" asp-for="PersonalCharacteristics[i].PCId" />
@@ -135,8 +139,10 @@
             </div>
         }
     </div>
+    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>
+
     <h3>@ViewBag.HeadlineInterest</h3>                                                           @* Interest *@
-    <div class="mb-4">
+    <div class="mb-4" id="Interests-Container" data-interests-index="@Model.Interests.Count">
         @for (int i = 0; i < Model.Interests.Count; i++)
         {
             <input type="hidden" asp-for="Interests[i].InterestId" /> @* Måste finnas med för att dem ska finnas i Modelstate vid Post, syns ej i sidan *@
@@ -148,6 +154,7 @@
             </div>
         }
     </div>
+    <button type="button" onclick="addInterests()">Add Interest</button><br>
 
 
 

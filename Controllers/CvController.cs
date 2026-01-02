@@ -333,8 +333,11 @@ namespace CVBuddy.Controllers
             //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
 
             //Experiences
-            for(int i = 0; i < cvOldVersion.Experiences.Count; i++)
+            for(int i = 0; i < cv.Experiences.Count; i++)
             {
+                if (cvOldVersion.Experiences.Count < cv.Experiences.Count)
+                    cvOldVersion.Experiences.Add(new());
+
                 cvOldVersion.Experiences[i].Title = cv.Experiences[i].Title;
                 cvOldVersion.Experiences[i].Description = cv.Experiences[i].Description;
                 cvOldVersion.Experiences[i].Company = cv.Experiences[i].Company;
@@ -355,31 +358,38 @@ namespace CVBuddy.Controllers
             for (int i = 0; i < cv.Skills.Count; i++)
             {
                 if(cvOldVersion.Skills.Count < cv.Skills.Count)
-                {
                     cvOldVersion.Skills.Add(new());
-                }
+                
                 cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
                 cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
                 cvOldVersion.Skills[i].Date = cv.Skills[i].Date;
             }
 
             //Interests
-            for (int i = 0; i < cvOldVersion.Interests.Count; i++)
+            for (int i = 0; i < cv.Interests.Count; i++)
             {
+                if (cvOldVersion.Interests.Count < cv.Interests.Count)
+                    cvOldVersion.Interests.Add(new());
+
                 cvOldVersion.Interests[i].InterestName = cv.Interests[i].InterestName;
             }
 
 
             //Certificates
-            for (int i = 0; i < cvOldVersion.Certificates.Count; i++)
+            for (int i = 0; i < cv.Certificates.Count; i++)
             {
+                if (cvOldVersion.Certificates.Count < cv.Certificates.Count)
+                    cvOldVersion.Certificates.Add(new());
+
                 cvOldVersion.Certificates[i].CertName = cv.Certificates[i].CertName;
             }
 
 
             //PersonalCharacteristics
-            for (int i = 0; i < cvOldVersion.PersonalCharacteristics.Count; i++)
+            for (int i = 0; i < cv.PersonalCharacteristics.Count; i++)
             {
+                if (cvOldVersion.PersonalCharacteristics.Count < cv.PersonalCharacteristics.Count)
+                    cvOldVersion.PersonalCharacteristics.Add(new());
                 cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
             }
 
