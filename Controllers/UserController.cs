@@ -79,7 +79,7 @@ namespace CVBuddy.Controllers
                         Street = formUser.OneAddress.Street,
                         UserId = user.Id
                     };
-                    await _context.Addresses.AddAsync(user.OneAddress);
+                    await _context.Addresses.AddAsync(user.OneAddress);//fick null
                 }
                 else
                 {
