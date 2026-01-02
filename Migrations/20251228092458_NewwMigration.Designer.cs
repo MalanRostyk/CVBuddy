@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20251223001631_óneaakbhnikoljkb")]
-    partial class óneaakbhnikoljkb
+    [Migration("20251228092458_NewwMigration")]
+    partial class NewwMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace CVBuddy.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CVBuddy.Models.Address", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>
                 {
@@ -222,14 +254,14 @@ namespace CVBuddy.Migrations
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Pid")
+                    b.Property<int>("ProjId")
                         .HasColumnType("int");
 
-                    b.HasKey("CvId", "Pid");
+                    b.HasKey("CvId", "ProjId");
 
-                    b.HasIndex("Pid");
+                    b.HasIndex("ProjId");
 
-                    b.ToTable("CvProject");
+                    b.ToTable("CvProjects");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
@@ -242,15 +274,41 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("Enddate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PublisDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Pid");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProjId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ProjId");
+
+                    b.HasIndex("ProjId");
+
+                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
@@ -271,6 +329,14 @@ namespace CVBuddy.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -451,6 +517,17 @@ namespace CVBuddy.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CVBuddy.Models.Address", b =>
+                {
+                    b.HasOne("CVBuddy.Models.User", "OneUser")
+                        .WithOne("OneAddress")
+                        .HasForeignKey("CVBuddy.Models.Address", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OneUser");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.CVInfo.Certificate", b =>
                 {
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
@@ -537,13 +614,32 @@ namespace CVBuddy.Migrations
 
                     b.HasOne("CVBuddy.Models.Project", "OneProject")
                         .WithMany("CvProjects")
-                        .HasForeignKey("Pid")
+                        .HasForeignKey("ProjId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("OneCv");
 
                     b.Navigation("OneProject");
+                });
+
+            modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
+                {
+                    b.HasOne("CVBuddy.Models.Project", "Project")
+                        .WithMany("ProjectUsers")
+                        .HasForeignKey("ProjId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CVBuddy.Models.User", "User")
+                        .WithMany("ProjectUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -618,12 +714,19 @@ namespace CVBuddy.Migrations
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
                 {
                     b.Navigation("CvProjects");
+
+                    b.Navigation("ProjectUsers");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
                 {
+                    b.Navigation("OneAddress")
+                        .IsRequired();
+
                     b.Navigation("OneCv")
                         .IsRequired();
+
+                    b.Navigation("ProjectUsers");
                 });
 #pragma warning restore 612, 618
         }
