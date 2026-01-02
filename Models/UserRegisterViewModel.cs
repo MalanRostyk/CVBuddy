@@ -7,11 +7,11 @@ namespace CVBuddy.Models
 
 
         [Required(ErrorMessage = "Must enter first name")]
-        [StringLength(100, ErrorMessage = "Too long first Name, max 72 characters")]
+        [StringLength(72, ErrorMessage = "Too long first Name, max 72 characters")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Must enter last name")]
-        [StringLength(100, ErrorMessage = "Too long last Name, max 72 characters")]
+        [StringLength(72, ErrorMessage = "Too long last Name, max 72 characters")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Enter email")]
@@ -19,7 +19,7 @@ namespace CVBuddy.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Enter your phone number")]
-        [StringLength(100, ErrorMessage = "Too long last Name, max 12")]
+        [StringLength(12, ErrorMessage = "Too long last Name, max 12")]
         public string PhoneNumber { get; set; }
               
         

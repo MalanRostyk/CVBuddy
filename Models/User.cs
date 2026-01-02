@@ -15,7 +15,7 @@ namespace CVBuddy.Models
         public string FirstName{ get; set; }
         [Required]
         public string LastName{ get; set; }
-
+        public Address OneAddress { get; set; }
         public string GetFullName()
         {
             return $"{FirstName} {LastName}";

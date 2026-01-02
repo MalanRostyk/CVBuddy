@@ -1,6 +1,11 @@
 ﻿@model IEnumerable<User>
 
-
+<form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Search by name..." />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
 
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
@@ -54,3 +59,19 @@
     </tbody>
 </table>
 
+@* <form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Search by name..." />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+<form method="post" asp-controller="Account" asp-action="Logout">
+<AuthorizeView>
+    <Authorized>
+            <h2>Welcome @User.Identity.Name</h2>
+            <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
+            <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
+            <a asp-controller="Account" asp-action="Logout" class="btn-link">Logout</a>
+    </Authorized>
+</AuthorizeView>
+</form> *@

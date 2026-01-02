@@ -1,0 +1,38 @@
+﻿@model User
+
+<form method="post" asp-action="UpdateUser">
+    <div>
+        <h2>Edit your personal information</h2>
+        <h3>Login information</h3>
+        <label asp-for="UserName">User name</label><br />
+        <input asp-for="UserName" type="Text" /><br />
+        @* password *@
+
+        <h3>Your name</h3>
+        <label asp-for="FirstName">First name</label><br />
+        <input asp-for="FirstName" type="Text" /><br />
+
+        <label asp-for="LastName">Last name</label><br />
+        <input asp-for="LastName" type="Text" /><br />
+
+        <h3>Contact information</h3>
+        <label asp-for="Email">Email</label><br />
+        <input asp-for="Email" type="Text" /><br />
+
+        <label asp-for="PhoneNumber">Phone number</label><br />
+        <input asp-for="PhoneNumber" type="Text" /><br />
+
+        <h3>Your address information</h3>
+        <label asp-for="@Model.OneAddress.Country">Country</label><br />
+        <input asp-for="@Model.OneAddress.Country" type="Text" /><br />
+
+        <label asp-for="@Model.OneAddress.City">City </label><br />
+        <input asp-for="@Model.OneAddress.City" type="Text" /><br />
+
+        <label asp-for="@Model.OneAddress.Street">Street</label><br />
+        <input asp-for="@Model.OneAddress.Street" type="Text" /><br />
+
+
+    </div>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>

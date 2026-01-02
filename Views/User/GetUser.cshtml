@@ -1,0 +1,52 @@
+﻿@model CVBuddy.Models.User
+
+<div class="d-flex justify-content-center align-items-center min-vh-90">
+    <div class="col-md-6 col-lg-4">
+
+        <h3 class="text-center mb-4">Welcome back @Model.UserName</h3>
+
+        <h5>Personal information</h5>
+
+        <div class="mb-3">
+            <p><b>User name: </b>@Model.UserName</p>
+        </div>
+
+        <div class="mb-3">
+            <p><b>First name: </b>@Model.FirstName</p>
+        </div>
+
+        <div class="mb-3">
+            <p><b>Last name: </b>@Model.LastName</p>
+        </div>
+
+        <h5>Contact information</h5>
+
+        <div class="mb-3">
+            <p><b>Email: </b>@Model.Email</p>
+        </div>
+
+        <div class="mb-3">
+            <p><b>Phone number: </b>@Model.PhoneNumber</p>
+        </div>
+
+        <div class="mb-3">
+            <h5>Address information</h5>
+            @if (Model.OneAddress != null)
+            {
+                <p><b>Country: </b>@Model.OneAddress.Country</p>
+                <p><b>City: </b>@Model.OneAddress.City</p>
+                <p><b>Street: </b>@Model.OneAddress.Street</p>
+            }
+            else
+            {
+                <p class="text-muted fst-italic">No address registered</p>
+            }
+        </div>
+
+        <div>
+            <a asp-action="UpdateUser" asp-route-id="@Model.Id" class="btn btn-primary">Edit personal information</a>
+        </div>
+    </div>
+
+
+</div>
