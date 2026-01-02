@@ -352,8 +352,12 @@ namespace CVBuddy.Controllers
             cvOldVersion.Education.UniDate = cv.Education.UniDate;
 
             //Skills
-            for (int i = 0; i < cvOldVersion.Skills.Count; i++)
+            for (int i = 0; i < cv.Skills.Count; i++)
             {
+                if(cvOldVersion.Skills.Count < cv.Skills.Count)
+                {
+                    cvOldVersion.Skills.Add(new());
+                }
                 cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
                 cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
                 cvOldVersion.Skills[i].Date = cv.Skills[i].Date;
