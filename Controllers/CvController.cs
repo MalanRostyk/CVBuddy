@@ -30,6 +30,9 @@ namespace CVBuddy.Controllers
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
+            if (!(User.Identity!.IsAuthenticated))
+                return new();
+                
             //Ingen transaktion, Select statements(dvs, await _context...) är atomära, om ej i sekvens, behövs ej transaktion
             var userId = _userManager.GetUserId(User); //Datan kommer från db men man läser inte från Db i realtid, utan man hämtar det från inloggningscontexten, via ClaimsPrincipal, dvs user laddas vid inloggningen, läggs till i ClaimsPrincipal. Kan ej vara opålitlig. Därmet endast en read operation görs
             Cv? cv = await _context.Cvs
@@ -191,13 +194,14 @@ namespace CVBuddy.Controllers
                 }
                 else//I else hämtas den inloggade användarens Cv, för "My Cv"
                 {
+
                     cv = await GetLoggedInUsersCvAsync();
                 }
 
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
                 if (cv?.OneUser == null)
-                    return NotFound("This cvs user could not be found");
+                    return RedirectToAction("Login", "Account");
 
                 ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
 

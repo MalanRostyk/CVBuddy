@@ -6,10 +6,11 @@
 <div class="d-flex flex-row justify-content-center gap-4">
     @if (ViewBag.NotLoggedInUsersCv != true) @* bolean uttrycket använder inte !bool för att det är inte ett uttryck tydligen så jag körde bool != true *@
     {
+        <a clas="btn-primary ml-1" asp-controller="Cv" asp-action="UpdateCv"><i class="fa-solid fa-pencil"></i>Update My Cv</a>
         <a asp-controller="Cv" asp-action="DeleteCv" asp-route-Cid="@Model.Cid"><i class="fa-solid fa-x"></i>DELETE</a>
     }
     <a clas="btn btn-primary" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i>Home</a>
-    <a clas="btn-primary ml-1" asp-controller="Cv" asp-action="UpdateCv"><i class="fa-solid fa-pencil"></i>Update My Cv</a>
+    
 </div>
 
 
