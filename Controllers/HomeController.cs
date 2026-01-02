@@ -21,18 +21,6 @@ namespace CVBuddy.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //Allt detta för att en Users OneCv är null i Viewens foreach, så tilldelar manuellt en User sin OneCv
-            //var users = _context.Users.ToList();
-            //var cvs = _context.Cvs.ToList();
-
-            //foreach (var user in users)
-            //{
-            //    foreach (var cv in cvs)
-            //    {
-            //        if (user.OneCv?.Cid != null && user.OneCv.Cid == cv.Cid)
-            //            user.OneCv.Cid = cv.Cid;
-            //    }
-            //}
 
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
