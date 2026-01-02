@@ -87,7 +87,7 @@ namespace CVBuddy.Models
             builder.Entity<Education>()
                 .HasOne(p => p.Cv)
                 .WithOne(p => p.Education)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             //Cv > Certificate 1:M
             builder.Entity<Certificate>()

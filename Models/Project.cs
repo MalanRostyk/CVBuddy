@@ -23,7 +23,7 @@ namespace CVBuddy.Models
 
         public DateTime? Enddate { get; set; } //Ändra till stort D, glöm ej att även ändra i view också
         [NotMapped]
-        public List<User> UsersInProject { get; set; } = new();//ONödig, kan ej användas efter att det serialiserats, när det kommer från db så är den null oavsett
+        public List<User> UsersInProject { get; set; } = new();//För att enklare hantera användare i projekt i koden
 
         public DateTime PublisDate { get; set; } = DateTime.Now;
 

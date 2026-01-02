@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-<<<<<<<< HEAD:Migrations/20251228092458_NewwMigration.Designer.cs
     [Migration("20251228092458_NewwMigration")]
     partial class NewwMigration
-========
-    [Migration("20260102131648_asdfsdf")]
-    partial class asdfsdf
->>>>>>>> to-merge:Migrations/20260102131648_asdfsdf.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -559,7 +554,7 @@ namespace CVBuddy.Migrations
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "Cv")
                         .WithOne("Education")
                         .HasForeignKey("CVBuddy.Models.CVInfo.Education", "CvId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cv");

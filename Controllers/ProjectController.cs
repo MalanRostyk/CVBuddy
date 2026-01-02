@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace CVBuddy.Controllers
@@ -22,35 +21,16 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateProject()
+        public IActionResult CreateProject()
         {
             ViewBag.ProjectCreateHeadline = "Create a Project";
-
-            var user = await _userManager.GetUserAsync(User);
-
-            //Lägga till sig själv i projektet som deltagare innan det skapas
-            Project newProj = new();
-
-            newProj.UsersInProject.Add(user);
-            return View(newProj); //Att lägga till sig själv isom participant i ett projekt när det skapas funkar inte eftersom att Project.UsersInproject inte Serialiseras
-            //Vill ej ändra model innan vi har mergeat tillsammans
+            return View(new Project());
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateProject(Project proj)
         {
-            User? user = await _userManager.GetUserAsync(User);
-            if(user != null)
-            {
-                proj.UsersInProject.Add(user);//Lägg till user i projektet som participant för participant count
-            }
-            else
-            {
-                return NotFound();
-            }
-
-
-                await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
+            await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
             await _context.SaveChangesAsync(); //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
             //eftersom att Pid tilldelas först när den har serialiserats till Db
 
@@ -62,7 +42,6 @@ namespace CVBuddy.Controllers
             {
                 ProjId = projId,
                 CvId = cvId
-                
             });
 
             await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit

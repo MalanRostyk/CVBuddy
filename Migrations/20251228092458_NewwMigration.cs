@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Migrations/20251228092458_NewwMigration.cs
     public partial class NewwMigration : Migration
-========
-    public partial class asdfsdf : Migration
->>>>>>>> to-merge:Migrations/20260102131648_asdfsdf.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -312,7 +308,7 @@ namespace CVBuddy.Migrations
                         column: x => x.CvId,
                         principalTable: "Cvs",
                         principalColumn: "Cid",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
