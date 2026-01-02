@@ -31,6 +31,7 @@
     <div style="float: right; font-size: 1.5em;">
         @if (ViewBag.NotLoggedInUsersCv == true)
         {
+            <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-address-card"></i></a>
             <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-message"></i></a>
         }
     </div>
