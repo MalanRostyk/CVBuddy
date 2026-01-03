@@ -200,8 +200,16 @@ namespace CVBuddy.Controllers
 
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
-                if (cv?.OneUser == null)
+                if (!User.Identity!.IsAuthenticated)
+                {
                     return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    if (cv?.OneUser == null)
+                        return RedirectToAction("CreateCv", "Cv");
+                }
+                
 
                 ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
 
