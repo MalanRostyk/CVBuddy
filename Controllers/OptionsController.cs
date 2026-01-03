@@ -12,6 +12,8 @@ namespace CVBuddy.Controllers
         public OptionsController(UserManager<User> u, CVBuddyContext c) : base(u, c)
         {
         }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetOptions()
         {
