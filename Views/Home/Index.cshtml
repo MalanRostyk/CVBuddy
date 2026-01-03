@@ -1,5 +1,56 @@
 ﻿@model IEnumerable<User>
 
+<div class="container">
+    <div>
+        <label>Your name: </label>
+        <input type="text" id="displayname" />
+    </div>
+    <div>
+        <input type="text" id="message"/>
+        <input type="button" id="sendmessage" value="send" />
+    </div>
+    <div>
+        <ul id="discussion"></ul>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm"></script>
+
+<script>
+    var connection = new SignalR.HubConnectionBuilder().WithUrl("/chat").Build();
+
+    //fånga errors till för att se i console
+    connection.start().catch(function (err){
+        return console.error(err.toString());
+    });
+    //eventlyssnare på sendmessage knappen hämtar info om vilken user som connectas till hub det och meddelandet, SendMessage() anropas i ChatHub modeln
+    document.getElementById("sendmessage").addEventListener("click", function (event) {
+        var user = document.getElementById("displayname").value;
+        var message = document.getElementById("message").value;
+
+
+        connection.invoke("SendMessage", user, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        event.preventDefault();
+
+    });
+
+    connection.on("RecieveMessage", function (user){
+        var messageWithSender = user + ": " + message;
+        var listItem = document.createElement("li");
+
+        listItem.textContent = messageWithSender;
+        document.getElementById("discussion").appendChild(listItem); //hämta sista listItem i discussion
+
+    });
+</script>
+
+
+
+
+
+
 <form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
     <div class="input-group">
         <input type="text" name="searchTerm" class="form-control" placeholder="Search by name..." />
