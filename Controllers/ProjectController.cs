@@ -18,7 +18,8 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult GetProject()
         {
-            return View();
+            var projects = _context.Projects.ToList();
+            return View(projects);
         }
 
         [HttpGet]
