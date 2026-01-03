@@ -36,7 +36,19 @@
     {
         @if(user.OneCv != null)
         {
-            <img src="@user.OneCv.ImageFilePath" />
+            <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
+                <div class="flex-grow-0">
+                    <img src="@user.OneCv.ImageFilePath" />
+                </div>
+                <div class="flex-grow-1">
+                    <p class="mb-2"><b>@user.FirstName @user.LastName</b></p>
+                    <p class="mb-2">@(user.OneCv.Education?.Univeristy ?? user.OneCv.Education?.HighSchool ?? "")</p>
+                </div>
+                <div class="flex-grow-0 d-flex flex-column gap-2">
+                    <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@user.OneCv.Cid" class="btn btn-outline-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>See Cv</a>
+                    <a asp-controller="Account" asp-action="SendMessage" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-message me-1"></i>Send Message</a>
+                </div>
+            </div>
         }
     }
 
