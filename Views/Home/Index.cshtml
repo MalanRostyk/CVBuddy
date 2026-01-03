@@ -3,32 +3,60 @@
 <div class="container">
     <div>
         <label>Your name: </label>
-        <input type="text" id="displayname" />
+        <input type="text" id="display-name" />
     </div>
     <div>
         <input type="text" id="message"/>
-        <input type="button" id="sendmessage" value="send" />
+        <input type="button" id="send-message" value="send" />
     </div>
     <div>
         <ul id="discussion"></ul>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm"></script>
+
+<script type="module">
+    import * as signalR from "https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm";
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .build();
+
+    connection.start().catch(err => console.error(err.toString()));
+
+    document.getElementById("send-message").addEventListener("click", function (event) {
+        const user = document.getElementById("display-name").value;
+        const message = document.getElementById("message").value;
+
+        connection.invoke("SendMessage", user, message)
+            .catch(err => console.error(err.toString()));
+
+        event.preventDefault();
+    });
+
+    connection.on("RecieveMessage", function (user, message) {
+        const li = document.createElement("li");
+        li.textContent = user + ": " + message;
+        document.getElementById("discussion").appendChild(li);
+    });
+</script>
+
+
+@* <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm"></script>
 
 <script>
-    var connection = new SignalR.HubConnectionBuilder().WithUrl("/chat").Build();
+    var connection = new SignalR.HubConnectionBuilder().withUrl("/chat").Build();
 
     //fånga errors till för att se i console
     connection.start().catch(function (err){
         return console.error(err.toString());
     });
     //eventlyssnare på sendmessage knappen hämtar info om vilken user som connectas till hub det och meddelandet, SendMessage() anropas i ChatHub modeln
-    document.getElementById("sendmessage").addEventListener("click", function (event) {
-        var user = document.getElementById("displayname").value;
+    document.getElementById("send-message").addEventListener("click", function (event) {
+        var user = document.getElementById("display-name").value;
         var message = document.getElementById("message").value;
 
 
-        connection.invoke("SendMessage", user, message).catch(function (err) {
+        connection.invoke("Send-Message", user, message).catch(function (err) {
             return console.error(err.toString());
         });
 
@@ -44,7 +72,7 @@
         document.getElementById("discussion").appendChild(listItem); //hämta sista listItem i discussion
 
     });
-</script>
+</script> *@
 
 
 

@@ -42,7 +42,10 @@ namespace CVBuddy
             app.UseAuthorization();
 
             //Specificera specifik Hub för clienter att ansluta till
-            app.UseEndpoints(endpoints => endpoints.MapHub<ChatHub>("/chat"));
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<ChatHub>("/chat");
+            });
 
             app.MapStaticAssets();
             app.MapControllerRoute(
