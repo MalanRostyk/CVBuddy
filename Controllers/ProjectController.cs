@@ -129,5 +129,47 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateProject(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var project = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                .FirstOrDefaultAsync(p => p.Pid == id && p.ProjectUsers.Any(pu => pu.UserId == userId));
+
+            if (project == null)
+                return NotFound();
+
+            return View(project);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProject(Project toUpdate)
+        {
+            if (!ModelState.IsValid)
+                return View(toUpdate);
+
+            var userId = _userManager.GetUserId(User);
+
+            var newProj = await _context.Projects
+                .Include(pu => pu.ProjectUsers)
+                .FirstOrDefaultAsync(p => p.Pid == toUpdate.Pid && p.ProjectUsers.Any(pu => pu.UserId == userId));
+
+            if (newProj == null)
+                return NotFound();
+
+            newProj.Title = toUpdate.Title;
+            newProj.Description = toUpdate.Description;
+            newProj.StartDate = toUpdate.StartDate;
+            newProj.Enddate = toUpdate.Enddate;
+            newProj.UsersInProject = toUpdate.UsersInProject;
+            newProj.PublisDate = toUpdate.PublisDate;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
