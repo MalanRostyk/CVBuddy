@@ -47,8 +47,8 @@ namespace CVBuddy.Controllers
                     .ThenInclude(cp => cp.OneProject)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
 
-            if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
-                throw new NullReferenceException("Users Cv was not found");
+            //if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
+            //    throw new NullReferenceException("Users Cv was not found");
 
             return cv;
         }

@@ -30,7 +30,7 @@
 </form>
 
 <h2>@ViewBag.CvIndexHeadline</h2>
-<div class="d-flex gap-4 flex-nowrap">
+<div class="d-flex gap-4 flex-wrap">
     @if(ViewBag.CvsExists == true)
     {
         @foreach (var user in Model)
@@ -43,7 +43,6 @@
                     </div>
                     <div class="flex-grow-1">
                         <p class="mb-2"><b>@user.FirstName @user.LastName</b></p>
-                        <p class="mb-2">@(user.OneCv.Education?.Univeristy ?? user.OneCv.Education?.HighSchool ?? "")</p> @* När man är utloggad så syns inte detta för att den blir null *@
                         <i class="mb-2">@(user.OneCv.ReadCount + " Reads")</i>
                     </div>
                     <div class="flex-grow-0 d-flex flex-column gap-2">
