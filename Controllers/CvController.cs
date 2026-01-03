@@ -194,21 +194,21 @@ namespace CVBuddy.Controllers
                 }
                 else//I else hämtas den inloggade användarens Cv, för "My Cv"
                 {
-
-                    cv = await GetLoggedInUsersCvAsync();
+                    if (!User.Identity.IsAuthenticated)
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                    else
+                    {
+                        cv = await GetLoggedInUsersCvAsync();
+                        if (cv?.OneUser == null)
+                            return RedirectToAction("CreateCv", "Cv");
+                    }
+                        
                 }
 
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
-                if (!User.Identity!.IsAuthenticated)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-                else
-                {
-                    if (cv?.OneUser == null)
-                        return RedirectToAction("CreateCv", "Cv");
-                }
                 
 
                 ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
