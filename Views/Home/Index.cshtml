@@ -10,7 +10,7 @@
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
     <Authorized>
-            <h2>Welcome @User.Identity.Name</h2>
+            <h2>Welcome @User.Identity!.Name</h2>
 
             @if (ViewBag.HasCv)//Visa rätt knappar beroende på om man har ett cv eller inte
             {
