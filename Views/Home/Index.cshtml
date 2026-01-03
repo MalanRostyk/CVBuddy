@@ -14,27 +14,19 @@
     </div>
 </div> 
 
-@* <script type="module">
-    gick ej med es-module
-    import * as signalR fr
-</script> *@
-
-
 <script type="module">
+    // gick ej med es-module var tvungen att gör det globalt istället
     import * as signalR from "https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm";
-
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/chat")
-        .build();
-
+    
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+    
     connection.start().catch(err => console.error(err.toString()));
 
     document.getElementById("send-message").addEventListener("click", function (event) {
         const user = document.getElementById("display-name").value;
         const message = document.getElementById("message").value;
 
-        connection.invoke("SendMessage", user, message)
-            .catch(err => console.error(err.toString()));
+        connection.invoke("sendmessage", user, message).catch(err => console.error(err.toString()));
 
         event.preventDefault();
     });
@@ -45,45 +37,6 @@
         document.getElementById("discussion").appendChild(li);
     });
 </script>
-
-
-@* <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm"></script>
-
-<script>
-    var connection = new SignalR.HubConnectionBuilder().withUrl("/chat").Build();
-
-    //fånga errors till för att se i console
-    connection.start().catch(function (err){
-        return console.error(err.toString());
-    });
-    //eventlyssnare på sendmessage knappen hämtar info om vilken user som connectas till hub det och meddelandet, SendMessage() anropas i ChatHub modeln
-    document.getElementById("send-message").addEventListener("click", function (event) {
-        var user = document.getElementById("display-name").value;
-        var message = document.getElementById("message").value;
-
-
-        connection.invoke("Send-Message", user, message).catch(function (err) {
-            return console.error(err.toString());
-        });
-
-        event.preventDefault();
-
-    });
-
-    connection.on("RecieveMessage", function (user){
-        var messageWithSender = user + ": " + message;
-        var listItem = document.createElement("li");
-
-        listItem.textContent = messageWithSender;
-        document.getElementById("discussion").appendChild(listItem); //hämta sista listItem i discussion
-
-    });
-</script> *@
-
-
-
-
-
 
 <form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
     <div class="input-group">
