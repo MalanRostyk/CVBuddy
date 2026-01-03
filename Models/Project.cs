@@ -27,6 +27,9 @@ namespace CVBuddy.Models
 
         public DateTime PublisDate { get; set; } = DateTime.Now;
 
+        [NotMapped]
+        public string? UserId{ get; set; }
+
         public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
         public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
     }
