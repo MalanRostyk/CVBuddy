@@ -24,9 +24,11 @@ namespace CVBuddy.Controllers
 
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
+                .Where(u => u.IsDeactivated != true)
                 .Include(u => u.OneCv)
                 .Include(u => u.ProjectUsers)
                 .ThenInclude(pu => pu.Project)
+
                 .ToListAsync();
 
             ViewBag.CvsExists = false;
