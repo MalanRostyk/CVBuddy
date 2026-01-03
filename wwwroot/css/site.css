@@ -51,3 +51,31 @@ img{
 .cv-container:hover {
     box-shadow: 0 6px 18px rgba(0, 0, 255, 0.25);
 }
+
+.read-banner {
+    display: flex;
+    border: 2px solid #72acf2;
+    border-radius: 0 2em 2em 0;
+    background-color: #36045c;
+    color: aliceblue;
+    padding-right: 1em;
+}
+
+.interactions-read-banner {
+    float: right;
+    font-size: 1.5em;
+}
+
+.contact-info-read-banner {
+    padding: 1em 0 0 1em;
+    flex-grow: 2;
+}
+
+.content-item {
+    padding: 10px 20px;
+    margin: 0 20px;
+    border: 2px solid black;
+    border-radius: 2em;
+    background-color: #7abfeb;
+}
+
