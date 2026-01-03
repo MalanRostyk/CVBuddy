@@ -29,11 +29,20 @@ namespace CVBuddy.Controllers
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
 
+            ViewBag.CvsExists = false;
+            foreach(var user in users)
+            {
+                if(user.OneCv != null)
+                {
+                    ViewBag.CvsExists = true;
+                }
+            }
          
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
+
             return View(users);//För att ge Users till Index view, så Model inte är NULL
         }
 

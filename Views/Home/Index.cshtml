@@ -13,44 +13,52 @@
             <h2>Welcome @User.Identity.Name</h2>
 
             @if (ViewBag.HasCv)//Visa rätt knappar beroende på om man har ett cv eller inte
-                {
-                    <a asp-controller="Cv" asp-action="UpdateCv">Update My Cv</a>
-                    <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
-                }
-                else
-                {
-                    <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
-                    
-                }
+            {
+                <a asp-controller="Cv" asp-action="UpdateCv">Update My Cv</a>
+                <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
+            }
+            else
+            {
+                <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>    
+            }
             @if(User.Identity.IsAuthenticated)
-                {
-                    <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Logout</a> <br>
-                }
+            {
+                <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Logout</a> <br>
+            }
             </Authorized>
 </AuthorizeView>
 </form>
 
 <h2>@ViewBag.CvIndexHeadline</h2>
 <div class="d-flex gap-4 flex-nowrap">
-    @foreach (var user in Model)
+    @if(ViewBag.CvsExists == true)
     {
-        @if(user.OneCv != null)
+        @foreach (var user in Model)
         {
-            <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
-                <div class="flex-grow-0">
-                    <img src="@user.OneCv.ImageFilePath" />
+            @if(user.OneCv != null)
+            {
+                <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
+                    <div class="flex-grow-0">
+                        <img src="@user.OneCv.ImageFilePath" />
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="mb-2"><b>@user.FirstName @user.LastName</b></p>
+                        <p class="mb-2">@(user.OneCv.Education?.Univeristy ?? user.OneCv.Education?.HighSchool ?? "")</p>
+                        <i class="mb-2">@(user.OneCv.ReadCount + " Reads")</i>
+                    </div>
+                    <div class="flex-grow-0 d-flex flex-column gap-2">
+                        <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@user.OneCv.Cid" class="btn btn-outline-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>See Cv</a>
+                        <a asp-controller="Account" asp-action="SendMessage" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-message me-1"></i>Send Message</a>
+                    </div>
                 </div>
-                <div class="flex-grow-1">
-                    <p class="mb-2"><b>@user.FirstName @user.LastName</b></p>
-                    <p class="mb-2">@(user.OneCv.Education?.Univeristy ?? user.OneCv.Education?.HighSchool ?? "")</p>
-                </div>
-                <div class="flex-grow-0 d-flex flex-column gap-2">
-                    <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@user.OneCv.Cid" class="btn btn-outline-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>See Cv</a>
-                    <a asp-controller="Account" asp-action="SendMessage" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-message me-1"></i>Send Message</a>
-                </div>
-            </div>
+            }
         }
     }
+    else
+    {
+        <p>No cvs was found</p>
+    }
+
 
     @* @foreach(var item in Model)
     { *@
