@@ -194,7 +194,7 @@ namespace CVBuddy.Controllers
                 }
                 else//I else hämtas den inloggade användarens Cv, för "My Cv"
                 {
-                    if (!User.Identity.IsAuthenticated)
+                    if (!User.Identity!.IsAuthenticated)
                     {
                         return RedirectToAction("Login", "Account");
                     }
