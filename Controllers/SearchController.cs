@@ -23,6 +23,8 @@ namespace CVBuddy.Controllers
             //}
 
             //Måste göras stegvis för att annars kan man få users som har avaktiverade konton i tom söksträng
+
+
             var users = _context.Users
                 .Where(u => u.IsDeactivated != true)
                 .ToList();

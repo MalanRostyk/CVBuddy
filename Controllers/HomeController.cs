@@ -28,9 +28,14 @@ namespace CVBuddy.Controllers
                 .Include(u => u.OneCv)
                 .Include(u => u.ProjectUsers)
                 .ThenInclude(pu => pu.Project)
-
                 .ToListAsync();
 
+            if (!User.Identity!.IsAuthenticated)
+            {
+                users = users
+                    .Where(u => u.OneCv.IsPrivate != true)
+                    .ToList();
+            }
             ViewBag.CvsExists = false;
             foreach(var user in users)
             {
@@ -40,6 +45,8 @@ namespace CVBuddy.Controllers
                 }
             }
          
+            
+
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
 
