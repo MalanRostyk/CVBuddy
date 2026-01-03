@@ -33,7 +33,7 @@ namespace CVBuddy.Controllers
             if (!User.Identity!.IsAuthenticated)
             {
                 users = users
-                    .Where(u => u.OneCv.IsPrivate != true)
+                    .Where(u => u.OneCv?.IsPrivate != true)
                     .ToList();
             }
             ViewBag.CvsExists = false;

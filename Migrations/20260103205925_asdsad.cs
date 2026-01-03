@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class mmmc : Migration
+    public partial class asdsad : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
