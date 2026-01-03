@@ -29,6 +29,7 @@ namespace CVBuddy.Controllers
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
 
+         
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
 
