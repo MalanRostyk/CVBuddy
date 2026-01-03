@@ -34,68 +34,71 @@
 <div class="d-flex gap-4 flex-nowrap">
     @foreach(var item in Model)
     {
-        @if(item?.OneCv != null)
+@*         @if(item?.OneCv != null)
                 {
-                    @* <a asp-controller="Cv" asp-Action="ReadCv" asp-route-Cid="@item.OneCv.Cid">See Cv</a> *@
-                    @* <div class="d-flex cv-container-start flex-wrap justify-content-center">
+
+                    <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
+
                         <div class="flex-grow-0">
-                            <img src="@item.OneCv.ImageFilePath"/>
+                            <img src="@item.OneCv.ImageFilePath" alt="Profile Image" />
                         </div>
+
                         <div class="flex-grow-1">
-                            <b>@item.GetFullName()</b>
-                            <p>Prutt</p>
+                            <b class="d-block text-truncate">@item.FirstName @item.LastName - @item.OneCv.ReadCount Reads</b>
+                            @(item.OneCv.Education.Univeristy! ?? @item.OneCv.Education.HighSchool! ?? "")
                         </div>
-                        <div class="flex-grow-0">
-                            <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-address-card"></i>See profile</a>
-                            <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-message">Send message</i></a>
-                        </div>
-                    </div> *@
 
-<div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
 
-    <div class="flex-grow-0">
-        <img src="@item.OneCv.ImageFilePath" alt="Profile Image" />
-    </div>
 
-    <div class="flex-grow-1">
-        <b class="d-block text-truncate">@item.FirstName @item.LastName - @item.OneCv.ReadCount Reads</b>
-        <p class="mb-0 ">
-        </p>
-            
-        <p class="mb-0 ">
 
-        @foreach(var experience in item.OneCv.Experiences)
-        {
-            <b>Experience: </b>@experience.Title
-        }
-        </p>
-        @if(item.OneCv.Education.Univeristy! != null)
-        {
-            <p><b>Education: </b>@item.OneCv.Education.Univeristy</p>
-        }
-        else if(item.OneCv.Education.HighSchool != null)
-        {
-            <p><b>Education: </b>@item.OneCv.Education.HighSchool</p>
-        }
+                            <div class="flex-grow-0 d-flex flex-column gap-2">
+                                <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@item.OneCv.Cid" class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-regular fa-address-card me-1"></i>
+                                    See profile
+                                </a>
+                                <a class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-regular fa-message me-1"></i>
+                                    Send message
+                                </a>
+                            </div>
 
-    </div>
-
-    <div class="flex-grow-0 d-flex flex-column gap-2">
-        <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@item.OneCv.Cid" class="btn btn-outline-primary btn-sm">
-            <i class="fa-regular fa-address-card me-1"></i>
-            See profile
-        </a>
-        <a class="btn btn-outline-secondary btn-sm">
-            <i class="fa-regular fa-message me-1"></i>
-            Send message
-        </a>
-    </div>
-
-</div>
+                    </div>
 
 
                 }
-    }
+        @if(item?.OneCv != null)
+                {
+
+                    <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
+
+                        <div class="flex-grow-0">
+                            <img src="@item.OneCv.ImageFilePath" alt="Profile Image" />
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <b class="d-block text-truncate">@item.FirstName @item.LastName - @item.OneCv.ReadCount Reads</b>
+                            @("Education:" + item.OneCv.Education.Univeristy! ?? @item.OneCv.Education.HighSchool! ?? "")
+                        </div>
+
+
+
+
+                            <div class="flex-grow-0 d-flex flex-column gap-2">
+                                <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@item.OneCv.Cid" class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-regular fa-address-card me-1"></i>
+                                    See profile
+                                </a>
+                                <a class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa-regular fa-message me-1"></i>
+                                    Send message
+                                </a>
+                            </div>
+
+                    </div>
+
+
+                }*@
+    } 
 </div>
 @* <table class="table table-dark">
     <thead>
