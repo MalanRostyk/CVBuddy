@@ -289,10 +289,13 @@ namespace CVBuddy.Controllers
             ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             ViewBag.HeadlineInterest = "Interests";
 
+            
 
             var cv = await GetLoggedInUsersCvAsync();
-            if(cv != null)
+            
+            if (cv != null)
             {
+                ViewBag.IsPrivate = cv.IsPrivate;
                 return View(cv);
             }
             else
@@ -311,6 +314,7 @@ namespace CVBuddy.Controllers
             if (cvOldVersion == null)
                 return NotFound();
 
+            cvOldVersion.IsPrivate = cv.IsPrivate;
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
             

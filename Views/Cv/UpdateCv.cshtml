@@ -15,10 +15,26 @@
 
         <div class="mb-2">
             Image: <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" style="background-color: #e6efff;" /> @* accept="image/*" gör så att bara alla bilformat går hitt när en bild ska väljas, Ska inte stå CvImages*@
-            <img src="@Model.ImageFilePath"/>
+            <img src="@Model.ImageFilePath" alt="Profile Image"/>
         </div>
     </div>
 
+                                                                                                                @*IsPrivate *@
+    <div class="mb-2">
+        <b>Private profile - </b>
+        <select asp-for="@Model.IsPrivate">
+            @if (ViewBag.IsPrivate)
+            {
+                <option value="false">Public</option>
+                <option selected value="true">Private</option>
+            }
+            else
+            {
+                <option selected value="false">Public</option>
+                <option value="true">Private</option>
+            }
+                </select>
+    </div> 
 
     <h3>@ViewBag.HeadlineExperiences</h3>                                                        @* Experiences *@
     <div class="mb-4" id="Experience-Container" data-experience-index="@Model.Experiences.Count">

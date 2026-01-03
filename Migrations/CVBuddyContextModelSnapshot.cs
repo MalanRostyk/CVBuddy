@@ -90,6 +90,9 @@ namespace CVBuddy.Migrations
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ReadCount")
                         .HasColumnType("int");
 
@@ -335,9 +338,6 @@ namespace CVBuddy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeactivated")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPrivate")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
