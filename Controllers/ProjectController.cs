@@ -27,6 +27,9 @@ namespace CVBuddy.Controllers
             ViewBag.ProjectCreateHeadline = "Create a Project";
 
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound("inte jaag");
+            //var userId = _userManager.GetUserId(User);
 
             //Lägga till sig själv i projektet som deltagare innan det skapas
             Project newProj = new();
@@ -46,7 +49,7 @@ namespace CVBuddy.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound("det var jag");
             }
 
 
@@ -55,17 +58,17 @@ namespace CVBuddy.Controllers
             //eftersom att Pid tilldelas först när den har serialiserats till Db
 
             var userId = _userManager.GetUserId(User); //Hämtar användarens id
-            var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
+            //var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
             var projId = await _context.Projects.Where(createdProject => createdProject.Pid == proj.Pid).Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades
 
-            await _context.CvProjects.AddAsync(new CvProject //Lägg till CvProject direkt i DbSet
-            {
-                ProjId = projId,
-                CvId = cvId
+            //await _context.CvProjects.AddAsync(new CvProject //Lägg till CvProject direkt i DbSet
+            //{
+            //    ProjId = projId,
+            //    CvId = cvId
                 
-            });
+            //});
 
-            await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
+            //await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
 
             await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
             {
