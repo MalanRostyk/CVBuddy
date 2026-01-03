@@ -1,3 +1,25 @@
 ﻿@model List<Project>
 
 <a asp-action="CreateProject">Create new Project</a>
+@if (Model != null)
+{
+    @foreach (var project in Model)
+    {
+        <div>
+            <div>
+                <h3>@project.Title</h3>
+            </div>
+            <div>
+                <a asp-action="UpdateProject" asp-route-id="@project.Pid">Update a project</a>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div>
+        <p class="text-danger">You have no Projects</p>
+    </div>
+
+}
+
