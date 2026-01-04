@@ -52,6 +52,10 @@ img{
     box-shadow: 0 6px 18px rgba(0, 0, 255, 0.25);
 }
 
+.img-file-picker {
+    background-color: #e6efff;
+}
+
 .read-banner {
     display: flex;
     border: 2px solid #72acf2;

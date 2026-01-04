@@ -14,7 +14,7 @@
         <input type="hidden" asp-for="ImageFilePath" />
 
         <div class="mb-2">
-            Image: <input asp-for="ImageFile" type="file" accept="image/*" class="form-control" style="background-color: #e6efff;" /> @* accept="image/*" gör så att bara alla bilformat går hitt när en bild ska väljas, Ska inte stå CvImages*@
+            Image: <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker"/> @* accept="image/*" gör så att bara alla bilformat går hitt när en bild ska väljas, Ska inte stå CvImages*@
             <img src="@Model.ImageFilePath" alt="Profile Image"/>
         </div>
     </div>
