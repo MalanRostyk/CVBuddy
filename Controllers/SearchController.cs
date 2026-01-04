@@ -24,10 +24,22 @@ namespace CVBuddy.Controllers
 
             //Måste göras stegvis för att annars kan man få users som har avaktiverade konton i tom söksträng
 
+            List<User> users = new();
 
-            var users = _context.Users
-                .Where(u => u.IsDeactivated != true)
+            if (User.Identity!.IsAuthenticated)
+            {
+                users = _context.Users
+                .Where(u => !u.IsDeactivated)
                 .ToList();
+            }
+            else
+            {
+                users = _context.Users
+                .Where(u => !u.IsDeactivated && !u.OneCv.IsPrivate)
+                .ToList();
+            }
+
+
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
