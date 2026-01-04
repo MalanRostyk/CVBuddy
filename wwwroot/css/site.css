@@ -83,9 +83,10 @@ img{
     background-color: #7abfeb;
 }
 
-#notification {
+.notification-container {
     color: #f2f2f2;
     background-color: #0d6efd;
-    border-radius: 50%;
+    border-radius: 35%;
+    padding: 0em 0.4em;
 }
 
