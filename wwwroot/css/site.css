@@ -83,3 +83,9 @@ img{
     background-color: #7abfeb;
 }
 
+#notification {
+    color: #f2f2f2;
+    background-color: #0d6efd;
+    border-radius: 50%;
+}
+
