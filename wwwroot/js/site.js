@@ -31,45 +31,23 @@
 //    skillIndex++;
 //}
 
-
-//Använder Polling, att fråga Db med jämna mellanrum, en "listen del" en "act del"
-
-//listen delen - utför "Polling", frågar databasen med jämna mellanrum efter antal lästa meddelanden för en användare
-
-//let lastUnreadCount = null;
-
-//function ListenForUnreadChanges(notReadCount) {
-//    if (notReadCount !== lastUnreadCount) {//Uppdatera bara en ändring skedde
-//        UpdateNotification(notReadCount);
-//        lastUnreadCount = notReadCount;
-//    }
-//}
-////act del - beroende på antal olästa meddelanden så göms, och uppdateras notisen
-//function UpdateNotification(notReadCount) {
-//    const notification = document.getElementById("notification");
-
-//    if (notReadCount > 0) {
-//        notification.textContent = notReadCount;
-//        notification.classList.add("notification-container");//vid tom textContent syns styling för denna klass därför läggs till i klassen när stylingen behövs
-//    } else {
-//        notification.textContent = "";
-//        notification.classList.remove("notification-container");
-//    }
-//}
-
-
+//Hämta notification HTML elementet som ska hanteras
 const notification = document.getElementById("notification");
+
+//Eventlyssnare som lyssnar på när domänen laddas om(när sidan refreshas på något sätt)
 document.addEventListener("DOMContentLoaded", function () {
-    ShowNotification();
+    ShowNotification();//Funktionen anropas då
 });
+
+//Funktionen som anropas
 function ShowNotification() {
     
-    const notReadCount = Number(notification.textContent)
+    const notReadCount = Number(notification.textContent)//parsear elementets text innehåll till ett nummer
     if (notReadCount > 0) {
-        notification.classList.add("notification-container");
+        notification.classList.add("notification-container");//lägg till till styling för elemetet
     } else {
-        notification.textContent = "";
-        notification.classList.remove("notification-container");
+        notification.textContent = "";//tömm elementets text innehåll
+        notification.classList.remove("notification-container");//ta bort styling, eftersom padding används, då när text innehållet är "" så syns elementets styling ändå, därför tas den bort när den inte har något innehåll, då syns inget
     }
 }
 

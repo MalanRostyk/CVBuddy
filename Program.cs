@@ -12,8 +12,6 @@ namespace CVBuddy
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSignalR();//Lägg till SignalR services i container
-
             builder.Services.AddDbContext<CVBuddyContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration
@@ -40,12 +38,6 @@ namespace CVBuddy
 
             app.UseAuthentication();//Måste komma först
             app.UseAuthorization();
-
-            //Specificera specifik Hub för clienter att ansluta till
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<ChatHub>("/chat");
-            });
 
             app.MapStaticAssets();
             app.MapControllerRoute(
