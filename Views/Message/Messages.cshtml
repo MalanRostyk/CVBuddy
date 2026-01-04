@@ -9,7 +9,7 @@
                 <tr>
                     <td>From: @message.Sender</td>
                     <td>Sent: @message.SendDate.ToShortDateString()</td>
-                    <td><a asp-controller="Message" asp-action="ReadMsg" asp-route-mid="@message.Mid">Read</a></td>
+                    <td><a asp-controller="Message" asp-action="ReadMsg" asp-route-mid="@message.Mid" class="btn btn-outline-light">Read</a></td>
                     <td>
                         <form asp-action="UpdateIsRead" asp-route-mid="@message.Mid" method="post">
                             <select asp-for="@message.IsRead">
@@ -24,7 +24,7 @@
                                     <option selected value="false">Not read</option>
                                 }
                             </select>
-                            <input type="submit" class="btn btn-outline-secondary"  value="Mark read status"/>
+                            <input type="submit" class="btn btn-outline-success"  value="Mark read status"/>
                         </form>
                     </td>
                 </tr>

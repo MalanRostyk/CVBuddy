@@ -38,6 +38,13 @@ img{
     object-fit: cover;
 }
 
+select {
+    color: #ebebeb;
+    border-radius: 0.5em;
+    border: 1px solid #ebebeb;
+    background-color: #333;
+}
+
 .cv-container {
     border: 1px solid #e5e7eb;
     border-radius: 12px;
