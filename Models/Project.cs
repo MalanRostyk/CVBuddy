@@ -19,9 +19,9 @@ namespace CVBuddy.Models
 
         [Required]
         //[DataType(DataType.Date)] //Kom tillbaka hit, den sätter i view startande datumet till 0001-01-01
-        public DateTime StartDate{ get; set; }
+        public DateTime StartDate { get; set; } = DateTime.MinValue;
 
-        public DateTime? Enddate { get; set; } //Ändra till stort D, glöm ej att även ändra i view också
+        public DateTime? Enddate { get; set; }  //Ändra till stort D, glöm ej att även ändra i view också
         [NotMapped]
         public List<User> UsersInProject { get; set; } = new();//ONödig, kan ej användas efter att det serialiserats, när det kommer från db så är den null oavsett
 
