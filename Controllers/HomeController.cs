@@ -51,15 +51,19 @@ namespace CVBuddy.Controllers
 
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
-
+            string sendersName = "";
             ViewBag.CanSend = true;
             if (User.Identity!.IsAuthenticated)
             {
+
                 var userId = _userManager.GetUserId(User);
                 if (ViewBag.HasCv)
                 {
                     if (userId == usersCv!.UserId)
+                    {
                         ViewBag.CanSend = false;
+                    }
+                        
                 }
             }
 
