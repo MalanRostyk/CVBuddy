@@ -34,7 +34,12 @@
     connection.on("RecieveMessage", function (user, message) {
         const li = document.createElement("li");
         li.textContent = user + ": " + message;
-        document.getElementById("discussion").appendChild(li);
+        const discussionList = document.getElementById("discussion");
+        discussionList.appendChild(li);
+        const msgList = discussionList.querySelectorAll("li");
+
+        const notification = document.getElementById("notification");
+        notification.textContent = msgList.length;
     });
 </script>
 
