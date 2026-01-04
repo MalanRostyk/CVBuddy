@@ -58,7 +58,7 @@ namespace CVBuddy.Controllers
                 var userId = _userManager.GetUserId(User);
                 if (ViewBag.HasCv)
                 {
-                    if (userId == usersCv.UserId)
+                    if (userId == usersCv!.UserId)
                         ViewBag.CanSend = false;
                 }
             }
