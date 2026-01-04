@@ -100,6 +100,7 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult CreateCv()
         {
+            #region coments
             //Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall
             //ViewBag.Headline = "Cv";
             //ViewBag.HeadlineExperiences = "Experiences";
@@ -110,8 +111,9 @@ namespace CVBuddy.Controllers
             //ViewBag.HeadlineInterest = "Interests";
 
             //Ej behov av transaktion, av samma anledning som för GetLoggedInUsersCvAsync()
-            var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
-            var userId = _userManager.GetUserId(User);
+            //var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
+            //var userId = _userManager.GetUserId(User);
+            #endregion
             return View(new Cv());
         }
 

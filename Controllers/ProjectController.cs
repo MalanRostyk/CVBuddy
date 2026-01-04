@@ -16,9 +16,17 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProject()
+        public async Task<IActionResult> GetProject()
         {
-            var projects = _context.Projects.ToList();
+            var userId = _userManager.GetUserId(User);
+
+            var projects = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToListAsync();
+
+            if (projects == null)
+                return NotFound();
+            //var projects = _context.Projects.ToList();
             return View(projects);
         }
 
@@ -79,7 +87,7 @@ namespace CVBuddy.Controllers
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
 
-
+            #region Coments
             //FUNKAR, najs. Felet var, Ändringarna som gjordes var, att allt behövde göra i en speciell ordning. Tilldela värden till proj innan Post metod.
             //I Post metod har inte proj ett Pid än. Lägg till proj i Dbset. Serialiser via save changes. Ett Pid tilldelas. 
             //Hämta användares id som samt cvs id som förr. Men hämta även samma projs Pid som serialiserades nyss.
@@ -129,7 +137,7 @@ namespace CVBuddy.Controllers
             //};
             //await _context.ProjectUsers.AddAsync(userProject);
             //await _context.SaveChangesAsync();
-
+            #endregion
 
             return RedirectToAction("Index", "Home");
         }
