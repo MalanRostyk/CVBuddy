@@ -6,13 +6,12 @@ using System.Net.WebSockets;
 
 namespace CVBuddy.Controllers
 {
-    public class AccountController : HomeController
+    public class AccountController : BaseController
     {
         private SignInManager<User> signInManager;
-
-        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> s) : base(u, c)
+        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c)
         {
-            signInManager = s;
+            signInManager = sm;
         }
 
         [HttpGet]
