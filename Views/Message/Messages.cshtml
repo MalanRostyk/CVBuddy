@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Message>
+
+<h2>Messages</h2>
+<div>
+    <table class="table table-dark">
+        <tbody>
+            @foreach (var message in Model)
+            {
+                <tr>
+                    <td>From: @message.Sender</td>
+                    <td>Sent: @message.SendDate.ToShortDateString()</td>
+                    <td><a asp-controller="Message" asp-action="ReadMsg" asp-route-mid="@message.Mid">Read</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -21,6 +21,7 @@ namespace CVBuddy.Models
         public DbSet<CvProject> CvProjects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -117,6 +118,13 @@ namespace CVBuddy.Models
                .WithOne(a => a.OneUser)
                .HasForeignKey<Address>(a => a.UserId)
                .OnDelete(DeleteBehavior.Cascade);
-        }
+
+            //User > Message 1:N
+            builder.Entity<Message>()
+                .HasOne(m => m.Reciever)
+                .WithMany(r => r.MessageList)
+                .HasForeignKey(m => m.RecieverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            }
     }
 }

@@ -267,6 +267,39 @@ namespace CVBuddy.Migrations
                     b.ToTable("CvProjects");
                 });
 
+            modelBuilder.Entity("CVBuddy.Models.Message", b =>
+                {
+                    b.Property<int>("Mid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Mid"));
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MessageString")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RecieverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SendDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Mid");
+
+                    b.HasIndex("RecieverId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
                 {
                     b.Property<int>("Pid")
@@ -629,6 +662,17 @@ namespace CVBuddy.Migrations
                     b.Navigation("OneProject");
                 });
 
+            modelBuilder.Entity("CVBuddy.Models.Message", b =>
+                {
+                    b.HasOne("CVBuddy.Models.User", "Reciever")
+                        .WithMany("MessageList")
+                        .HasForeignKey("RecieverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Reciever");
+                });
+
             modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
                 {
                     b.HasOne("CVBuddy.Models.Project", "Project")
@@ -726,6 +770,8 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.User", b =>
                 {
+                    b.Navigation("MessageList");
+
                     b.Navigation("OneAddress")
                         .IsRequired();
 
