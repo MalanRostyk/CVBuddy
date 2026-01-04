@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
 {
-    public class MessageController : Controller
+    public class MessageController : BaseController
     {
-        protected readonly UserManager<User> _userManager;
-        protected readonly CVBuddyContext _context;
-        public MessageController(UserManager<User> u, CVBuddyContext c)
+
+        public MessageController(UserManager<User> u, CVBuddyContext c) : base(u, c)
         {
-            _userManager = u;
-            _context = c;
         }
 
         [HttpGet]
