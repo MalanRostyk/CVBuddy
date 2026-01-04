@@ -4,7 +4,7 @@
 
 @* Styla snyggt  *@
 <div class="d-flex flex-row justify-content-center gap-4">
-    @if (ViewBag.NotLoggedInUsersCv != true) @* bolean uttrycket använder inte !bool för att det är inte ett uttryck tydligen så jag körde bool != true *@
+    @if (!ViewBag.NotLoggedInUsersCv) @* bolean uttrycket använder inte !bool för att det är inte ett uttryck tydligen så jag körde bool != true *@
     {
         <a clas="btn-primary ml-1" asp-controller="Cv" asp-action="UpdateCv"><i class="fa-solid fa-pencil"></i>Update My Cv</a>
         <a asp-controller="Cv" asp-action="DeleteCv" asp-route-Cid="@Model.Cid"><i class="fa-solid fa-x"></i>DELETE</a>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="interactions-read-banner">
-        @if (ViewBag.NotLoggedInUsersCv == true)
+        @if (ViewBag.NotLoggedInUsersCv)
         {
             <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-address-card"></i></a>
             <a asp-controller="Message" asp-action="SendMsg"><i class="fa-regular fa-message"></i></a>

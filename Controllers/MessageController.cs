@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
@@ -31,6 +32,9 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> SendMsg(Message msg)
         {
+            if (!ModelState.IsValid)
+                return NotFound("Dumbass vet du inte hur man skickar saker eller");
+
             await _context.AddAsync(msg);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
@@ -44,6 +48,8 @@ namespace CVBuddy.Controllers
                 .Where(m => m.RecieverId == userId)
                 .OrderByDescending(m => m.SendDate)
                 .ToList();
+
+            ViewBag.HasMessages = msgList.Count > 0;
             return View(msgList);
         }
 

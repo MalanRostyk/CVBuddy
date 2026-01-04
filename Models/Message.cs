@@ -21,6 +21,6 @@ namespace CVBuddy.Models
 
         [ForeignKey(nameof(RecieverId))]
         public string RecieverId { get; set; }
-        public User Reciever { get; set; }
+        public User? Reciever { get; set; } //nullable för att inte modelstate ska bli invalid vid post, Går inte att routea hela objekt
     }
 }
