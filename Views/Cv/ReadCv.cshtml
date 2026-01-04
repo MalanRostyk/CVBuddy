@@ -32,7 +32,7 @@
         @if (ViewBag.NotLoggedInUsersCv == true)
         {
             <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-address-card"></i></a>
-            <a asp-controller="Message" asp-action="SendMsg"><i class="fa-regular fa-message"></i></a>
+            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id"><i class="fa-regular fa-message"></i></a>
         }
     </div>
 </div>
