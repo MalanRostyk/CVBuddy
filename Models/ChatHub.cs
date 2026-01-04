@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+
 namespace CVBuddy.Models
 {
     public class ChatHub : Hub
@@ -8,5 +9,6 @@ namespace CVBuddy.Models
         {
             await Clients.All.SendAsync("RecieveMessage", user, message);
         }
+
     }
 }

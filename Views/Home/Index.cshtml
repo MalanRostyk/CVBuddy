@@ -14,14 +14,21 @@
     </div>
 </div> 
 
-<script type="module">
+@* <script type="module">
     // gick ej med es-module var tvungen att gör det globalt istället
     import * as signalR from "https://cdn.jsdelivr.net/npm/@@microsoft/signalr@9.0.6/+esm";
     
     const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     
     connection.start().catch(err => console.error(err.toString()));
-
+    
+    setInterval (() => {
+        connection.invoke("notify");
+    }, 5000); /* 5 sek intervall */
+    
+    
+    
+    
     document.getElementById("send-message").addEventListener("click", function (event) {
         const user = document.getElementById("display-name").value;
         const message = document.getElementById("message").value;
@@ -44,7 +51,7 @@
         notification.classList.add("notification-container");
         
     });
-</script>
+</script> *@
 
 <form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
     <div class="input-group">

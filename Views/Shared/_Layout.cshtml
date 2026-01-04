@@ -20,6 +20,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
                 <div class="navbar-collapse collapse ">
                     <ul class="navbar-nav ">
                         <li class="nav-item">
@@ -41,11 +42,13 @@
                         }
                         else
                         {
+                            
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Message" asp-action="Messages">
+                                    <a class="nav-link" asp-controller="Message" asp-action="Messages">
                                     <i class="fa-solid fa-envelope"></i>
-                                    Messages <b id="notification"></b>
+                                    Messages <b id="notification">@ViewBag.NotReadCount</b>
                                 </a>
+                                
                             </li>
                         }
                     </ul>

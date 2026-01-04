@@ -12,7 +12,7 @@
                     <td><a asp-controller="Message" asp-action="ReadMsg" asp-route-mid="@message.Mid">Read</a></td>
                     <td>
                         <form asp-action="UpdateIsRead" asp-route-mid="@message.Mid" method="post">
-                            <select asp-for="@message.IsRead" class="form-select">
+                            <select asp-for="@message.IsRead">
                                 @if (message.IsRead)
                                 {
                                     <option selected value="true">Is read</option>

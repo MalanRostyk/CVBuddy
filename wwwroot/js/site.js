@@ -32,6 +32,47 @@
 //}
 
 
+//Använder Polling, att fråga Db med jämna mellanrum, en "listen del" en "act del"
+
+//listen delen - utför "Polling", frågar databasen med jämna mellanrum efter antal lästa meddelanden för en användare
+
+//let lastUnreadCount = null;
+
+//function ListenForUnreadChanges(notReadCount) {
+//    if (notReadCount !== lastUnreadCount) {//Uppdatera bara en ändring skedde
+//        UpdateNotification(notReadCount);
+//        lastUnreadCount = notReadCount;
+//    }
+//}
+////act del - beroende på antal olästa meddelanden så göms, och uppdateras notisen
+//function UpdateNotification(notReadCount) {
+//    const notification = document.getElementById("notification");
+
+//    if (notReadCount > 0) {
+//        notification.textContent = notReadCount;
+//        notification.classList.add("notification-container");//vid tom textContent syns styling för denna klass därför läggs till i klassen när stylingen behövs
+//    } else {
+//        notification.textContent = "";
+//        notification.classList.remove("notification-container");
+//    }
+//}
+
+
+const notification = document.getElementById("notification");
+document.addEventListener("DOMContentLoaded", function () {
+    ShowNotification();
+});
+function ShowNotification() {
+    
+    const notReadCount = Number(notification.textContent)
+    if (notReadCount > 0) {
+        notification.classList.add("notification-container");
+    } else {
+        notification.textContent = "";
+        notification.classList.remove("notification-container");
+    }
+}
+
 let containerSkills = document.getElementById("Skill-Container");
 let skillIndex = parseInt(containerSkills.dataset.skillIndex);
 function addSkill() {

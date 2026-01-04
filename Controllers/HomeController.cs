@@ -9,21 +9,29 @@ using System.Security.Cryptography;
 
 namespace CVBuddy.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        protected readonly UserManager<User> _userManager;
-        protected readonly CVBuddyContext _context;
-        public HomeController(UserManager<User> u, CVBuddyContext c)
+        
+        public HomeController(UserManager<User> u, CVBuddyContext c) : base(u, c)
         {
-            _userManager = u;
-            _context = c;
+        }
+
+        private int GetNotReadCount()
+        {
+            if (User.Identity!.IsAuthenticated)
+            {
+                var userId = _userManager.GetUserId(User);
+
+                return _context.Messages
+                    .Where(m => m.RecieverId == userId && !m.IsRead)
+                    .Count();
+            }
+            return 0;
         }
 
         public async Task<IActionResult> Index()
         {
-
-            
-
+            Console.WriteLine(GetNotReadCount() + "ASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
                 .Where(u => u.IsDeactivated != true)

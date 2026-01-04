@@ -16,8 +16,6 @@ namespace CVBuddy.Controllers
             _context = c;
         }
 
-
-
         [HttpGet]
         public IActionResult SendMsg(string userId)
         {
