@@ -1,17 +1,41 @@
 ﻿@model List<Project>
 
-<a asp-action="CreateProject">Create new Project</a>
-@if (Model != null)
+<a asp-action="CreateProject" class="btn btn-primary">Create new Project</a>
+@if (Model.Count > 0)
 {
     @foreach (var project in Model)
     {
-        <div class="read-banner">
-            <div class="col-lg-">
-                <h3>@project.Title :</h3>
-                <p>@project.Description</p>
-            </div>
-            <div>
-                <a asp-action="UpdateProject" asp-route-id="@project.Pid">Update a project</a>
+        <div class="min-vh-80 read-banner">
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project description : </strong>@project.Description</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                </div>
+
+                <div class="col-7">
+                    @if (project.Enddate == null)
+                    {
+                        <p><strong>Project status : </strong>Ongoing project</p>
+                    }
+                    else
+                    {
+                        <p><strong>Project ended : </strong>@project.Enddate?.ToString("yyyy-mm-dd")</p>
+                    }
+                </div>
+
+                <div class="col-5 d-flex justify-content-end align-items-end">
+                    <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
+                </div>
+
             </div>
         </div>
     }
