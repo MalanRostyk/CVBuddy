@@ -10,6 +10,23 @@
                     <td>From: @message.Sender</td>
                     <td>Sent: @message.SendDate.ToShortDateString()</td>
                     <td><a asp-controller="Message" asp-action="ReadMsg" asp-route-mid="@message.Mid">Read</a></td>
+                    <td>
+                        <form asp-action="UpdateIsRead" asp-route-mid="@message.Mid" method="post">
+                            <select asp-for="@message.IsRead" class="form-select">
+                                @if (message.IsRead)
+                                {
+                                    <option selected value="true">Is read</option>
+                                    <option value="false">Not read</option>
+                                }
+                                else
+                                {
+                                    <option value="true">Is read</option>
+                                    <option selected value="false">Not read</option>
+                                }
+                            </select>
+                            <input type="submit" class="btn btn-outline-secondary" />
+                        </form>
+                    </td>
                 </tr>
             }
             @if (ViewBag.HasMesseges != true)
@@ -18,4 +35,5 @@
             }
         </tbody>
     </table>
+    
 </div>

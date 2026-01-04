@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
@@ -14,6 +15,7 @@ namespace CVBuddy.Controllers
             _userManager = u;
             _context = c;
         }
+
 
 
         [HttpGet]
@@ -48,6 +50,17 @@ namespace CVBuddy.Controllers
             ViewBag.HasMesseges = msgList.Count > 0;
 
             return View(msgList);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateIsRead(Message message, int mid)
+        {
+            Message? oldState = _context.Messages
+                .Where(m => m.Mid == mid).FirstOrDefault();
+
+            oldState!.IsRead = message.IsRead;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Messages");
         }
 
         [HttpGet]
