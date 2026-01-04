@@ -44,6 +44,9 @@ namespace CVBuddy.Controllers
                 .Where(m => m.RecieverId == userId)
                 .OrderByDescending(m => m.SendDate)
                 .ToList();
+
+            ViewBag.HasMesseges = msgList.Count > 0;
+
             return View(msgList);
         }
 
