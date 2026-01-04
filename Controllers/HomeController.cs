@@ -22,6 +22,8 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> Index()
         {
 
+            
+
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
                 .Where(u => u.IsDeactivated != true)
@@ -49,6 +51,17 @@ namespace CVBuddy.Controllers
 
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
+
+            ViewBag.CanSend = true;
+            if (User.Identity!.IsAuthenticated)
+            {
+                var userId = _userManager.GetUserId(User);
+                if (ViewBag.HasCv)
+                {
+                    if (userId == usersCv.UserId)
+                        ViewBag.CanSend = false;
+                }
+            }
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
