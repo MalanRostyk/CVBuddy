@@ -11,6 +11,7 @@ namespace CVBuddy.Models
 
         public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
 
+
         [Required]
         public string FirstName{ get; set; }
         [Required]

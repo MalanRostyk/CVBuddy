@@ -23,7 +23,6 @@ namespace CVBuddy.Controllers
         {
 
             
-
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
                 .Where(u => u.IsDeactivated != true)
@@ -31,6 +30,9 @@ namespace CVBuddy.Controllers
                 .Include(u => u.ProjectUsers)
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
+
+
+            
 
             if (!User.Identity!.IsAuthenticated)
             {
@@ -65,8 +67,22 @@ namespace CVBuddy.Controllers
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
-            return View(users);//För att ge Users till Index view, så Model inte är NULL
+            //-----ändring här-----//lista av projekt i user, tilldela listan här 
+            var projList = await _context.Projects
+                .Where(p => p.Enddate != null)
+                .OrderByDescending(p => p.PublisDate)
+                .Take(10)
+                .ToListAsync();
+
+            var vm = new HomeIndexViewModel
+            {
+                UserList = users,
+                ProjectList = projList
+            };
+
+            return View(vm);//För att ge Users till Index view, så Model inte är NULL
         }
+            //-----hit-----
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {

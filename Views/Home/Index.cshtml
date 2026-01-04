@@ -1,4 +1,4 @@
-﻿@model IEnumerable<User>
+﻿@model HomeIndexViewModel
 
 <div class="container">
     <div>
@@ -79,7 +79,7 @@
 <div class="d-flex gap-4 flex-wrap">
     @if(ViewBag.CvsExists == true)
     {
-        @foreach (var user in Model)
+        @foreach (var user in Model.UserList)
         {
             @if(user.OneCv != null)
             {
@@ -108,7 +108,7 @@
         <p>No cvs was found</p>
     }
 
-
+ 
     @* @foreach(var item in Model)
     { *@
 @*         @if(item?.OneCv != null)
@@ -176,7 +176,9 @@
 
                 }*@
     @* }  *@
+   
 </div>
+
 @* <table class="table table-dark">
     <thead>
         <tr>
@@ -221,3 +223,39 @@
     </Authorized>
 </AuthorizeView>
 </form> *@
+
+
+@* -----Projects----- *@
+<form method="post" asp-controller="Project" asp-action="ProjectDetails">
+    @foreach(var project in Model.ProjectList)
+    {
+         <div class="min-vh-80 read-banner">
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project description : </strong>@project.Description</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
+                </div>
+
+                 <div class="col-5 d-flex justify-content-end align-items-end">
+                    <a asp-controller="Project" asp-action="ProjectDetails" asp-route-id="@project.Pid">Join project</a>
+                </div>
+
+
+            </div>
+        </div>
+        
+    }
+</form>
