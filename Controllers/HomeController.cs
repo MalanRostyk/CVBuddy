@@ -67,22 +67,32 @@ namespace CVBuddy.Controllers
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
-            //-----ändring här-----//lista av projekt i user, tilldela listan här 
+            //-----ändring här--------------------------------------------------------------------------
             var projList = await _context.Projects
-                .Where(p => p.Enddate != null)
+                .Where(p => p.Enddate == null)
+                .Include(p => p.ProjectUsers)
+                .ThenInclude(p => p.User)
                 .OrderByDescending(p => p.PublisDate)
                 .Take(10)
+                .ToListAsync();
+
+            var projUser = await _context.ProjectUsers
+                .Include(pu => pu.Project)
+                .ThenInclude(p => p.ProjectUsers)
+                .Include(pu => pu.User)
+                .ThenInclude(u => u.ProjectUsers)
                 .ToListAsync();
 
             var vm = new HomeIndexViewModel
             {
                 UserList = users,
-                ProjectList = projList
+                ProjectList = projList,
+                ProjectUsers = projUser
             };
 
             return View(vm);//För att ge Users till Index view, så Model inte är NULL
         }
-            //-----hit-----
+            //-----hit--------------------------------------------------------------------------------------
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {

@@ -247,12 +247,15 @@ namespace CVBuddy.Migrations
                 name: "ProjectUsers",
                 columns: table => new
                 {
+                    PUId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ProjId = table.Column<int>(type: "int", nullable: false),
+                    IsOwner = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectUsers", x => new { x.UserId, x.ProjId });
+                    table.PrimaryKey("PK_ProjectUsers", x => x.PUId);
                     table.ForeignKey(
                         name: "FK_ProjectUsers_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -514,6 +517,11 @@ namespace CVBuddy.Migrations
                 name: "IX_ProjectUsers_ProjId",
                 table: "ProjectUsers",
                 column: "ProjId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectUsers_UserId",
+                table: "ProjectUsers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Skills_CvId",

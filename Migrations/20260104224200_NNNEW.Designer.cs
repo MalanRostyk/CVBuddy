@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260104202413_NNNEW")]
+    [Migration("20260104224200_NNNEW")]
     partial class NNNEW
     {
         /// <inheritdoc />
@@ -337,15 +337,27 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PUId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PUId"));
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProjId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "ProjId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PUId");
 
                     b.HasIndex("ProjId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ProjectUsers");
                 });

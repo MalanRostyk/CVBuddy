@@ -334,15 +334,27 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PUId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PUId"));
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProjId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "ProjId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PUId");
 
                     b.HasIndex("ProjId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ProjectUsers");
                 });

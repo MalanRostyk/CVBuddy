@@ -23,9 +23,9 @@ namespace CVBuddy.Controllers
             var userId = _userManager.GetUserId(User);
 
             var projects = await _context.Projects
-                .Include(p => p.ProjectUsers)
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToListAsync();
-
+                .Include(p => p.ProjectUsers)//---------viktig ändring---------------------------------------------------
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner == true)).ToListAsync();
+            //-------------------------------------------------------------------------------------------------------------
             if (projects == null)
                 return NotFound();
             //var projects = _context.Projects.ToList();
@@ -84,7 +84,8 @@ namespace CVBuddy.Controllers
             await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
             {
                 ProjId = projId,
-                UserId = userId
+                UserId = userId,
+                IsOwner = true//-----Ändring--------------------------------------------------------------------------------------
             });
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
@@ -183,5 +184,27 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        //-----Ändring--------------------------------------------------------------------------------------------
+        [HttpPost]
+        public async Task<IActionResult> ProjectDetails(int PUId)/*, string uid)*/
+        {
+            var projectuser = await _context.ProjectUsers.Where(pu => pu.PUId == PUId).FirstOrDefaultAsync();
+            var userId = _userManager.GetUserId(User);
+
+            bool alreadyJoined = await _context.ProjectUsers.AnyAsync(pu => pu.ProjId == PUId && pu.UserId == userId);
+            if (alreadyJoined)
+                return RedirectToAction("Index", "Home");
+
+            await _context.ProjectUsers.AddAsync(new ProjectUser 
+            {
+                ProjId = projectuser.ProjId,
+                UserId = userId,
+                IsOwner = false
+            });
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+        //-----------------------------------------------------------------------------------------------------------
     }
 }
