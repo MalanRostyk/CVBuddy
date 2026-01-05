@@ -31,7 +31,7 @@
             <h2>Cv</h2>
             @if (ViewBag.HasExperience)
             {
-                <h2>Experiences</h2>
+                <h2 class="d-block">Experiences</h2>
                 <div class="mb-4">
                     @foreach (var experience in Model.Cv!.Experiences)
                     {
@@ -65,36 +65,65 @@
                 </div>
             }
             
-            <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
+            <div>
                 @if (ViewBag.HasSkills)
                 {
-                    @foreach(var skill in Model.Cv!.Skills)
-                    {
-                        <div class="flex-grow-2 content-item">
-                            <p class="mb-0">@skill.ASkill</p>
-                            <p class="mb-0">@skill.Description</p>
-                            <p class="mb-0">@skill.Date</p>
-                        </div>
-                    }
+                    <h2>Skills</h2>
+                    <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
+                        @foreach (var skill in Model.Cv!.Skills)
+                        {
+                            <div class="flex-grow-2 content-item">
+                                <p class="mb-0"><b>@skill.ASkill</b></p>
+                                <p class="mb-0">@skill.Description</p>
+                                <p class="mb-0">@skill.Date</p>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
             <div class="mb-4 d-flex gap-3">
-                @if (ViewBag.HasCertificates)
-                {
-                    @foreach (var certificate in Model.Cv!.Certificates)
-                    {
-                        <div class="content-item">
-                            <p class="mb-0">@certificate.CertName</p>
-                        </div>
-                    }
-                }
                 @if (ViewBag.HasInterests)
                 {
                     <div class="content-item">
-                        @foreach (var interest in Model.Cv!.Interests)
-                        {
-                            <p class="mb-0">@interest.InterestName</p>
-                        }
+                        <h2 class="d-block">Interests</h2>
+                        <ul>
+                            @foreach (var interest in Model.Cv!.Interests)
+                            {
+                                <li class="mb-0">@interest.InterestName</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                
+                @if (ViewBag.HasCertificates)
+                {
+                    <div class="content-item">
+                        <h2>Certificates</h2>
+                        <ul>
+                            @foreach (var certificate in Model.Cv!.Certificates)
+                            {
+                                <li>
+                                    <p class="mb-0">@certificate.CertName</p>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                @if (ViewBag.HasPersonalCharacteristics)
+                {
+                    <div class="content-item">
+                        <h2>Personal Characteristics</h2>
+                        <div class="d-flex flex-column gap-3">
+                            <ul>
+                                @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
+                                {
+                                    <li>
+                                        <p class="mb-0">@persChar.CharacteristicName</p>
+                                    </li>
+                                }
+                            </ul>
+                            
+                        </div>
                     </div>
                 }
             </div>
@@ -102,14 +131,18 @@
             <div>
                 @if (ViewBag.HasPersonalCharacteristics)
                 {
-                    <div class="d-flex flex-column gap-3 content-item">
-                        @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
-                        {
-                            <div>
-                                <p class="mb-0">@persChar.CharacteristicName</p>
-                            </div>
-                        }
+                    <div class="content-item">
+                        <h2>Personal Characteristics</h2>
+                        <ul>
+                            @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
+                            {
+                                <li>
+                                    <p class="mb-0">@persChar.CharacteristicName</p>
+                                </li>
+                            }
+                        </ul>
                     </div>
+                    
                 }
             </div>
             
@@ -118,7 +151,7 @@
     @if (ViewBag.HasJoinedProjects)
     {
         <div id="project-in-profile">
-            <h2>Projects</h2>
+            <h2 class="d-flex">Projects</h2>
             @foreach (var project in Model.Projects)
             {
                 <div class="mb-2 projects-in-profile-containers">
