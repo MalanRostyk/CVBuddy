@@ -21,10 +21,10 @@ namespace CVBuddy.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            //ViewBag.IsSetToPrivate = user.IsPrivate;
             ViewBag.IsSetToDeactivated = user.IsDeactivated;
-            //optViewModel.IsPrivate = ViewBag.IsSetToPrivate;
+            ViewBag.HasSetProfilePrivate = user.HasPrivateProfile;
             optViewModel.IsDeactivated = ViewBag.IsSetToDeactivated;
+            optViewModel.HasPrivateProfile = ViewBag.HasSetProfilePrivate;
 
             return View();
         }
@@ -36,8 +36,8 @@ namespace CVBuddy.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            //user.IsPrivate = optModel.IsPrivate;
             user.IsDeactivated = optModel.IsDeactivated;
+            user.HasPrivateProfile = optModel.HasPrivateProfile;
 
             await _userManager.UpdateAsync(user);
             

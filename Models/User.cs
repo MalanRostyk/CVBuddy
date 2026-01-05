@@ -17,6 +17,7 @@ namespace CVBuddy.Models
         public string LastName{ get; set; }
         public Address OneAddress { get; set; }
         public bool IsDeactivated { get; set; } = false;
+        public bool HasPrivateProfile { get; set; } = false;
 
         public List<Message> MessageList { get; set; }
         public string GetFullName()

@@ -34,5 +34,21 @@
             }
         </select>
     </div>
+
+    <div class="mb-2">
+        <b>Private Profile - </b>
+        <select asp-for="@Model.HasPrivateProfile">
+            @if (ViewBag.IsSetToDeactivated)
+            {
+                <option value="false">Public</option>
+                <option selected value="true">Private</option>
+            }
+            else
+            {
+                <option selected value="false">Public</option>
+                <option value="true">Private</option>
+            }
+        </select>
+    </div>
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260104172311_addad")]
-    partial class addad
+    [Migration("20260105141834_aaaa")]
+    partial class aaaa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,6 +372,9 @@ namespace CVBuddy.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasPrivateProfile")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeactivated")
                         .HasColumnType("bit");

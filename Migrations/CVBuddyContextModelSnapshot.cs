@@ -370,6 +370,9 @@ namespace CVBuddy.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("HasPrivateProfile")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeactivated")
                         .HasColumnType("bit");
 
