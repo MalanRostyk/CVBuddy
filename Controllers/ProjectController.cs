@@ -15,7 +15,7 @@ namespace CVBuddy.Controllers
         {
 
         }
-        //---------------------Ändring-------------------------------------------------------------------------------------------
+        
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetProject()
@@ -24,15 +24,15 @@ namespace CVBuddy.Controllers
 
             var projects = await _context.Projects
                 .Include(p => p.ProjectUsers)
-                .ThenInclude(pu => pu.User)
+                    .ThenInclude(pu => pu.User)
                 .ToListAsync();
-
+            //---------------------Ändring-------------------------------------------------------------------------------------------
             var myProjects = projects
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId )).ToList();//&& pu.IsOwner
 
             var otherProjects = projects
-                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
-
+                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId )).ToList();//&& pu.IsOwner
+            //----------------------------------------hit--------------------------------------------------------------------------------
             var vm = new ProjectIndexViewModel
             {
                 MyProjects = myProjects,
@@ -41,7 +41,7 @@ namespace CVBuddy.Controllers
 
             return View(vm);
         }
-        //----------------------------------------hit--------------------------------------------------------------------------------
+        
         [HttpGet]
         public async Task<IActionResult> CreateProject()
         {
@@ -88,7 +88,7 @@ namespace CVBuddy.Controllers
             {
                 ProjId = projId,
                 UserId = userId,
-                IsOwner = true//-----Ändring--------------------------------------------------------------------------------------
+                IsOwner = true
             });
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
@@ -138,7 +138,7 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        //-----Ändring--------------------------------------------------------------------------------------------
+      
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> ProjectDetails(int PUId)
@@ -170,6 +170,5 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        //-----------------------------------------------------------------------------------------------------------
     }
 }
