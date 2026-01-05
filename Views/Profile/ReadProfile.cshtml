@@ -17,8 +17,18 @@
             <p><i class="fa-solid fa-thumbtack"></i>@Model.OneAddress!.Country, @Model.OneAddress!.City</p>
         }
     </div>
-    <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
-        <a asp-controller="Cv" asp-action="ReadCv" asp-route-Cid="@Model.OneCv.Cid" class="btn btn-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>See Cv</a>
+    <div class="px-2 d-flex flex-column gap-2 justify-content-center interactions-read-banner">
+        <a asp-controller="Cv" asp-action="ReadCv" asp-route-Cid="@Model.OneCv.Cid" class="btn btn-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>
+            @if (ViewBag.IsMyProfile)
+                {
+                    <span>My</span>
+                }
+                else
+                {
+                    <span>See</span>
+                }
+                Cv
+            </a>
         <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
     </div>
 </div>

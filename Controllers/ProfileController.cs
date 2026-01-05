@@ -30,6 +30,14 @@ namespace CVBuddy.Controllers
                                                    //ska kunna komma till Profil sidan inte bara från en persons cv
                                                    //så är det inte garanterat att de har cv
 
+            ViewBag.IsMyProfile = false;
+            if (User.Identity!.IsAuthenticated)
+            {
+                var loggedInUserId = _userManager.GetUserId(User);
+                ViewBag.IsMyProfile = loggedInUserId == userId;
+
+            }
+
             return View(user);
         }
     }
