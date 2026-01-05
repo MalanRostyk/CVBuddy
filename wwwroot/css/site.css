@@ -30,6 +30,11 @@ body {
   text-align: start;
 }
 
+.tinify{/*klass som normaliser text i h2, h3 osv taggar till root font-size, font-weight(fetstilt) till normal*/
+        font-size: 1rem;
+        font-weight: normal;
+}
+
 img{
     height: 7em;
     border-radius: 100%;

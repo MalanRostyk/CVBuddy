@@ -31,7 +31,7 @@
     <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
         @if (ViewBag.NotLoggedInUsersCv == true)
         {
-            <a asp-controller="Profile" asp-action="ReadProfile" class="btn btn-primary btn-sm"><i class="fa-regular fa-address-card"></i>Profile</a>
+            <a asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@Model.OneUser!.Id" class="btn btn-primary btn-sm"><i class="fa-regular fa-address-card"></i>Profile</a>
             <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
         }
     </div>

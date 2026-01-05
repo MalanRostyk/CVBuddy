@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CVBuddy.Controllers
 {
@@ -10,9 +11,26 @@ namespace CVBuddy.Controllers
         {
         }
         [HttpGet]
-        public IActionResult ReadProfile()
+        public IActionResult ReadProfile(string userId)
         {
-            return View();
+            var user = _context.Users
+                .Include(u => u.OneAddress)
+                .Include(u => u.OneCv)
+                .Include(u => u.ProjectUsers)
+                .Where(u => u.Id.Equals(userId))
+                .FirstOrDefault();
+
+            
+
+            if (user == null)
+                return NotFound("This Cvs user could not be found.");
+
+            ViewBag.HasOneAdress = user.OneAddress != null;
+            ViewBag.HasOneCv = user.OneCv != null; //HasOneCv för att om vi planerar på att man
+                                                   //ska kunna komma till Profil sidan inte bara från en persons cv
+                                                   //så är det inte garanterat att de har cv
+
+            return View(user);
         }
     }
 }
