@@ -354,7 +354,8 @@ namespace CVBuddy.Migrations
 
                     b.HasIndex("ProjId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "ProjId")
+                        .IsUnique();
 
                     b.ToTable("ProjectUsers");
                 });

@@ -31,8 +31,7 @@ namespace CVBuddy.Models
 
 
             //User > Project (M-M via ProjectUser)
-            builder.Entity<ProjectUser>().HasKey(pu => pu.PUId);
-            //builder.Entity<ProjectUser>().HasIndex(pu => new { pu.UserId, pu.ProjId }).IsUnique();
+            builder.Entity<ProjectUser>().HasIndex(pu => new { pu.UserId, pu.ProjId }).IsUnique();//----------änfring---------
             //One Project har många ProjectUsers
             builder.Entity<ProjectUser>()
                 .HasOne(p => p.Project)

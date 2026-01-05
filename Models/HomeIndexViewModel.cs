@@ -6,6 +6,5 @@
 
         public List<Project> ProjectList { get; set; } = new List<Project>();
 
-        public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
     }
 }

@@ -76,18 +76,11 @@ namespace CVBuddy.Controllers
                 .Take(10)
                 .ToListAsync();
 
-            var projUser = await _context.ProjectUsers
-                .Include(pu => pu.Project)
-                .ThenInclude(p => p.ProjectUsers)
-                .Include(pu => pu.User)
-                .ThenInclude(u => u.ProjectUsers)
-                .ToListAsync();
 
             var vm = new HomeIndexViewModel
             {
                 UserList = users,
-                ProjectList = projList,
-                ProjectUsers = projUser
+                ProjectList = projList,    
             };
 
             return View(vm);//För att ge Users till Index view, så Model inte är NULL

@@ -15,7 +15,7 @@ namespace CVBuddy.Controllers
         {
 
         }
-
+        //---------------------Ändring-------------------------------------------------------------------------------------------
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetProject()
@@ -23,15 +23,25 @@ namespace CVBuddy.Controllers
             var userId = _userManager.GetUserId(User);
 
             var projects = await _context.Projects
-                .Include(p => p.ProjectUsers)//---------viktig ändring---------------------------------------------------
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner == true)).ToListAsync();
-            //-------------------------------------------------------------------------------------------------------------
-            if (projects == null)
-                return NotFound();
-            //var projects = _context.Projects.ToList();
-            return View(projects);
-        }
+                .Include(p => p.ProjectUsers)
+                .ThenInclude(pu => pu.User)
+                .ToListAsync();
 
+            var myProjects = projects
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+
+            var otherProjects = projects
+                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+
+            var vm = new ProjectIndexViewModel
+            {
+                MyProjects = myProjects,
+                OtherProjects = otherProjects
+            };
+
+            return View(vm);
+        }
+        //----------------------------------------hit--------------------------------------------------------------------------------
         [HttpGet]
         public async Task<IActionResult> CreateProject()
         {
@@ -186,14 +196,24 @@ namespace CVBuddy.Controllers
         }
         //-----Ändring--------------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> ProjectDetails(int PUId)/*, string uid)*/
+        [Authorize]
+        public async Task<IActionResult> ProjectDetails(int PUId)
         {
-            var projectuser = await _context.ProjectUsers.Where(pu => pu.PUId == PUId).FirstOrDefaultAsync();
             var userId = _userManager.GetUserId(User);
 
-            bool alreadyJoined = await _context.ProjectUsers.AnyAsync(pu => pu.ProjId == PUId && pu.UserId == userId);
+            var projectuser = await _context.ProjectUsers
+                .Include(pu => pu.Project)
+                .FirstOrDefaultAsync(pu => pu.PUId == PUId);
+            
+            if (projectuser == null) return NotFound();
+
+            bool alreadyJoined = await _context.ProjectUsers
+                .AnyAsync(pu => pu.ProjId == projectuser.ProjId && pu.UserId == userId);
+            
             if (alreadyJoined)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("GetProject");
+
+
 
             await _context.ProjectUsers.AddAsync(new ProjectUser 
             {
@@ -203,6 +223,7 @@ namespace CVBuddy.Controllers
             });
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index", "Home");
         }
         //-----------------------------------------------------------------------------------------------------------

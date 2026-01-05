@@ -519,9 +519,10 @@ namespace CVBuddy.Migrations
                 column: "ProjId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectUsers_UserId",
+                name: "IX_ProjectUsers_UserId_ProjId",
                 table: "ProjectUsers",
-                column: "UserId");
+                columns: new[] { "UserId", "ProjId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Skills_CvId",

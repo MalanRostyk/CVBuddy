@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260104224200_NNNEW")]
+    [Migration("20260105130326_NNNEW")]
     partial class NNNEW
     {
         /// <inheritdoc />
@@ -357,7 +357,8 @@ namespace CVBuddy.Migrations
 
                     b.HasIndex("ProjId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "ProjId")
+                        .IsUnique();
 
                     b.ToTable("ProjectUsers");
                 });

@@ -226,31 +226,28 @@
 
 
 @* -------------------------------------------------------Projects--------------------------------------------------------------------------- *@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> _userManager
 
-    @foreach(var project in Model.ProjectList)
-    {
-         <div class="min-vh-80 read-banner">
+@{
+    var currentUserId = _userManager.GetUserId(User);
+}
+
+@foreach (var project in Model.ProjectList)
+{
+    var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
+
+    var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+
+     <div class="min-vh-80 read-banner">
 
             <div class="row">
-
-                <div class="col-12">
-                    @foreach(var pu in project.ProjectUsers)
-                    {
-                        if (pu.ProjId == project.Pid)
-                        {
-                            @if(pu.IsOwner == true )
-                            {
-                                <p><strong>Owner : </strong>@pu.User.FirstName @pu.User.LastName</p>
-                                <form method="post" asp-Controller="Project" asp-action="ProjectDetails" asp-route-puid="@pu.PUId">@* asp-route-pid="@project.Pid" asp-route-uid="@pu.User.Id"> *@
-                                    <div class="col-5 d-flex justify-content-end align-items-end">
-                                        <input type="submit" value="Join project" />
-                                    </div>
-                                </form>
-                            }
-                        }
-                    }
-                </div>
-
+                @if (owner != null)
+                {
+                    <div class="col-12">
+                        <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+                    </div>
+                }
                 <div class="col-12">
                     <p><strong>Title : </strong>@project.Title</p>
                 </div>
@@ -262,15 +259,39 @@
                 <div class="col-12">
                     <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
                 </div>
-
-                <div class="col-12">
-                    <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
-                </div>
-
-                 
-
-
             </div>
-        </div>
-        
+
+     </div>
+
+
+    <div class="read-banner p-3 mb-4">
+        @if(owner != null)
+        {
+            <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+        }
+    
+    <p><strong>Title : </strong>@project.Title</p>
+   
+    <p><strong>Project description : </strong>@project.Description</p>
+   
+    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+   
+    <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
+   
+    @if (!isUserInProject)
+    {
+        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
+            <button class="btn btn-primary">Join project!</button>
+        </form>
     }
+    else
+    {
+        <div class="col-5 d-flex justify-content-end align-items-end">
+            <button class="btn btn-info">Already joined</button>
+        </div>
+    }
+    </div>
+}
+
+
+
