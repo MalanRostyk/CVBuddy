@@ -16,7 +16,19 @@ namespace CVBuddy.Controllers
             var user = _context.Users
                 .Include(u => u.OneAddress)
                 .Include(u => u.OneCv)
-                .Include(u => u.ProjectUsers)
+                .ThenInclude(cv => cv.Experiences)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Education)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Skills)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Certificates)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Interests)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Interests)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.PersonalCharacteristics)
                 .Where(u => u.Id.Equals(userId))
                 .FirstOrDefault();
 
@@ -32,16 +44,29 @@ namespace CVBuddy.Controllers
 
             if (ViewBag.HasOneCv)
             {
-                ViewBag.HasExperience = user.OneCv!.Experiences != null;
-                ViewBag.HasEducation = user.OneCv!.Education != null;
-                ViewBag.HasSkills = user.OneCv!.Skills != null;
-                ViewBag.HasCertificates = user.OneCv!.Certificates != null;
-                ViewBag.HasInterests = user.OneCv!.Interests != null;
-                ViewBag.HasPersonalCharacteristics = user.OneCv!.PersonalCharacteristics != null;
+                ViewBag.HasExperience = user.OneCv!.Experiences.Count() > 0;
+                ViewBag.HasHighSchool = user.OneCv!.Education?.HighSchool == "";
+                ViewBag.HasUniveristy = user.OneCv!.Education?.Univeristy == "";
+                ViewBag.HasSkills = user.OneCv!.Skills.Count() > 0;
+                ViewBag.HasCertificates = user.OneCv!.Certificates.Count() > 0;
+                ViewBag.HasInterests = user.OneCv!.Interests.Count() > 0;
+                ViewBag.HasPersonalCharacteristics = user.OneCv!.PersonalCharacteristics.Count() > 0;
+                //Om använderen bara har en bild för sitt cv så syns en ensam rubrik, ta bort den med detta
+                ViewBag.HasCvWithOnlyImage = false;
+                if(ViewBag.HasExperience ||
+                    ViewBag.HasHighSchool ||
+                    ViewBag.HasUniveristy ||
+                    ViewBag.HasSkills ||
+                    ViewBag.HasCertificates ||
+                    ViewBag.HasInterests ||
+                    ViewBag.HasPersonalCharacteristics)
+                {
+                    ViewBag.HasCvWithOnlyImage = true;
+                }
                 
             }
 
-            ViewBag.HasJoinedProjects = user.ProjectUsers.Count() > 0;
+            
 
             List<Project> projList = _context.ProjectUsers
                 .Where(pu => pu.UserId == userId)
@@ -51,6 +76,8 @@ namespace CVBuddy.Controllers
                 p => p.Pid,
                 (pu, p) => p)
                 .ToList();
+
+            ViewBag.HasJoinedProjects = projList.Count() > 0;
 
             ViewBag.IsMyProfile = false;
             if (User.Identity!.IsAuthenticated)

@@ -48,7 +48,8 @@ body {
 }
 
 img{
-    height: 7em;
+    height: auto;
+    width: 7em;
     border-radius: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
@@ -112,5 +113,27 @@ select {
     background-color: #0d6efd;
     border-radius: 35%;
     padding: 0em 0.4em;
+}
+
+.content-in-profile{
+    object-fit: contain;
+}
+#cv-info-in-profile {
+    flex: 1 1 55%;
+}
+
+#project-in-profile {
+    padding: 1em;
+    border-radius: 2em;
+    background-color: #454545;
+    color: #efefef;
+    flex: 1 0 auto;
+}
+
+.projects-in-profile-containers {
+    background-color: #5d6263;
+    border-radius: 2em;
+    padding: inherit;
+    border: 1px solid white;
 }
 

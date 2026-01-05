@@ -9,7 +9,7 @@ namespace CVBuddy.Models
     {
         [Key]
         public int Mid { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Must enter your name")]
         public string Sender { get; set; }
         [Required]
         public string MessageString { get; set; }

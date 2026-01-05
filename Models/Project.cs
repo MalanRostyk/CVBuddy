@@ -15,7 +15,7 @@ namespace CVBuddy.Models
 
         [Required]
         [MaxLength(200)] //Ska matcha maxlength="200" i view på inputfältet
-        public string? Description { get; set; }
+        public string? Description { get; set; }//Kraschar om man inte anger en description vid skpande av projekt
 
         [Required]
         //[DataType(DataType.Date)] //Kom tillbaka hit, den sätter i view startande datumet till 0001-01-01

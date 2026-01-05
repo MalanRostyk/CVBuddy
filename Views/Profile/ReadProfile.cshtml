@@ -24,42 +24,103 @@
         }
     </div>
 </div>
-<div class="mt-4 d-flex gap-3">
-    @if (ViewBag.HasOneCv)
+<div class="content-in-profile my-4 d-flex gap-3">
+    @if (ViewBag.HasOneCv && ViewBag.HasCvWithOnlyImage)
     {
-        <div class="content-in-profile">
+        <div id="cv-info-in-profile">
             <h2>Cv</h2>
             @if (ViewBag.HasExperience)
             {
-                
+                <div class="mb-4">
+                    @foreach (var experience in Model.Cv!.Experiences)
+                    {
+                        <div class="mb-2 content-item">
+                            <p>@experience.Title</p>
+                        </div>
+                    }
+                </div>
             }
-            @if (ViewBag.HasEducation)
+
+            @if (ViewBag.HasUniveristy)
             {
-                
+                <div class="mb-4 content-item">
+                    <p class="mb-0">@Model.Cv!.Education.Univeristy</p>
+                    <p class="mb-0">@Model.Cv!.Education.UniProgram</p>
+                    <p class="mb-0">@Model.Cv!.Education.UniDate</p>
+                </div>
             }
-            @if (ViewBag.HasSkills)
+            @if (ViewBag.HasHighSchool)
             {
-                
+                <div class="mb-4 content-item">
+                    <p class="mb-0">@Model.Cv!.Education.HighSchool</p>
+                    <p class="mb-0">@Model.Cv!.Education.HSDate</p>
+                    <p class="mb-0">@Model.Cv!.Education.HSDate</p>
+                </div>
             }
-            @if (ViewBag.HasCertificates)
-            {
-                
-            }
-            @if (ViewBag.HasInterests)
-            {
-                
-            }
-            @if (ViewBag.HasPersonalCharacteristics)
-            {
-                
-            }
+            <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
+                @if (ViewBag.HasSkills)
+                {
+                    @foreach(var skill in Model.Cv!.Skills)
+                    {
+                        <div class="flex-grow-2 content-item">
+                            <p class="mb-0">@skill.ASkill</p>
+                            <p class="mb-0">@skill.Description</p>
+                            <p class="mb-0">@skill.Date</p>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="mb-4 d-flex gap-3">
+                @if (ViewBag.HasCertificates)
+                {
+                    @foreach (var certificate in Model.Cv!.Certificates)
+                    {
+                        <div class="content-item">
+                            <p class="mb-0">@certificate.CertName</p>
+                        </div>
+                    }
+                }
+                @if (ViewBag.HasInterests)
+                {
+                    <div class="content-item">
+                        @foreach (var interest in Model.Cv!.Interests)
+                        {
+                            <p class="mb-0">@interest.InterestName</p>
+                        }
+                    </div>
+                }
+            </div>
+            
+            <div>
+                @if (ViewBag.HasPersonalCharacteristics)
+                {
+                    <div class="d-flex flex-column gap-3 content-item">
+                        @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
+                        {
+                            <div>
+                                <p class="mb-0">@persChar.CharacteristicName</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            
         </div>
     }
     @if (ViewBag.HasJoinedProjects)
     {
-        <div class="content-in-profile">
+        <div id="project-in-profile">
             <h2>Projects</h2>
-            
+            @foreach (var project in Model.Projects)
+            {
+                <div class="mb-2 projects-in-profile-containers">
+                    <b class="mb-2">@project.Title</b>
+                    <p class="mb-1">Description: @(project.Description ?? "")</p>
+                    <p class="mb-1">Start date: @project.StartDate.ToShortDateString()</p>
+                    <p class="mb-1">End date: @project.Enddate?.ToString("yyyy-mm-dd")</p>
+                    <p class="mb-1">Publish date: @project.PublisDate.ToShortDateString()</p>
+                </div>
+            }
         </div>
     }
 </div>
