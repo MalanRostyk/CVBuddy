@@ -16,7 +16,7 @@
 
 <h1 class="mb-4">@ViewBag.Headline@ViewBag.CvOwnerFullName</h1>
 
-<div class="mb-4 read-banner">
+<div class="mb-4 shadow read-banner">
 
     <div class="Cv-image">
         <img src="@Model.ImageFilePath" class="img-thumbnail"/>
@@ -28,11 +28,11 @@
         <p>@("Phone number:  " + Model.OneUser?.PhoneNumber ?? "")</p>
     </div>
 
-    <div class="interactions-read-banner">
+    <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
         @if (ViewBag.NotLoggedInUsersCv == true)
         {
-            <a asp-controller="Account" asp-action="Message"><i class="fa-regular fa-address-card"></i></a>
-            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id"><i class="fa-regular fa-message"></i></a>
+            <a asp-controller="Profile" asp-action="ReadProfile" class="btn btn-primary btn-sm"><i class="fa-regular fa-address-card"></i>Profile</a>
+            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
         }
     </div>
 </div>

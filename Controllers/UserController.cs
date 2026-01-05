@@ -19,7 +19,7 @@ namespace CVBuddy.Controllers
         {
             var user = await _userManager.Users
                 .Include(u => u.OneAddress)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
