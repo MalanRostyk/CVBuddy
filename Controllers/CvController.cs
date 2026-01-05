@@ -207,6 +207,8 @@ namespace CVBuddy.Controllers
                         
                 }
 
+                ViewBag.HasSetPrivateProfile = cv?.OneUser!.HasPrivateProfile;
+
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
                 
