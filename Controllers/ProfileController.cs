@@ -43,7 +43,14 @@ namespace CVBuddy.Controllers
 
             ViewBag.HasJoinedProjects = user.ProjectUsers.Count() > 0;
 
-            //ViewBag.ProjectsList = _context.Projects
+            List<Project> projList = _context.ProjectUsers
+                .Where(pu => pu.UserId == userId)
+                .Join(
+                _context.Projects,
+                pu => pu.ProjId,
+                p => p.Pid,
+                (pu, p) => p)
+                .ToList();
 
             ViewBag.IsMyProfile = false;
             if (User.Identity!.IsAuthenticated)
@@ -53,7 +60,13 @@ namespace CVBuddy.Controllers
 
             }
 
-            return View(user);
+            ProfileViewModel profViewModel = new();
+
+            profViewModel.ViewUser = user;
+            profViewModel.Cv = user.OneCv;
+            profViewModel.Projects = projList;
+
+            return View(profViewModel);
         }
     }
 }

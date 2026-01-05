@@ -1,26 +1,26 @@
-﻿@model CVBuddy.Models.User
+﻿@model CVBuddy.Models.ProfileViewModel
 
 <div class="p-2 d-flex read-banner">
     <div class="pe-2">
         @if (ViewBag.HasOneCv)
         {
-            <img src="@Model.OneCv.ImageFilePath" alt="Cv Image" />
+            <img src="@Model.Cv!.ImageFilePath" alt="Cv Image" />
         }
     </div>
     <div class="pl-2 d-flex flex-column">
-        <h3><i class="fa-solid fa-user"></i> @Model.FirstName @Model.LastName</h3>
-        <p><i class="fa-solid fa-globe"></i> @Model.Email</p>
-        <p><i class="fa-solid fa-phone"></i> @Model.PhoneNumber</p>
+        <h3><i class="fa-solid fa-user"></i> @Model.ViewUser!.FirstName @Model.ViewUser!.LastName</h3>
+        <p><i class="fa-solid fa-globe"></i> @Model.ViewUser!.Email</p>
+        <p><i class="fa-solid fa-phone"></i> @Model.ViewUser!.PhoneNumber</p>
 
         @if (ViewBag.HasOneAdress)
         {
-            <p><i class="fa-solid fa-thumbtack"></i>@Model.OneAddress!.Country, @Model.OneAddress!.City</p>
+            <p><i class="fa-solid fa-thumbtack"></i>@Model.ViewUser!.OneAddress!.Country, @Model.ViewUser!.OneAddress!.City</p>
         }
     </div>
     <div class="px-2 d-flex flex-column gap-2 justify-content-center interactions-read-banner">
         @if (ViewBag.IsMyProfile != true)
         {
-            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
+            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.ViewUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
         }
     </div>
 </div>
@@ -59,7 +59,7 @@
     {
         <div class="content-in-profile">
             <h2>Projects</h2>
-            @* @foreach(var project in Model.) *@
+            
         </div>
     }
 </div>
