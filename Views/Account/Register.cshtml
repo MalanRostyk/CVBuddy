@@ -1,75 +1,10 @@
 ﻿@model UserRegisterViewModel
 
-<<<<<<< HEAD
-<form method="post" asp-action="Register">
-    <div class="d-flex justify-content-center align-items-center min-vh-90">
-        <div class="col-md-6 col-lg-4">
-=======
-@* <div asp-validation-summary="All" class="text-danger"></div>
-<form method="post" asp-action="Register">
-
-    <div class="form-group-row">
-        <div class="col-sm-2">
-            <label>First Name:</label>
-        </div>
-        <div class="col-sm-4">
-            <input asp-for="FirstName" class="form-control" />
-        </div>
-    </div>
-
-    <div class="form-group-row">
-        <div class="col-sm-2">
-            <label>Last Name:</label>
-        </div>
-        <div class="col-sm-4">
-        <input asp-for="LastName" class="form-control" />
-        </div>
-    </div>
->>>>>>> den-senaste-v2-05
-
-            <h3 class="text-center mb-4">Register</h3>
-
-            <div class="form-group-row">
-                <label asp-for="UserName" class="form-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group-row">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <div class="form-group-row">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Register</button>
-
-            <div class="text-center mt-3">
-                <span>Already have an account?</span>
-                <a asp-action="Login">To login</a>
-            </div>
-            
-        </div>    
-        
-    </div>
-    
-</form>
-<<<<<<< HEAD
-
-=======
-<a asp-action="Login">To login</a>
- *@
 <form method="post" asp-action="Register">
     <div class="d-flex justify-content-center align-items-center min-vh-90">
         <div class="col-md-6 col-lg-4">
 
             <h3 class="text-center mb-4">Register</h3>
-
             <div class="form-group-row">
                 <label asp-for="FirstName" class="form-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -91,7 +26,6 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
 
-
             <div class="form-group-row">
                 <label asp-for="UserName" class="form-label"></label>
                 <input asp-for="UserName" class="form-control" />
@@ -109,7 +43,6 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-
             <button type="submit" class="btn btn-primary w-100">Register</button>
 
             <div class="text-center mt-3">
@@ -122,4 +55,3 @@
     </div>
 
 </form>
->>>>>>> den-senaste-v2-05
