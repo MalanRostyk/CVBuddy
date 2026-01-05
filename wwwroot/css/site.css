@@ -35,6 +35,18 @@ body {
         font-weight: normal;
 }
 
+.link-style-to-paragraph-style {
+    display: block;
+    color: black;
+    text-decoration: none;
+    transition: 0.2s ease;
+    
+}
+
+.link-style-to-paragraph-style:hover {
+    text-decoration: underline;
+}
+
 img{
     height: 7em;
     border-radius: 100%;

@@ -38,7 +38,7 @@
     <div class="mb-2">
         <b>Private Profile - </b>
         <select asp-for="@Model.HasPrivateProfile">
-            @if (ViewBag.IsSetToDeactivated)
+            @if (ViewBag.HasSetProfilePrivate)
             {
                 <option value="false">Public</option>
                 <option selected value="true">Private</option>

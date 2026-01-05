@@ -41,7 +41,18 @@
                         <img src="@user.OneCv.ImageFilePath" />
                     </div>
                     <div class="flex-grow-1">
-                        <p class="mb-2"><b>@user.FirstName @user.LastName</b></p>
+                        @if (user.HasPrivateProfile == true)
+                        {
+                            <p class="mb-2">
+                                <b>@user.FirstName @user.LastName</b>
+                            </p>
+                        }
+                        else
+                        {
+                            <a asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@user.Id" class="mb-2 link-style-to-paragraph-style">
+                                <b>@user.FirstName @user.LastName</b>
+                            </a>
+                        }
                         <i class="mb-2">@(user.OneCv.ReadCount + " Reads")</i>
                     </div>
                     <div class="flex-grow-0 d-flex flex-column gap-2">
