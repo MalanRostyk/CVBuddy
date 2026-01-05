@@ -22,6 +22,44 @@
         {
             <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
         }
-
     </div>
+</div>
+<div class="mt-4 d-flex gap-3">
+    @if (ViewBag.HasOneCv)
+    {
+        <div class="content-in-profile">
+            <h2>Cv</h2>
+            @if (ViewBag.HasExperience)
+            {
+                
+            }
+            @if (ViewBag.HasEducation)
+            {
+                
+            }
+            @if (ViewBag.HasSkills)
+            {
+                
+            }
+            @if (ViewBag.HasCertificates)
+            {
+                
+            }
+            @if (ViewBag.HasInterests)
+            {
+                
+            }
+            @if (ViewBag.HasPersonalCharacteristics)
+            {
+                
+            }
+        </div>
+    }
+    @if (ViewBag.HasJoinedProjects)
+    {
+        <div class="content-in-profile">
+            <h2>Projects</h2>
+            @* @foreach(var project in Model.) *@
+        </div>
+    }
 </div>

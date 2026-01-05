@@ -24,12 +24,22 @@ namespace CVBuddy.Controllers
 
             var projects = await _context.Projects
                 .Include(p => p.ProjectUsers)
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToListAsync();
+                .ThenInclude(pu => pu.User)
+                .ToListAsync();
 
-            if (projects == null)
-                return NotFound();
-            //var projects = _context.Projects.ToList();
-            return View(projects);
+            var myProjects = projects
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+
+            var otherProjects = projects
+                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+
+            var vm = new ProjectIndexViewModel
+            {
+                MyProjects = myProjects,
+                OtherProjects = otherProjects
+            };
+
+            return View(vm);
         }
 
         [HttpGet]
@@ -84,7 +94,8 @@ namespace CVBuddy.Controllers
             await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
             {
                 ProjId = projId,
-                UserId = userId
+                UserId = userId!,
+                IsOwner = true
             });
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
@@ -178,6 +189,38 @@ namespace CVBuddy.Controllers
             newProj.Enddate = toUpdate.Enddate;
             newProj.UsersInProject = toUpdate.UsersInProject;
             newProj.PublisDate = toUpdate.PublisDate;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ProjectDetails(int PUId)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var projectuser = await _context.ProjectUsers
+                .Include(pu => pu.Project)
+                .FirstOrDefaultAsync(pu => pu.PUId == PUId);
+
+            if (projectuser == null) return NotFound();
+
+            bool alreadyJoined = await _context.ProjectUsers
+                .AnyAsync(pu => pu.ProjId == projectuser.ProjId && pu.UserId == userId);
+
+            if (alreadyJoined)
+                return RedirectToAction("GetProject");
+
+
+
+            await _context.ProjectUsers.AddAsync(new ProjectUser
+            {
+                ProjId = projectuser.ProjId,
+                UserId = userId,
+                IsOwner = false
+            });
 
             await _context.SaveChangesAsync();
 

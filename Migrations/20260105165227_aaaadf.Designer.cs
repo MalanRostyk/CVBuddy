@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260105141834_aaaa")]
-    partial class aaaa
+    [Migration("20260105165227_aaaadf")]
+    partial class aaaadf
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -337,15 +337,28 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.ProjectUser", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PUId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PUId"));
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProjId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "ProjId");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PUId");
 
                     b.HasIndex("ProjId");
+
+                    b.HasIndex("UserId", "ProjId")
+                        .IsUnique();
 
                     b.ToTable("ProjectUsers");
                 });

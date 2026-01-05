@@ -33,15 +33,15 @@ namespace CVBuddy.Controllers
                     .ToList();
             }
             ViewBag.CvsExists = false;
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                if(user.OneCv != null)
+                if (user.OneCv != null)
                 {
                     ViewBag.CvsExists = true;
                 }
             }
-         
-            
+
+
 
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
@@ -59,7 +59,22 @@ namespace CVBuddy.Controllers
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
-            return View(users);//För att ge Users till Index view, så Model inte är NULL
+            var projList = await _context.Projects
+                .Where(p => p.Enddate == null)
+                .Include(p => p.ProjectUsers)
+                .ThenInclude(p => p.User)
+                .OrderByDescending(p => p.PublisDate)
+                .Take(10)
+                .ToListAsync();
+
+
+            var vm = new HomeIndexViewModel
+            {
+                UserList = users,
+                ProjectList = projList,
+            };
+
+            return View(vm);
         }
 
         private async Task<Cv> GetLoggedInUsersCvAsync()

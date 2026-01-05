@@ -30,6 +30,21 @@ namespace CVBuddy.Controllers
                                                    //ska kunna komma till Profil sidan inte bara från en persons cv
                                                    //så är det inte garanterat att de har cv
 
+            if (ViewBag.HasOneCv)
+            {
+                ViewBag.HasExperience = user.OneCv!.Experiences != null;
+                ViewBag.HasEducation = user.OneCv!.Education != null;
+                ViewBag.HasSkills = user.OneCv!.Skills != null;
+                ViewBag.HasCertificates = user.OneCv!.Certificates != null;
+                ViewBag.HasInterests = user.OneCv!.Interests != null;
+                ViewBag.HasPersonalCharacteristics = user.OneCv!.PersonalCharacteristics != null;
+                
+            }
+
+            ViewBag.HasJoinedProjects = user.ProjectUsers.Count() > 0;
+
+            //ViewBag.ProjectsList = _context.Projects
+
             ViewBag.IsMyProfile = false;
             if (User.Identity!.IsAuthenticated)
             {
