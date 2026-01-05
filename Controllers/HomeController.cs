@@ -32,7 +32,6 @@ namespace CVBuddy.Controllers
                 .ToListAsync();
 
 
-            
 
             if (!User.Identity!.IsAuthenticated)
             {

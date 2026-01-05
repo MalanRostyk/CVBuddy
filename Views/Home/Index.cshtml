@@ -259,38 +259,24 @@
                 <div class="col-12">
                     <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
                 </div>
+                <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
+                @if (!isUserInProject)
+                {
+                    <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
+                        <div class="col-5 d-flex justify-content-end align-items-end">
+                            <button class="btn btn-primary">Join project!</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        <button class="btn btn-info">Already joined</button>
+                    </div>
+                }
             </div>
 
      </div>
-
-
-    <div class="read-banner p-3 mb-4">
-        @if(owner != null)
-        {
-            <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
-        }
-    
-    <p><strong>Title : </strong>@project.Title</p>
-   
-    <p><strong>Project description : </strong>@project.Description</p>
-   
-    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
-   
-    <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
-   
-    @if (!isUserInProject)
-    {
-        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
-            <button class="btn btn-primary">Join project!</button>
-        </form>
-    }
-    else
-    {
-        <div class="col-5 d-flex justify-content-end align-items-end">
-            <button class="btn btn-info">Already joined</button>
-        </div>
-    }
-    </div>
 }
 
 
