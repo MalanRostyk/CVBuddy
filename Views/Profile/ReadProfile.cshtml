@@ -31,32 +31,40 @@
             <h2>Cv</h2>
             @if (ViewBag.HasExperience)
             {
+                <h2>Experiences</h2>
                 <div class="mb-4">
                     @foreach (var experience in Model.Cv!.Experiences)
                     {
                         <div class="mb-2 content-item">
-                            <p>@experience.Title</p>
+                            <b class="mb-2">@experience.Title</b>
+                            <p class="mb-1">Description: @experience.Description</p>
+                            <p class="mb-1">Company: @experience.Company</p>
+                            <p class="mb-1">Start date: @experience.StartDate.ToShortDateString()</p>
+                            <p class="mb-1">End date: @experience.EndDate?.ToString("yyyy-mm-dd")</p>
                         </div>
                     }
+                </div>
+            }
+            @if (ViewBag.HasHighSchool)
+            {
+                <div class="mb-4 content-item">
+                    <h5>High School</h5>
+                    <p class="mb-0">High School: @Model.Cv!.Education.HighSchool</p>
+                    <p class="mb-0">Program: @(Model.Cv!.Education.HSProgram ?? "")</p>
+                    <p class="mb-0">Graduation: @(Model.Cv!.Education.HSDate ?? "Ongoing")</p>
                 </div>
             }
 
             @if (ViewBag.HasUniveristy)
             {
                 <div class="mb-4 content-item">
-                    <p class="mb-0">@Model.Cv!.Education.Univeristy</p>
-                    <p class="mb-0">@Model.Cv!.Education.UniProgram</p>
-                    <p class="mb-0">@Model.Cv!.Education.UniDate</p>
+                    <h5>University</h5>
+                    <p class="mb-0">University: @Model.Cv!.Education.Univeristy</p>
+                    <p class="mb-0">Program: @(Model.Cv!.Education.UniProgram ?? "")</p>
+                    <p class="mb-0">Graduation: @(Model.Cv!.Education.UniDate ?? "Ongoing")</p>
                 </div>
             }
-            @if (ViewBag.HasHighSchool)
-            {
-                <div class="mb-4 content-item">
-                    <p class="mb-0">@Model.Cv!.Education.HighSchool</p>
-                    <p class="mb-0">@Model.Cv!.Education.HSDate</p>
-                    <p class="mb-0">@Model.Cv!.Education.HSDate</p>
-                </div>
-            }
+            
             <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
                 @if (ViewBag.HasSkills)
                 {
@@ -114,7 +122,7 @@
             @foreach (var project in Model.Projects)
             {
                 <div class="mb-2 projects-in-profile-containers">
-                    <b class="mb-2">@project.Title</b>
+                    <h5 class="mb-2">@project.Title</h5>
                     <p class="mb-1">Description: @(project.Description ?? "")</p>
                     <p class="mb-1">Start date: @project.StartDate.ToShortDateString()</p>
                     <p class="mb-1">End date: @project.Enddate?.ToString("yyyy-mm-dd")</p>

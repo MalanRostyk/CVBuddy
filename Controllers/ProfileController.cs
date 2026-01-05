@@ -11,9 +11,9 @@ namespace CVBuddy.Controllers
         {
         }
         [HttpGet]
-        public IActionResult ReadProfile(string userId)
+        public async Task<IActionResult> ReadProfile(string userId)
         {
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(u => u.OneAddress)
                 .Include(u => u.OneCv)
                 .ThenInclude(cv => cv.Experiences)
@@ -30,7 +30,7 @@ namespace CVBuddy.Controllers
                 .Include(u => u.OneCv)
                 .ThenInclude(cv => cv.PersonalCharacteristics)
                 .Where(u => u.Id.Equals(userId))
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             
 
@@ -45,8 +45,8 @@ namespace CVBuddy.Controllers
             if (ViewBag.HasOneCv)
             {
                 ViewBag.HasExperience = user.OneCv!.Experiences.Count() > 0;
-                ViewBag.HasHighSchool = user.OneCv!.Education?.HighSchool == "";
-                ViewBag.HasUniveristy = user.OneCv!.Education?.Univeristy == "";
+                ViewBag.HasHighSchool = user.OneCv!.Education?.HighSchool != null;
+                ViewBag.HasUniveristy = user.OneCv!.Education?.Univeristy != null;
                 ViewBag.HasSkills = user.OneCv!.Skills.Count() > 0;
                 ViewBag.HasCertificates = user.OneCv!.Certificates.Count() > 0;
                 ViewBag.HasInterests = user.OneCv!.Interests.Count() > 0;
@@ -68,14 +68,14 @@ namespace CVBuddy.Controllers
 
             
 
-            List<Project> projList = _context.ProjectUsers
+            List<Project> projList = await _context.ProjectUsers
                 .Where(pu => pu.UserId == userId)
                 .Join(
                 _context.Projects,
                 pu => pu.ProjId,
                 p => p.Pid,
                 (pu, p) => p)
-                .ToList();
+                .ToListAsync();
 
             ViewBag.HasJoinedProjects = projList.Count() > 0;
 

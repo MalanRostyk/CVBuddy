@@ -28,10 +28,10 @@ namespace CVBuddy.Controllers
                 .ToListAsync();
 
             var myProjects = projects
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();//&& pu.IsOwner
 
             var otherProjects = projects
-                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId && pu.IsOwner)).ToList();
+                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();//&& pu.IsOwner
 
             var vm = new ProjectIndexViewModel
             {

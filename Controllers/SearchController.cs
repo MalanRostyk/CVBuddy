@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CVBuddy.Controllers
 {
@@ -11,7 +12,7 @@ namespace CVBuddy.Controllers
 
         }
         [HttpGet]
-        public IActionResult Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm)
         {
             //var users = _context.Users.AsQueryable();//gör så att man bygger frågan först, och sen kör den som filter i db, inte i c#
             //if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -28,15 +29,15 @@ namespace CVBuddy.Controllers
 
             if (User.Identity!.IsAuthenticated)
             {
-                users = _context.Users
+                users = await _context.Users
                 .Where(u => !u.IsDeactivated)
-                .ToList();
+                .ToListAsync();
             }
             else
             {
-                users = _context.Users
+                users = await _context.Users
                 .Where(u => !u.IsDeactivated && !u.OneCv.IsPrivate)
-                .ToList();
+                .ToListAsync();
             }
 
 

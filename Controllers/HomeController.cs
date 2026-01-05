@@ -81,7 +81,7 @@ namespace CVBuddy.Controllers
         {
 
             var userId = _userManager.GetUserId(User);
-            Cv? cv = _context.Cvs
+            Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
                     .Include(cv => cv.Skills)
@@ -91,7 +91,7 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.OneUser)
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)
-                    .FirstOrDefault(cv => cv.UserId == userId); //Kan göra cv till null ändå
+                    .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             if (cv == null)
                 NotFound();
 

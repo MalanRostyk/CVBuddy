@@ -98,7 +98,7 @@ namespace CVBuddy.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult CreateCv()
+        public async Task<IActionResult> CreateCv()
         {
             //Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall
             //ViewBag.Headline = "Cv";
@@ -110,7 +110,7 @@ namespace CVBuddy.Controllers
             //ViewBag.HeadlineInterest = "Interests";
 
             //Ej behov av transaktion, av samma anledning som för GetLoggedInUsersCvAsync()
-            var cvsList = _context.Cvs.Select(cv => cv.UserId).ToList(); //Alla cvns userId
+            var cvsList = await _context.Cvs.Select(cv => cv.UserId).ToListAsync(); //Alla cvns userId
             var userId = _userManager.GetUserId(User);
             return View(new Cv());
         }
@@ -170,7 +170,7 @@ namespace CVBuddy.Controllers
                 if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
                 {
                     //  Är inte Logged in Users cv som ska hämtas här, detta cv är det som ska visas
-                    cv = _context.Cvs
+                    cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
                     .Include(cv => cv.Skills)
@@ -180,7 +180,7 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.OneUser)
                     .Include(cv => cv.CvProjects)
                     .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
-                    .FirstOrDefault(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+                    .FirstOrDefaultAsync(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
 
 
 
@@ -437,13 +437,13 @@ namespace CVBuddy.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteCv(Cv cv)
+        public async Task<IActionResult> DeleteCv(Cv cv)
          {
             try
             {
                 _context.Cvs.Remove(cv);
                 DeleteOldImageLocally(cv);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }catch(Exception e)
             {
                 return NotFound(e);

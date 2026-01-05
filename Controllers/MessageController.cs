@@ -42,13 +42,13 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult Messages()
+        public async Task<IActionResult> Messages()
         {
             var userId = _userManager.GetUserId(User);
-            List<Message> msgList = _context.Messages
+            List<Message> msgList = await _context.Messages
                 .Where(m => m.RecieverId == userId)
                 .OrderByDescending(m => m.SendDate)
-                .ToList();
+                .ToListAsync();
 
             ViewBag.HasMesseges = msgList.Count > 0;
 
@@ -58,8 +58,8 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateIsRead(Message message, int mid)
         {
-            Message? oldState = _context.Messages
-                .Where(m => m.Mid == mid).FirstOrDefault();
+            Message? oldState = await _context.Messages
+                .Where(m => m.Mid == mid).FirstOrDefaultAsync();
 
             oldState!.IsRead = message.IsRead;
             await _context.SaveChangesAsync();
@@ -67,10 +67,10 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult ReadMsg(int mid)
+        public async Task<IActionResult> ReadMsg(int mid)
         {
-            var msg = _context.Messages
-                .Where(m => m.Mid == mid).FirstOrDefault();
+            var msg = await _context.Messages
+                .Where(m => m.Mid == mid).FirstOrDefaultAsync();
             if (msg == null)
                 return NotFound("Message could not be found.");
             return View(msg);
