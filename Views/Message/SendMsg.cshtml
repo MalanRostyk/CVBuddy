@@ -1,0 +1,26 @@
+﻿@model CVBuddy.Models.Message
+
+<div>
+
+    <form asp-controller="Message" asp-action="SendMsg" method="post">
+        <div>
+            <label>Sender name: </label>
+            @if (ViewBag.WillEnterName)
+            {
+                <input type="text" asp-for="@Model.Sender" />
+            }
+            else
+            {
+                <input type="hidden" value="@User.Identity!.Name" asp-for="@Model.Sender" /> @* Ger username som value *@
+                @User.Identity!.Name
+            }
+        </div>
+        <div>
+            <textarea type="text" asp-for="@Model.MessageString"></textarea>
+        </div>
+        <input type="hidden" asp-for="@Model.SendDate" value="@Model.SendDate" />
+        <input type="hidden" asp-for="@Model.IsRead" value="@Model.IsRead" />
+        <input type="hidden" asp-for="@Model.RecieverId" value="@Model.RecieverId" />
+        <input type="submit" value="Send" class="btn btn-primary" />
+    </form>
+</div>

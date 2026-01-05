@@ -6,13 +6,12 @@ using System.Net.WebSockets;
 
 namespace CVBuddy.Controllers
 {
-    public class AccountController : HomeController
+    public class AccountController : BaseController
     {
         private SignInManager<User> signInManager;
-
-        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> s) : base(u, c)
+        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c)
         {
-            signInManager = s;
+            signInManager = sm;
         }
 
         [HttpGet]
@@ -61,7 +60,15 @@ namespace CVBuddy.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logout)
+        {
+            ViewBag.LogoutAreYouSure = "Are you sure you want to log out?";
+            return View(); 
+        }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<div>
     <a asp-action="ChangePassword" asp-controller="User">Change your password</a>
 </div>
@@ -7,3 +8,59 @@
 <div>
     <p>deactivate your profile</p>
 </div>
+=======
+﻿@model CVBuddy.Models.OptionsViewModel
+<div class="mb-2">
+    <a asp-action="ChangePassword" asp-controller="User">Change your password</a>
+</div>
+
+<form asp-action="GetOptions" method="post">
+   @*  <div class="mb-2">
+        <b>Private profile - </b>
+        <select asp-for="@Model.IsPrivate">
+            @if (ViewBag.IsSetToPrivate)
+            {
+                <option value="false">Public</option>
+                <option selected value="true">Private</option>
+            }
+            else
+            {
+                <option selected value="false">Public</option>
+                <option value="true">Private</option>
+            }
+        </select>
+    </div> *@
+    <div class="mb-2">
+        <b>Deactivated Account - </b>
+        <select asp-for="@Model.IsDeactivated">
+            @if (ViewBag.IsSetToDeactivated)
+            {
+                <option value="false">Active</option>
+                <option selected value="true">Deactivated</option>
+            }
+            else
+            {
+                <option selected value="false">Active</option>
+                <option value="true">Deactivated</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-2">
+        <b>Private Profile - </b>
+        <select asp-for="@Model.HasPrivateProfile">
+            @if (ViewBag.HasSetProfilePrivate)
+            {
+                <option value="false">Public</option>
+                <option selected value="true">Private</option>
+            }
+            else
+            {
+                <option selected value="false">Public</option>
+                <option value="true">Private</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+>>>>>>> den-senaste-v2-05

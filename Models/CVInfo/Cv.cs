@@ -23,6 +23,8 @@ namespace CVBuddy.Models.CVInfo
         public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();
 
 
+        public bool IsPrivate { get; set; }
+
 
         public List<Interest> Interests { get; set; } = new();
         public string? ImageFilePath { get; set; }

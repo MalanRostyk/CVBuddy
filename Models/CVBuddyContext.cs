@@ -21,6 +21,12 @@ namespace CVBuddy.Models
         public DbSet<CvProject> CvProjects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<Address> Addresses { get; set; }
+<<<<<<< HEAD
+=======
+        public DbSet<Message> Messages { get; set; }
+
+
+>>>>>>> den-senaste-v2-05
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
@@ -28,7 +34,7 @@ namespace CVBuddy.Models
 
 
             //User > Project (M-M via ProjectUser)
-            builder.Entity<ProjectUser>().HasKey(pu => new { pu.UserId, pu.ProjId });
+            builder.Entity<ProjectUser>().HasIndex(pu => new { pu.UserId, pu.ProjId }).IsUnique();
             //One Project har många ProjectUsers
             builder.Entity<ProjectUser>()
                 .HasOne(p => p.Project)
@@ -109,6 +115,7 @@ namespace CVBuddy.Models
                 .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+<<<<<<< HEAD
             //Address > User 1:1 
             builder.Entity<User>()
                 .HasOne(u => u.OneAddress)
@@ -116,5 +123,21 @@ namespace CVBuddy.Models
                 .HasForeignKey<Address>(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+=======
+            //Adress > User 1:1
+            builder.Entity<User>()
+               .HasOne(u => u.OneAddress)
+               .WithOne(a => a.OneUser)
+               .HasForeignKey<Address>(a => a.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            //User > Message 1:N
+            builder.Entity<Message>()
+                .HasOne(m => m.Reciever)
+                .WithMany(r => r.MessageList)
+                .HasForeignKey(m => m.RecieverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            }
+>>>>>>> den-senaste-v2-05
     }
 }

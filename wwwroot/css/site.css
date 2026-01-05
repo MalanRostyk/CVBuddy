@@ -1,3 +1,19 @@
+<<<<<<< HEAD
+=======
+html {
+    font-size: 14px;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+>>>>>>> den-senaste-v2-05
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -8,6 +24,7 @@
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+<<<<<<< HEAD
 html, body {
     height: 100%;
 }
@@ -21,6 +38,8 @@ body {
     flex-direction: column;
 }
 
+=======
+>>>>>>> den-senaste-v2-05
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
@@ -28,4 +47,118 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+<<<<<<< HEAD
 }
+=======
+}
+
+.tinify{/*klass som normaliser text i h2, h3 osv taggar till root font-size, font-weight(fetstilt) till normal*/
+        font-size: 1rem;
+        font-weight: normal;
+}
+
+.link-style-to-paragraph-style {
+    display: block;
+    color: black;
+    text-decoration: none;
+    transition: 0.2s ease;
+    
+}
+
+.link-style-to-paragraph-style:hover {
+    text-decoration: underline;
+}
+
+img{
+    height: auto;
+    width: 7em;
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+select {
+    color: #ebebeb;
+    border-radius: 0.5em;
+    border: 1px solid #ebebeb;
+    background-color: #333;
+}
+
+.cv-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background-color: #fff;
+    transition: box-shadow 0.2s ease;
+    min-width: 20vh;
+    width: 50vh;
+    background-color: rgba(55, 0, 200, 0.05);
+}
+
+.cv-container:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 255, 0.25);
+}
+
+.img-file-picker {
+    background-color: #e6efff;
+}
+
+.read-banner {
+    display: flex;
+    border: 2px solid #72acf2;
+    border-radius: 0 2em 2em 0;
+    background-color: #36045c;
+    color: aliceblue;
+    padding-right: 1em;
+}
+
+.interactions-read-banner {
+    float: right;
+    font-size: 1.5em;
+}
+
+.contact-info-read-banner {
+    padding: 1em 0 0 1em;
+    flex-grow: 2;
+}
+
+.content-item {
+    box-shadow: 0 6px 18px rgba(0, 0, 255, 0.25);
+    padding: 10px 20px;
+    margin: 0 20px;
+    border: 2px solid black;
+    border-radius: 2em;
+    background-color: #7abfeb;
+}
+
+.notification-container {
+    color: #f2f2f2;
+    background-color: #0d6efd;
+    border-radius: 35%;
+    padding: 0em 0.4em;
+}
+
+.content-in-profile{
+    object-fit: contain;
+}
+#cv-info-in-profile {
+    flex: 1 1 55%;
+}
+
+#project-in-profile {
+    padding: 1em;
+    border-radius: 2em;
+    background-color: #454545;
+    color: #efefef;
+    flex: 1 0 auto;
+    height: min-content;
+    box-shadow: 0 6px 18px rgba(0, 0, 25, 0.25);
+}
+
+.projects-in-profile-containers {
+    background-color: #5d6263;
+    border-radius: 2em;
+    padding: inherit;
+    border: 1px solid white;
+}
+
+>>>>>>> den-senaste-v2-05

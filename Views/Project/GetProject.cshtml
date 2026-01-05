@@ -1,3 +1,159 @@
-﻿@model List<Project>
+﻿@model ProjectIndexViewModel
 
-<a asp-action="CreateProject">Create new Project</a>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> _userManager
+
+@{
+    var currentUserId = _userManager.GetUserId(User);
+}
+
+<a asp-action="CreateProject" class="btn btn-primary mb-3">Create new Project</a>
+@* ändra så att under my projects kommer mina ägna projekt först och därefter projekt som jag deltar i @
+@--------------------------------------------------------ändring------------------------------------------------------------------------- *@
+<h3>My projects</h3>
+@if (Model.MyProjects.Any())
+{
+    @foreach (var project in Model.MyProjects)
+    {
+        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+        var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);
+
+        <div class="min-vh-80 read-banner">
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
+                <div class="col-12">
+                    <p><strong>Project description : </strong>@project.Description</p>
+                </div>
+                <div class="col-12">
+                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                </div>
+
+                <div class="col-7">
+                    @if (project.Enddate == null)
+                    {
+                        <p><strong>Project status : </strong>Ongoing project</p>
+                    }
+                    else
+                    {
+                        <p><strong>Project ended : </strong>@project.Enddate?.ToString("yyyy-mm-dd")</p>
+                    }
+                </div>
+                <div class="col-12">
+                    <p>
+                        <strong>Participants : </strong>
+                        @{
+                            int i = usersInProject.Count() - 1;
+                        }
+                        @for (int x = 0; x < usersInProject.Count(); x++)
+                        {
+                            <span>
+                                @usersInProject[x].FirstName @usersInProject[x].LastName
+                                @if (i > 0)
+                                {
+                                    <span>, </span>
+                                    i--;
+                                }
+                            </span>
+
+                        }
+                    </p>
+                </div>
+
+                @if (relation.IsOwner)
+                {
+                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        <button class="btn btn-info">Participant</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>You don´t own any projects.</p>
+}
+
+<h3>Other projects</h3>
+
+@if (Model.OtherProjects.Any())
+{
+    @foreach (var project in Model.OtherProjects)
+    {
+        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+        var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
+        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+
+        <div class="min-vh-80 read-banner">
+
+            <div class="row">
+                @if (owner != null)
+                {
+                    <div class="col-12">
+                        <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+                    </div>
+                }
+                <div class="col-12">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project description : </strong>@project.Description</p>
+                </div>
+
+                <div class="col-12">
+                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                </div>
+                <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
+
+                <div class="col-12">
+                    <p>
+                        <strong>Participants : </strong>
+                        @{
+                            int i = usersInProject.Count() - 1;
+                        }
+                        @for (int x = 0; x < usersInProject.Count(); x++)
+                        {
+                            <span>
+                                @usersInProject[x].FirstName @usersInProject[x].LastName
+                                @if (i > 0)
+                                {
+                                    <span>, </span>
+                                    i--;
+                                }
+                            </span>
+
+                        }
+                    </p>
+                </div>
+
+                @if (!isUserInProject)
+                {
+                    <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
+                        <div class="col-5 d-flex justify-content-end align-items-end">
+                            <button class="btn btn-primary">Join project!</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        <button class="btn btn-info">Already joined</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>No other projects available.</p>
+}

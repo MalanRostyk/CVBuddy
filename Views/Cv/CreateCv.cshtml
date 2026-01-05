@@ -4,6 +4,14 @@
 @Html.ValidationSummary
 
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
+                                                                                                    @*IsPrivate *@
+    <div class="mb-2">
+        <b>Private profile - </b>
+        <select asp-for="@Model.IsPrivate">
+            <option selected value="false">Public</option>
+            <option value="true">Private</option>
+        </select>
+    </div>
 
     <h3>@ViewBag.EducationHLine</h3>                                                        @*Education*@
 
@@ -67,8 +75,12 @@
     <h3>Upload your image</h3> 
     <div>
         <label>Cv Image</label>
+<<<<<<< HEAD
         <input asp-for="ImageFile" type="file" accept="CvImages/*"/>
         @Html.ValidationMessageFor(m => m.ImageFile)
+=======
+        <input asp-for="ImageFile" type="file" accept="images/*" class="form-control img-file-picker"/>
+>>>>>>> den-senaste-v2-05
     </div>
 
     <button type="submit" class="btn btn-primary">Create Cv</button>                                      @*Button*@

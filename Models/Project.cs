@@ -15,17 +15,20 @@ namespace CVBuddy.Models
 
         [Required]
         [MaxLength(200)] //Ska matcha maxlength="200" i view på inputfältet
-        public string? Description { get; set; }
+        public string? Description { get; set; }//Kraschar om man inte anger en description vid skpande av projekt
 
         [Required]
         //[DataType(DataType.Date)] //Kom tillbaka hit, den sätter i view startande datumet till 0001-01-01
-        public DateTime StartDate{ get; set; }
 
+        public DateTime StartDate { get; set; } /*= DateTime.MinValue;*/
         public DateTime? Enddate { get; set; } //Ändra till stort D, glöm ej att även ändra i view också
         [NotMapped]
         public List<User> UsersInProject { get; set; } = new();//För att enklare hantera användare i projekt i koden
 
         public DateTime PublisDate { get; set; } = DateTime.Now;
+
+        [NotMapped]
+        public string? UserId{ get; set; }
 
         public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
         public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();

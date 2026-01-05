@@ -8,6 +8,7 @@ namespace CVBuddy.Controllers
 {
     public class UserController : HomeController
     {
+
         private readonly SignInManager<User> _signInManager;
         public UserController(UserManager<User> u, CVBuddyContext c, SignInManager<User> signInManager) : base(u, c)
         {
@@ -18,7 +19,7 @@ namespace CVBuddy.Controllers
         {
             var user = await _userManager.Users
                 .Include(u => u.OneAddress)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -36,7 +37,6 @@ namespace CVBuddy.Controllers
             }
             return View(user);
         }
-
         [HttpPost]
         public async Task<IActionResult> UpdateUser(User formUser)
         {
@@ -88,7 +88,6 @@ namespace CVBuddy.Controllers
                     user.OneAddress.Street = formUser.OneAddress.Street;
                 }
             }
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction("GetUser", "User");
