@@ -41,7 +41,7 @@
                         <img src="@user.OneCv.ImageFilePath" />
                     </div>
                     <div class="flex-grow-1">
-                        @if (user.HasPrivateProfile == true)
+                        @if (!User.Identity!.IsAuthenticated && user.HasPrivateProfile == true)
                         {
                             <p class="mb-2">
                                 <b>@user.FirstName @user.LastName</b>

@@ -29,7 +29,7 @@
     </div>
 
     <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
-        @if (ViewBag.HasSetPrivateProfile != true || ViewBag.NotLoggedInUsersCv != true)
+        @if (ViewBag.HasSetPrivateProfile != true || User.Identity!.IsAuthenticated)
         {
             <a asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@Model.OneUser!.Id" class="btn btn-primary btn-sm">
                 <i class="fa-regular fa-address-card"></i>

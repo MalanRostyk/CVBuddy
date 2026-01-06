@@ -29,16 +29,31 @@ namespace CVBuddy.Controllers
 
             if (User.Identity!.IsAuthenticated)
             {
+                //Inloggad göm deactivated account
                 users = await _context.Users
                 .Where(u => !u.IsDeactivated)
                 .ToListAsync();
             }
             else
             {
+                //utloggad göm alla deactivated account och privata profiler
                 users = await _context.Users
-                .Where(u => !u.IsDeactivated && !u.OneCv.IsPrivate)
+                .Where(u => !u.IsDeactivated && !u.HasPrivateProfile)
                 .ToListAsync();
             }
+
+            //if (User.Identity!.IsAuthenticated)
+            //{
+            //    users = await _context.Users
+            //    .Where(u => !u.IsDeactivated)
+            //    .ToListAsync();
+            //}
+            //else
+            //{
+            //    users = await _context.Users
+            //    .Where(u => !u.IsDeactivated && !u.OneCv.IsPrivate)
+            //    .ToListAsync();
+            //}
 
 
 

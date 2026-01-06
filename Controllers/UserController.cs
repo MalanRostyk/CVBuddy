@@ -64,7 +64,8 @@ namespace CVBuddy.Controllers
                 await _userManager.SetPhoneNumberAsync(user, formUser.PhoneNumber);
 
             }
-
+            await _context.SaveChangesAsync();
+            
             if (formUser.OneAddress != null)
             {
                 if (user.OneAddress == null)
@@ -83,10 +84,10 @@ namespace CVBuddy.Controllers
                     user.OneAddress.Country = formUser.OneAddress.Country;
                     user.OneAddress.City = formUser.OneAddress.City;
                     user.OneAddress.Street = formUser.OneAddress.Street;
+                    await _context.SaveChangesAsync();
                 }
             }
-            await _context.SaveChangesAsync();
-
+                          
             return RedirectToAction("GetUser", "User");
             //Identity bygger på säkerhet och token-baserade ändringar, microsoft tvingar oss att 
             //använda metoder som identity klassen har, de används för att lagra de fält på rätt sätt

@@ -18,6 +18,7 @@ namespace CVBuddy.Controllers
 
         public async Task<IActionResult> Index()
         {
+            //Ingen ska se, något från konton som är deactivated
             var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
                                              //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
                 .Where(u => u.IsDeactivated != true)
@@ -26,10 +27,18 @@ namespace CVBuddy.Controllers
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
 
+                                                                    //if (!User.Identity!.IsAuthenticated)
+                                                                    //{
+                                                                    //    users = users
+                                                                    //        .Where(u => u.OneCv?.IsPrivate != true)
+                                                                    //        .ToList();
+                                                                    //}
+
+            //Om man är utloggad så ska man inte se privata profiler
             if (!User.Identity!.IsAuthenticated)
             {
                 users = users
-                    .Where(u => u.OneCv?.IsPrivate != true)
+                    .Where(u => u.HasPrivateProfile != true)
                     .ToList();
             }
 
