@@ -37,6 +37,8 @@ namespace CVBuddy.Models.CVInfo
         public string? ImageFilePath { get; set; }
 
         [NotMapped]
+        [Required(ErrorMessage = "Upload an image please.")]
+        [FileExtensions(Extensions = "jpg,png,jfif,webp")]
         public IFormFile ImageFile { get; set; } //Borde vara nullable
         public int ReadCount { get; set; }
         public string? UserId { get; set; } //Vart null

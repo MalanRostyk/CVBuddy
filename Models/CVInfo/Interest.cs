@@ -8,7 +8,7 @@ namespace CVBuddy.Models.CVInfo
         [Key]
         public int InterestId { get; set; }
 
-        [Required(ErrorMessage = "An added interest cannot be left empty")] 
+        [Required(ErrorMessage = "An added interest cannot be left empty.")] 
         [StringLength(90)]
         public string InterestName { get; set; }
 

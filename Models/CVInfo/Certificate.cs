@@ -8,7 +8,7 @@ namespace CVBuddy.Models.CVInfo
         [Key]
         public int CertId { get; set; }
 
-        [Required(ErrorMessage = "An added certificate cannot be left empty")]
+        [Required(ErrorMessage = "An added certificate cannot be left empty.")]
         [StringLength(90, MinimumLength = 2)]
         public string CertName { get; set; }
 
