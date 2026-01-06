@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class withoutisPrivateoncv : Migration
+    public partial class ada : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -227,8 +227,8 @@ namespace CVBuddy.Migrations
                 {
                     Mid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Sender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MessageString = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sender = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    MessageString = table.Column<string>(type: "nvarchar(350)", maxLength: 350, nullable: false),
                     SendDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     RecieverId = table.Column<string>(type: "nvarchar(450)", nullable: false)

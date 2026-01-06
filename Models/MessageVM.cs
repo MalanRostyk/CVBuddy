@@ -1,24 +1,21 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CVBuddy.Models
 {
-    public class Message
+    public class MessageVM
     {
-        [Key]
         public int Mid { get; set; }
+
+        [Required(ErrorMessage = "Must enter your name")]
+        [StringLength(50, MinimumLength = 2)]
         public string Sender { get; set; }
+        [Required]
+        [StringLength(350, MinimumLength = 1)]
         public string MessageString { get; set; }
 
         public DateTime SendDate { get; set; } = DateTime.Now;
 
         public bool IsRead { get; set; }
-
-
-        [ForeignKey(nameof(RecieverId))]
         public string RecieverId { get; set; }
-        public User Reciever { get; set; }//nullable för att testa om modelstate inte blir invalid till SendMessage POST
     }
 }

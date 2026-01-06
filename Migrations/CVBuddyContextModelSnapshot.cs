@@ -280,7 +280,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("MessageString")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(350)
+                        .HasColumnType("nvarchar(350)");
 
                     b.Property<string>("RecieverId")
                         .IsRequired()
@@ -291,7 +292,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Sender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Mid");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260106134951_without-isPrivate-on-cv")]
-    partial class withoutisPrivateoncv
+    [Migration("20260106164429_ada")]
+    partial class ada
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -283,7 +283,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("MessageString")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(350)
+                        .HasColumnType("nvarchar(350)");
 
                     b.Property<string>("RecieverId")
                         .IsRequired()
@@ -294,7 +295,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Sender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Mid");
 
