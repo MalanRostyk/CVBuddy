@@ -1,4 +1,5 @@
 ﻿using CVBuddy.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +12,10 @@ namespace CVBuddy.Controllers
         {
         }
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ReadProfile(string userId)
         {
+
             var user = await _context.Users
                 .Include(u => u.OneAddress)
                 .Include(u => u.OneCv)

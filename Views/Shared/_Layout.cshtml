@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> _userManager
+
+@{
+    var currentUserId = _userManager.GetUserId(User);
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -66,7 +73,10 @@
                 <h6 class="text-uppercase">Meny</h6>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="User" asp-action="GetUser"><i class="fa-solid fa-user"></i>   My Profile</a>
+                        <a class="nav-link" asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@currentUserId"><i class="fa-solid fa-shapes"></i>   Preview My profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="User" asp-action="GetUser"><i class="fa-solid fa-user"></i>   My Info</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Cv" asp-action="ReadCv"><i class="fa-solid fa-file"></i>   My CV</a>@* Länk till cv, om finns ingen cv, utskrift, och knapp skapa cv *@
