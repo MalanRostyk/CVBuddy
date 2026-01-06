@@ -5,6 +5,19 @@
 @* <h1>@ViewBag.Headline</h1> *@
 <h1>Create your Cv</h1>
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <ul class="text-danger">
+        @foreach(var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>
+                @err.ErrorMessage
+            </li>
+        }
+    </ul>
+}
+
+
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
                                                                                                     @*IsPrivate *@
     @* <div class="mb-2">
@@ -22,7 +35,6 @@
     <div class="mb-3">
 
         <div class="mb-2">
-            <p class="mb-0">Enter what high school you went to.</p>
             <input type="text" asp-for="@Model.Education.HighSchool" class="border-primary" />
         </div>
 

@@ -54,7 +54,7 @@ function ShowNotification() {
 function addSkill() {
     let containerSkills = document.getElementById("Skill-Container");
     let skillIndex = parseInt(containerSkills.dataset.skillIndex);
-    containerSkills.insertAdjacentHTML('beforeend', `<p>Skill Title</p>
+    containerSkills.insertAdjacentHTML('beforeend', `<p>Skill Title<p class="mb-0">Enter what high school you went to.</p></p>
     <input type="text" name="Skills[${skillIndex}].ASkill" class="border-primary"/>
         <p>Skill Description</p>
     <input type="text" name="Skills[${skillIndex}].Description" class="border-primary"/>

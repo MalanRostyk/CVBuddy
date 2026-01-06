@@ -7,6 +7,7 @@ namespace CVBuddy.Models.CVInfo
     {
         [Key]
         public int Sid { get; set; }
+        [Required(ErrorMessage = "Det funkade!!!!")]
         public string ASkill { get; set; }
         public string? Description{ get; set; }
         public DateTime? Date{ get; set; }

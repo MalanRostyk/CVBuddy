@@ -224,6 +224,9 @@ namespace CVBuddy.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCv(CvVM cvVM)
         {
+            //var errorList = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            if (ModelState.IsValid)
+                return View(cvVM);
             try
             {
                 if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
@@ -450,6 +453,9 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(CvVM cvVM)
         {
+            if (!ModelState.IsValid)
+                return View(cvVM);
+
             var cvOldVersion = await GetLoggedInUsersCvAsync();
 
             if (cvOldVersion == null)
