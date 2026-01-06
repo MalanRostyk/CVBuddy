@@ -20,6 +20,48 @@ namespace CVBuddy.Controllers
         {
         }
 
+        private Cv ConvertToCv(CvVM cvVM)
+        {
+            Cv cv = new();
+            cv.Cid = cvVM.Cid;
+            cv.Skills = cvVM.Skills;
+            cv.Education = cvVM.Education;
+            cv.Experiences = cvVM.Experiences;
+            cv.Certificates = cvVM.Certificates;
+            cv.PersonalCharacteristics = cvVM.PersonalCharacteristics;
+            cv.PublishDate = cvVM.PublishDate;
+            cv.Interests = cvVM.Interests;
+            cv.ImageFilePath = cvVM.ImageFilePath;
+            cv.ImageFile = cvVM.ImageFile;
+            cv.ReadCount = cvVM.ReadCount;
+            cv.UserId = cvVM.UserId;
+            cv.OneUser = cvVM.OneUser;
+            cv.UsersProjects = cvVM.UsersProjects;
+
+            return cv;
+        }
+
+        private CvVM ConvertToCvVM(Cv cv)
+        {
+            CvVM cvVM = new();
+            cvVM.Cid = cv.Cid;
+            cvVM.Skills = cv.Skills;
+            cvVM.Education = cv.Education;
+            cvVM.Experiences = cv.Experiences;
+            cvVM.Certificates = cv.Certificates;
+            cvVM.PersonalCharacteristics = cv.PersonalCharacteristics;
+            cvVM.PublishDate = cv.PublishDate;
+            cvVM.Interests = cv.Interests;
+            cvVM.ImageFilePath = cv.ImageFilePath;
+            cvVM.ImageFile = cv.ImageFile;
+            cvVM.ReadCount = cv.ReadCount;
+            cvVM.UserId = cv.UserId;
+            cvVM.OneUser = cv.OneUser;
+            cvVM.UsersProjects = cv.UsersProjects;
+
+            return cvVM;
+        }
+
         private bool IsValidExtension(string extension)
         {
             string ext = extension.ToLower();
@@ -28,6 +70,44 @@ namespace CVBuddy.Controllers
             return false;
         }
 
+        private async Task<CvVM> GetLoggedInUsersCvVMAsync()
+        {
+            if (!(User.Identity!.IsAuthenticated))
+                return new();
+                
+            //Ingen transaktion, Select statements(dvs, await _context...) är atomära, om ej i sekvens, behövs ej transaktion
+            var userId = _userManager.GetUserId(User); //Datan kommer från db men man läser inte från Db i realtid, utan man hämtar det från inloggningscontexten, via ClaimsPrincipal, dvs user laddas vid inloggningen, läggs till i ClaimsPrincipal. Kan ej vara opålitlig. Därmet endast en read operation görs
+            //Cv? cv = await _context.Cvs
+            //        .Include(cv => cv.Education)
+            //        .Include(cv => cv.Experiences)
+            //        .Include(cv => cv.Skills)
+            //        .Include(cv => cv.Certificates)
+            //        .Include(cv => cv.PersonalCharacteristics)
+            //        .Include(cv => cv.Interests)
+            //        .Include(cv => cv.OneUser)
+            //        .Include(cv => cv.CvProjects)
+            //        .ThenInclude(cp => cp.OneProject)
+            //        .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+            Cv? cv = await _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
+                    .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+            if(cv != null)
+                cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
+
+
+
+            //if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
+            //    throw new NullReferenceException("Users Cv was not found");
+
+            return ConvertToCvVM(cv!);
+        }
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
             if (!(User.Identity!.IsAuthenticated))
@@ -58,6 +138,9 @@ namespace CVBuddy.Controllers
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             if(cv != null)
                 cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
+
+
+
             //if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
             //    throw new NullReferenceException("Users Cv was not found");
 
@@ -87,7 +170,7 @@ namespace CVBuddy.Controllers
             return false;
         }
 
-        private bool DeleteOldImageLocally(Cv cvOld)
+        private bool DeleteOldImageLocally(CvVM cvOld)
         {
             string[]? cvOldFileImageNameArray = null;
 
@@ -134,45 +217,58 @@ namespace CVBuddy.Controllers
             //ViewBag.HeadlineCertificates = "Certificates";
             //ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
             //ViewBag.HeadlineInterest = "Interests";
-
-            //Ej behov av transaktion, av samma anledning som för GetLoggedInUsersCvAsync()
-            var cvsList = await _context.Cvs.Select(cv => cv.UserId).ToListAsync(); //Alla cvns userId
-            var userId = _userManager.GetUserId(User);
-            return View(new Cv());
+            return View(new CvVM());
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateCv(Cv cv)
+        public async Task<IActionResult> CreateCv(CvVM cvVM)
         {
             try
             {
-                if (cv.ImageFile == null || cv.ImageFile.Length == 0)
+                if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
                 {
                     ModelState.AddModelError("ImageFile", "Please upload an image");
                     ViewBag.eror = "Please upload an image";
-                    return View(cv);
+                    return View(cvVM);
                 }
 
                 var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 Directory.CreateDirectory(uploadeFolder);
 
-                var ext = Path.GetExtension(cv.ImageFile.FileName);//null
+                var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
 
                 if (!IsValidExtension(ext))
-                    return View(cv);
+                    return View(cvVM);
 
                 var fileName = Guid.NewGuid().ToString() + ext;
 
                 var filePath = Path.Combine(uploadeFolder, fileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await cv.ImageFile.CopyToAsync(stream);
+                    await cvVM.ImageFile.CopyToAsync(stream);
                 }
-                cv.ImageFilePath = "/CvImages/" + fileName;
+                cvVM.ImageFilePath = "/CvImages/" + fileName;
 
                 //Tilldela user id till cv för realtion
-                cv.UserId = _userManager.GetUserId(User);
+                cvVM.UserId = _userManager.GetUserId(User);
+
+                Cv cv = new();
+
+                cv.Cid = cvVM.Cid;
+                cv.Skills = cvVM.Skills;
+                cv.Education = cvVM.Education;
+                cv.Experiences = cvVM.Experiences;
+                cv.Certificates = cvVM.Certificates;
+                cv.PersonalCharacteristics = cvVM.PersonalCharacteristics;
+                cv.PublishDate = cvVM.PublishDate;
+                cv.Interests = cvVM.Interests;
+                cv.ImageFilePath = cvVM.ImageFilePath;
+                cv.ImageFile = cvVM.ImageFile;
+                cv.ReadCount = cvVM.ReadCount;
+                cv.UserId = cvVM.UserId;
+                cv.OneUser = cvVM.OneUser;
+                cv.UsersProjects = cvVM.UsersProjects;
 
                 await _context.Cvs.AddAsync(cv);
                 await _context.SaveChangesAsync();
@@ -182,7 +278,7 @@ namespace CVBuddy.Controllers
             catch (Exception e)
             {
                 //Om transaktionen inte lyckades, tas tillagda bilden bort lokalt här i samband med en rollback
-                DeleteOldImageLocally(cv);
+                DeleteOldImageLocally(cvVM);
 
                 return NotFound(e);
             }
@@ -352,7 +448,7 @@ namespace CVBuddy.Controllers
         
 
         [HttpPost]
-        public async Task<IActionResult> UpdateCv(Cv cv)
+        public async Task<IActionResult> UpdateCv(CvVM cvVM)
         {
             var cvOldVersion = await GetLoggedInUsersCvAsync();
 
@@ -360,100 +456,100 @@ namespace CVBuddy.Controllers
                 return NotFound();
 
             //----------------------------------------------------------------------------------------------------------------------------cvOldVersion.IsPrivate = cv.IsPrivate;
-            cvOldVersion.ReadCount = cv.ReadCount;
-            cvOldVersion.UserId = cv.UserId;
+            cvOldVersion.ReadCount = cvVM.ReadCount;
+            cvOldVersion.UserId = cvVM.UserId;
             
-            if(cv.ImageFile != null)
+            if(cvVM.ImageFile != null)
             {
 
-                if (!IsValidFileSize(cv.ImageFile.Length))
-                    return View(cv);
+                if (!IsValidFileSize(cvVM.ImageFile.Length))
+                    return View(cvVM);
 
                 //var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
 
                 //accept räcker inte måste validera extension på server nivå
 
-                var extension = Path.GetExtension(cv.ImageFile.FileName);
+                var extension = Path.GetExtension(cvVM.ImageFile.FileName);
 
                 if (!IsValidExtension(extension))
-                    return View(cv);
+                    return View(cvVM);
                
                 var newFileName = Guid.NewGuid() + extension;
                 var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 var fullPath = Path.Combine(directory, newFileName);
 
-                DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
+                DeleteOldImageLocally(ConvertToCvVM(cvOldVersion)); //Radera gamla bilden lokalt
 
                 using (var fs = new FileStream(fullPath, FileMode.Create))
                 {
-                    await cv.ImageFile.CopyToAsync(fs);
+                    await cvVM.ImageFile.CopyToAsync(fs);
                 }
 
-                cvOldVersion.ImageFile = cv.ImageFile;
+                cvOldVersion.ImageFile = cvVM.ImageFile;
                 cvOldVersion.ImageFilePath = "/CvImages/" + newFileName;
             }          
 
             //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
 
             //Experiences
-            for(int i = 0; i < cv.Experiences.Count; i++)
+            for(int i = 0; i < cvVM.Experiences.Count; i++)
             {
-                if (cvOldVersion.Experiences.Count < cv.Experiences.Count)
+                if (cvOldVersion.Experiences.Count < cvVM.Experiences.Count)
                     cvOldVersion.Experiences.Add(new());
 
-                cvOldVersion.Experiences[i].Title = cv.Experiences[i].Title;
-                cvOldVersion.Experiences[i].Description = cv.Experiences[i].Description;
-                cvOldVersion.Experiences[i].Company = cv.Experiences[i].Company;
-                cvOldVersion.Experiences[i].StartDate = cv.Experiences[i].StartDate;
-                cvOldVersion.Experiences[i].EndDate = cv.Experiences[i].EndDate;
+                cvOldVersion.Experiences[i].Title = cvVM.Experiences[i].Title;
+                cvOldVersion.Experiences[i].Description = cvVM.Experiences[i].Description;
+                cvOldVersion.Experiences[i].Company = cvVM.Experiences[i].Company;
+                cvOldVersion.Experiences[i].StartDate = cvVM.Experiences[i].StartDate;
+                cvOldVersion.Experiences[i].EndDate = cvVM.Experiences[i].EndDate;
             }
 
             //Education
-            cvOldVersion.Education.HighSchool = cv.Education.HighSchool;
-            cvOldVersion.Education.HSProgram = cv.Education.HSProgram;
-            cvOldVersion.Education.HSDate = cv.Education.HSDate;
+            cvOldVersion.Education.HighSchool = cvVM.Education.HighSchool;
+            cvOldVersion.Education.HSProgram = cvVM.Education.HSProgram;
+            cvOldVersion.Education.HSDate = cvVM.Education.HSDate;
 
-            cvOldVersion.Education.Univeristy = cv.Education.Univeristy;
-            cvOldVersion.Education.UniProgram = cv.Education.UniProgram;
-            cvOldVersion.Education.UniDate = cv.Education.UniDate;
+            cvOldVersion.Education.Univeristy = cvVM.Education.Univeristy;
+            cvOldVersion.Education.UniProgram = cvVM.Education.UniProgram;
+            cvOldVersion.Education.UniDate = cvVM.Education.UniDate;
 
             //Skills
-            for (int i = 0; i < cv.Skills.Count; i++)
+            for (int i = 0; i < cvVM.Skills.Count; i++)
             {
-                if(cvOldVersion.Skills.Count < cv.Skills.Count)
+                if(cvOldVersion.Skills.Count < cvVM.Skills.Count)
                     cvOldVersion.Skills.Add(new());
                 
-                cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
-                cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
-                cvOldVersion.Skills[i].Date = cv.Skills[i].Date;
+                cvOldVersion.Skills[i].ASkill = cvVM.Skills[i].ASkill;
+                cvOldVersion.Skills[i].Description = cvVM.Skills[i].Description;
+                cvOldVersion.Skills[i].Date = cvVM.Skills[i].Date;
             }
 
             //Interests
-            for (int i = 0; i < cv.Interests.Count; i++)
+            for (int i = 0; i < cvVM.Interests.Count; i++)
             {
-                if (cvOldVersion.Interests.Count < cv.Interests.Count)
+                if (cvOldVersion.Interests.Count < cvVM.Interests.Count)
                     cvOldVersion.Interests.Add(new());
 
-                cvOldVersion.Interests[i].InterestName = cv.Interests[i].InterestName;
+                cvOldVersion.Interests[i].InterestName = cvVM.Interests[i].InterestName;
             }
 
 
             //Certificates
-            for (int i = 0; i < cv.Certificates.Count; i++)
+            for (int i = 0; i < cvVM.Certificates.Count; i++)
             {
-                if (cvOldVersion.Certificates.Count < cv.Certificates.Count)
+                if (cvOldVersion.Certificates.Count < cvVM.Certificates.Count)
                     cvOldVersion.Certificates.Add(new());
 
-                cvOldVersion.Certificates[i].CertName = cv.Certificates[i].CertName;
+                cvOldVersion.Certificates[i].CertName = cvVM.Certificates[i].CertName;
             }
 
 
             //PersonalCharacteristics
-            for (int i = 0; i < cv.PersonalCharacteristics.Count; i++)
+            for (int i = 0; i < cvVM.PersonalCharacteristics.Count; i++)
             {
-                if (cvOldVersion.PersonalCharacteristics.Count < cv.PersonalCharacteristics.Count)
+                if (cvOldVersion.PersonalCharacteristics.Count < cvVM.PersonalCharacteristics.Count)
                     cvOldVersion.PersonalCharacteristics.Add(new());
-                cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
+                cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cvVM.PersonalCharacteristics[i].CharacteristicName;
             }
 
             
@@ -485,7 +581,7 @@ namespace CVBuddy.Controllers
             try
             {
                 _context.Cvs.Remove(cv);
-                DeleteOldImageLocally(cv);
+                DeleteOldImageLocally(ConvertToCvVM(cv));
                 await _context.SaveChangesAsync();
             }catch(Exception e)
             {

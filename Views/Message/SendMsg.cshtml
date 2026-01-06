@@ -17,7 +17,7 @@
             }
         </div>
         <div>
-            <p class="mb-0">Message <span asp-validation-for="@Model.MessageString" class="text-danger"></span></p>
+            <p class="mb-0">Message<span asp-validation-for="@Model.MessageString" class="text-danger"></span></p>
             <textarea type="text" asp-for="@Model.MessageString" class="mb-4"></textarea>
         </div>
         <input type="hidden" asp-for="@Model.SendDate" value="@Model.SendDate" />
