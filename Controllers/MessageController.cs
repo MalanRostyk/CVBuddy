@@ -17,7 +17,7 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public IActionResult SendMsg(string userId)//Får inte med userId till POST sedan, därför är modelstate invalid och reciever null
         {
-            Message msg = new();
+            MessageVM msg = new();
             msg.RecieverId = userId;
             ViewBag.WillEnterName = false;
             if (!User.Identity!.IsAuthenticated)
@@ -27,12 +27,22 @@ namespace CVBuddy.Controllers
             return View(msg);
         }
         [HttpPost]
-        public async Task<IActionResult> SendMsg(Message msg)
+        public async Task<IActionResult> SendMsg(MessageVM msgVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(msg);
+                return View(msgVM);
             }
+
+            Message msg = new();
+
+            msg.Mid = msgVM.Mid;
+            msg.Sender = msgVM.Sender;
+            msg.MessageString = msgVM.MessageString;
+            msg.SendDate = msgVM.SendDate;
+            msg.IsRead = msgVM.IsRead;
+            msg.RecieverId = msgVM.RecieverId;
+
             await _context.AddAsync(msg);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
