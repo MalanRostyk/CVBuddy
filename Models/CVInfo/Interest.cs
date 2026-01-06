@@ -7,10 +7,13 @@ namespace CVBuddy.Models.CVInfo
     {
         [Key]
         public int InterestId { get; set; }
+
+        [Required(ErrorMessage = "An added interest cannot be left empty")] 
+        [StringLength(90)]
         public string InterestName { get; set; }
 
         public int CvId { get; set; }
         [ForeignKey(nameof(CvId))]
-        public Cv Cv { get; set; }
+        public Cv? Cv { get; set; }
     }
 }

@@ -145,6 +145,8 @@ namespace CVBuddy.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
+            if (!ModelState.IsValid)
+                return View(cv);
             try
             {
                 if (cv.ImageFile == null || cv.ImageFile.Length == 0)

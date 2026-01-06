@@ -54,11 +54,11 @@ function ShowNotification() {
 function addSkill() {
     let containerSkills = document.getElementById("Skill-Container");
     let skillIndex = parseInt(containerSkills.dataset.skillIndex);
-    containerSkills.insertAdjacentHTML('beforeend', `<p>Skill Title</p>
+    containerSkills.insertAdjacentHTML('beforeend', `<p>Skill Title<span asp-validation-for="Skills[${skillIndex}].ASkill" class="text-danger"></span></p>
     <input type="text" name="Skills[${skillIndex}].ASkill" class="border-primary"/>
-        <p>Skill Description</p>
+        <p>Skill Description<span asp-validation-for="Skills[${skillIndex}].Description" class="text-danger"></span></p>
     <input type="text" name="Skills[${skillIndex}].Description" class="border-primary"/>
-        <p>Skill Date</p>
+        <p>Skill Date<span asp-validation-for="Skills[${skillIndex}].Date" class="text-danger"></span></p>
     <input type="date" name="Skills[${skillIndex}].Date" class="border-primary"/>`);
     skillIndex++;
 
