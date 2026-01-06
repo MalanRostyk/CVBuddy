@@ -2,18 +2,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
 {
     public class BaseController : Controller
     {
         protected readonly UserManager<User> _userManager;
+        protected readonly SignInManager<User> _signInManager;
         protected readonly CVBuddyContext _context;
 
-        public BaseController(UserManager<User> u, CVBuddyContext c)
+        public BaseController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm)
         {
             _userManager = u;
             _context = c;
+            _signInManager = sm;
         }
 
 
@@ -25,7 +28,10 @@ namespace CVBuddy.Controllers
             if (User.Identity!.IsAuthenticated)
             {
                 var userId = _userManager.GetUserId(User);
-
+                if(User == null)
+                {
+                    _signInManager.SignOutAsync();
+                }
                 ViewBag.NotReadCount = _context.Messages
                     .Where(m => m.RecieverId == userId && !m.IsRead)
                     .Count();

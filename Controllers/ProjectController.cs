@@ -11,7 +11,7 @@ namespace CVBuddy.Controllers
     public class ProjectController : HomeController
     {
 
-        public ProjectController(UserManager<User> u, CVBuddyContext c) : base(u, c)
+        public ProjectController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
 
         }

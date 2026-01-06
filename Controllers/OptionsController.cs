@@ -9,7 +9,7 @@ namespace CVBuddy.Controllers
 {
     public class OptionsController : HomeController
     {
-        public OptionsController(UserManager<User> u, CVBuddyContext c) : base(u, c)
+        public OptionsController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
 

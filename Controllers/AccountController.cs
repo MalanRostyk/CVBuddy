@@ -8,10 +8,9 @@ namespace CVBuddy.Controllers
 {
     public class AccountController : BaseController
     {
-        private SignInManager<User> signInManager;
-        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c)
+        
+        public AccountController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
-            signInManager = sm;
         }
 
         [HttpGet]
@@ -24,7 +23,7 @@ namespace CVBuddy.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(
+                var result = await _signInManager.PasswordSignInAsync(
                     lvm.UserName, lvm.Password, isPersistent: lvm.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
@@ -56,7 +55,7 @@ namespace CVBuddy.Controllers
                 var result = await _userManager.CreateAsync(user, usr.Password);
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(user, isPersistent: true);
+                    await _signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -75,7 +74,7 @@ namespace CVBuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
     }

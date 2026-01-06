@@ -16,7 +16,7 @@ namespace CVBuddy.Controllers
 {
     public class CvController : HomeController
     {
-        public CvController(UserManager<User> u, CVBuddyContext c) : base(u, c)
+        public CvController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
 

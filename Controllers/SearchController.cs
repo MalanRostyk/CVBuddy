@@ -7,7 +7,7 @@ namespace CVBuddy.Controllers
 {
     public class SearchController : HomeController
     {
-        public SearchController(UserManager<User> u, CVBuddyContext c) : base(u, c)
+        public SearchController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
 
         }

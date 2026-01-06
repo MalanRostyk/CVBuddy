@@ -9,7 +9,7 @@ namespace CVBuddy.Controllers
     public class MessageController : BaseController
     {
 
-        public MessageController(UserManager<User> u, CVBuddyContext c) : base(u, c)
+        public MessageController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
 

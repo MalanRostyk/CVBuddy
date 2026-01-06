@@ -7,7 +7,7 @@ namespace CVBuddy.Controllers
 {
     public class ProfileController : BaseController
     {
-        public ProfileController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c)
+        public ProfileController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
         [HttpGet]

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260105183120_aaaadfälkjn")]
-    partial class aaaadfälkjn
+    [Migration("20260106011851_d-new-master-2")]
+    partial class dnewmaster2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,6 +95,9 @@ namespace CVBuddy.Migrations
 
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("PublishDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReadCount")
                         .HasColumnType("int");
@@ -319,7 +322,7 @@ namespace CVBuddy.Migrations
                     b.Property<DateTime?>("Enddate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PublisDate")
+                    b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
