@@ -13,6 +13,7 @@ else
         {
             <li class="list-group-item">
                 <strong>@user.FirstName @user.LastName</strong>
+                <a asp-action="ReadCv" asp-controller="Cv" asp-route-id="@user.OneCv.Cid">See more</a>
             </li>
         }
     </ul>

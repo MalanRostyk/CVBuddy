@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260106011851_d-new-master-2")]
-    partial class dnewmaster2
+    [Migration("20260106164701_NewMigration")]
+    partial class NewMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -794,8 +794,7 @@ namespace CVBuddy.Migrations
                 {
                     b.Navigation("MessageList");
 
-                    b.Navigation("OneAddress")
-                        .IsRequired();
+                    b.Navigation("OneAddress");
 
                     b.Navigation("OneCv")
                         .IsRequired();

@@ -63,24 +63,22 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject(Project proj)
         {
-            User? user = await _userManager.GetUserAsync(User);
-            if (user != null)
-            {
-                proj.UsersInProject.Add(user);//Lägg till user i projektet som participant för participant count
-            }
-            else
-            {
-                return NotFound("det var jag");
-            }
-
-
-            await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
-            await _context.SaveChangesAsync(); //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
-                                               //eftersom att Pid tilldelas först när den har serialiserats till Db
-
             var userId = _userManager.GetUserId(User); //Hämtar användarens id
-                                                       //var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
-            var projId = await _context.Projects.Where(createdProject => createdProject.Pid == proj.Pid).Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades
+
+            //var cvId = await _context.Cvs
+            //  .Where(cvs => cvs.UserId == userId)
+            //  .Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
+
+            //var projId = await _context.Projects
+            //    .Where(createdProject => createdProject.Pid == proj.Pid)
+            //    .Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades, kan köra direkt proj.Pid
+
+            await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
+            {
+                ProjId = proj.Pid,
+                UserId = userId!,
+                IsOwner = true
+            });
 
             //await _context.CvProjects.AddAsync(new CvProject //Lägg till CvProject direkt i DbSet
             //{
@@ -89,14 +87,9 @@ namespace CVBuddy.Controllers
 
             //});
 
-            //await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
-
-            await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
-            {
-                ProjId = projId,
-                UserId = userId!,
-                IsOwner = true
-            });
+            await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
+                                                   //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
+                                                   //eftersom att Pid tilldelas först när den har serialiserats till Db
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
             #region comments

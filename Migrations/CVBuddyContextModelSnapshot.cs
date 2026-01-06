@@ -791,8 +791,7 @@ namespace CVBuddy.Migrations
                 {
                     b.Navigation("MessageList");
 
-                    b.Navigation("OneAddress")
-                        .IsRequired();
+                    b.Navigation("OneAddress");
 
                     b.Navigation("OneCv")
                         .IsRequired();

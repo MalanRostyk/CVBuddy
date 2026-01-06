@@ -14,39 +14,74 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUser()
         {
-            var user = await _userManager.Users
+            var user = await _context.Users
                 .Include(u => u.OneAddress)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
+            
             return View(user);
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _context.Users
+                .Include(u => u.OneAddress)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
-            return View(user);
+            var userVm = new UserViewModel
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                OneAddress = user.OneAddress ?? new Address()
+            };
+            return View(userVm);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateUser(User formUser)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateUser(UserViewModel formUser)
         {
-            var user = await _userManager.Users
-                .Include(u => u.OneAddress)
-                .FirstOrDefaultAsync(u => u.Id == formUser.Id);
+            var userId = _userManager.GetUserId(User);
+            var user = await _context.Users.Include(u => u.OneAddress).FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
-            {
                 return RedirectToAction("Login", "Account");
-            }
+
+            if (_userManager.Users.Any(u => u.Email == formUser.Email && u.Id != user.Id))
+                ModelState.AddModelError(nameof(formUser.Email), "Email already exists");
+
+            if (_userManager.Users.Any(u => u.PhoneNumber == formUser.PhoneNumber && u.Id != user.Id))
+                ModelState.AddModelError(nameof(formUser.PhoneNumber), "Phone number already exists");
+
+            if (_userManager.Users.Any(u => u.UserName == formUser.UserName && u.Id != user.Id))
+                ModelState.AddModelError(nameof(formUser.UserName), "User name already exists");
+
+            if (!ModelState.IsValid)
+                return View(formUser);
 
             user.FirstName = formUser.FirstName;
             user.LastName = formUser.LastName;
+
+            if(formUser.UserName != user.UserName)
+            {
+                var userNameResult = await _userManager.SetUserNameAsync(user, formUser.UserName);
+                if (!userNameResult.Succeeded)
+                {
+                    foreach (var error in userNameResult.Errors)
+                        ModelState.AddModelError(nameof(formUser.UserName), error.Description);
+                    return View(formUser);
+                }
+            }
 
             if (formUser.Email != user.Email)
             {
@@ -54,44 +89,55 @@ namespace CVBuddy.Controllers
                 var emailResult = await _userManager.ChangeEmailAsync(user, formUser.Email, token);
                 if (!emailResult.Succeeded)
                 {
-                    ModelState.AddModelError("", "Could not update email");
+                    foreach (var error in emailResult.Errors)
+                        ModelState.AddModelError(nameof(formUser.Email), error.Description);
+                    
                     return View(formUser);
                 }
             }
 
             if (formUser.PhoneNumber != user.PhoneNumber)
             {
-                await _userManager.SetPhoneNumberAsync(user, formUser.PhoneNumber);
-
+                var phoneResult = await _userManager.SetPhoneNumberAsync(user, formUser.PhoneNumber);
+                if (!phoneResult.Succeeded)
+                {
+                    foreach (var error in phoneResult.Errors)
+                        ModelState.AddModelError(nameof(formUser.PhoneNumber), error.Description);
+                    return View(formUser);
+                }
             }
-
+            await _userManager.UpdateAsync(user);
+            await _context.SaveChangesAsync();
             if (formUser.OneAddress != null)
             {
                 if (user.OneAddress == null)
                 {
-                    user.OneAddress = new Address
+                    var newAddress = new Address
                     {
-                        Country = formUser.OneAddress.Country,
-                        City = formUser.OneAddress.City,
-                        Street = formUser.OneAddress.Street,
+                        Country = formUser.OneAddress.Country ?? "",
+                        City = formUser.OneAddress.City ?? "",
+                        Street = formUser.OneAddress.Street ?? "",
                         UserId = user.Id
                     };
-                    await _context.Addresses.AddAsync(user.OneAddress);//fick null
+                    user.OneAddress = newAddress;
+                    _context.Add(newAddress);//fick null
                 }
                 else
                 {
-                    user.OneAddress.Country = formUser.OneAddress.Country;
-                    user.OneAddress.City = formUser.OneAddress.City;
-                    user.OneAddress.Street = formUser.OneAddress.Street;
+                    user.OneAddress.Country = formUser.OneAddress.Country ?? "";
+                    user.OneAddress.City = formUser.OneAddress.City ?? "";
+                    user.OneAddress.Street = formUser.OneAddress.Street ?? "";
+                    //_context.Update(user.OneAddress);
                 }
+                await _context.SaveChangesAsync(); //ska vara här
             }
-            await _context.SaveChangesAsync();
-
+            //await _context.SaveChangesAsync();//ej här testar bara
             return RedirectToAction("GetUser", "User");
             //Identity bygger på säkerhet och token-baserade ändringar, microsoft tvingar oss att 
             //använda metoder som identity klassen har, de används för att lagra de fält på rätt sätt
             //med security stamp, unikhet, trigga rätt event osv
         }
+
         [HttpGet]
         public IActionResult ChangePassword()
         {
