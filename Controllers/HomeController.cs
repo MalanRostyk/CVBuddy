@@ -32,6 +32,12 @@ namespace CVBuddy.Controllers
                     .Where(u => u.OneCv?.IsPrivate != true)
                     .ToList();
             }
+
+            users = users
+                .OrderByDescending(u => u.OneCv.PublishDate)
+                .Take(9)
+                .ToList();
+
             ViewBag.CvsExists = false;
             foreach (var user in users)
             {
@@ -63,7 +69,7 @@ namespace CVBuddy.Controllers
                 .Where(p => p.Enddate == null)
                 .Include(p => p.ProjectUsers)
                 .ThenInclude(p => p.User)
-                .OrderByDescending(p => p.PublisDate)
+                .OrderByDescending(p => p.PublishDate)
                 .Take(10)
                 .ToListAsync();
 

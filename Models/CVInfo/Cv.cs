@@ -31,6 +31,7 @@ namespace CVBuddy.Models.CVInfo
 
         public bool IsPrivate { get; set; }
 
+        public DateTime PublishDate { get; set; } = DateTime.Now;
 
         public List<Interest> Interests { get; set; } = new();
         public string? ImageFilePath { get; set; }

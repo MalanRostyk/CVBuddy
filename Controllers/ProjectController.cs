@@ -188,7 +188,7 @@ namespace CVBuddy.Controllers
             newProj.StartDate = toUpdate.StartDate;
             newProj.Enddate = toUpdate.Enddate;
             newProj.UsersInProject = toUpdate.UsersInProject;
-            newProj.PublisDate = toUpdate.PublisDate;
+            newProj.PublishDate = toUpdate.PublishDate;
 
             await _context.SaveChangesAsync();
 

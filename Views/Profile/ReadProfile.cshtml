@@ -8,7 +8,7 @@
         }
     </div>
     <div class="pl-2 d-flex flex-column">
-        <h3><i class="fa-solid fa-user"></i> @Model.ViewUser!.FirstName @Model.ViewUser!.LastName</h3>
+        <h3><i class="fa-solid fa-user"></i> @Model.ViewUser!.FirstName @Model.ViewUser!.LastName - <i class="fa-solid fa-eye"></i> @Model.Cv!.ReadCount</h3>
         <p><i class="fa-solid fa-globe"></i> @Model.ViewUser!.Email</p>
         <p><i class="fa-solid fa-phone"></i> @Model.ViewUser!.PhoneNumber</p>
 
@@ -159,7 +159,7 @@
                     <p class="mb-1">Description: @(project.Description ?? "")</p>
                     <p class="mb-1">Start date: @project.StartDate.ToShortDateString()</p>
                     <p class="mb-1">End date: @project.Enddate?.ToString("yyyy-mm-dd")</p>
-                    <p class="mb-1">Publish date: @project.PublisDate.ToShortDateString()</p>
+                    <p class="mb-1">Publish date: @project.PublishDate.ToShortDateString()</p>
                 </div>
             }
         </div>

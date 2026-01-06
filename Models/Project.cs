@@ -25,7 +25,7 @@ namespace CVBuddy.Models
         [NotMapped]
         public List<User> UsersInProject { get; set; } = new();//ONödig, kan ej användas efter att det serialiserats, när det kommer från db så är den null oavsett
 
-        public DateTime PublisDate { get; set; } = DateTime.Now;
+        public DateTime PublishDate { get; set; } = DateTime.Now;
 
         [NotMapped]
         public string? UserId{ get; set; }

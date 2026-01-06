@@ -53,7 +53,7 @@
                                 <b>@user.FirstName @user.LastName</b>
                             </a>
                         }
-                        <i class="mb-2">@(user.OneCv.ReadCount + " Reads")</i>
+                        <i class="mb-2"><i class="fa-solid fa-eye"></i> @(user.OneCv.ReadCount)</i>
                     </div>
                     <div class="flex-grow-0 d-flex flex-column gap-2">
                         <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@user.OneCv.Cid" class="btn btn-outline-primary btn-sm"><i class="fa-regular fa-address-card me-1"></i>See Cv</a>
@@ -176,7 +176,7 @@
                 <div class="col-12">
                     <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
                 </div>
-                <p><strong>Published : </strong>@project.PublisDate.ToShortDateString()</p>
+                <p><strong>Published : </strong>@project.PublishDate.ToShortDateString()</p>
                 @if (!isUserInProject)
                 {
                     <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">

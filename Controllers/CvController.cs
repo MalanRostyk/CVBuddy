@@ -178,7 +178,7 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.PersonalCharacteristics)
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
+                    .Include(cv => cv.CvProjects)//Relationen finns inte längre
                     .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
                     .FirstOrDefaultAsync(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
 
