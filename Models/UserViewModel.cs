@@ -23,6 +23,6 @@ namespace CVBuddy.Models
         [Phone(ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        public Address OneAddress { get; set; } = new Address();
+        public AddressViewModel? AddressVm { get; set; } 
     }
 }

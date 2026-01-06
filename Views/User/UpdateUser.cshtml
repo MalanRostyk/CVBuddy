@@ -2,45 +2,46 @@
 
 <form method="post" asp-action="UpdateUser">
     
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="UserId" />
+    @Html.AntiForgeryToken()                    @* skyddar mot csrf attack, webbplats users webbläsare skicka begäran till din server(tex formulär),  *@
+                                                @* eftersom user är inloggat tror server att begäran är legitim, då kan angriparen ändra dina uppgifter *@
+    <input type="hidden" asp-for="UserId" />    @* skapar gömd fält med users id, som binder fältet till UserId i UserViewModel *@
 
-        <h2>Edit your personal information</h2>
-        <h3>Login information</h3>
-        <label asp-for="UserName">User name</label><br />
-        <input asp-for="UserName" type="Text" /><br />
-        <span asp-validation-for="UserName" class="text-danger"></span><br />
-        @* password *@
+    <h2>Edit your personal information</h2>
+    <h3>Login information</h3>
+    <label asp-for="UserName">User name</label><br />
+    <input asp-for="UserName" type="Text" /><br />
+    <span asp-validation-for="UserName" class="text-danger"></span><br />
 
-        <h3>Your name</h3>
-        <label asp-for="FirstName">First name</label><br />
-        <input asp-for="FirstName" type="Text" /><br />
-        <span asp-validation-for="FirstName" class="text-danger"></span><br />
+    <h3>Your name</h3>
+    <label asp-for="FirstName">First name</label><br />
+    <input asp-for="FirstName" type="Text" /><br />
+    <span asp-validation-for="FirstName" class="text-danger"></span><br />
 
-        <label asp-for="LastName">Last name</label><br />
-        <input asp-for="LastName" type="Text" /><br />
-        <span asp-validation-for="LastName" class="text-danger"></span><br />
+    <label asp-for="LastName">Last name</label><br />
+    <input asp-for="LastName" type="Text" /><br />
+    <span asp-validation-for="LastName" class="text-danger"></span><br />
 
-        <h3>Contact information</h3>
-        <label asp-for="Email">Email</label><br />
-        <input asp-for="Email" type="Text" /><br />
-        <span asp-validation-for="Email" class="text-danger"></span><br />
+    <h3>Contact information</h3>
+    <label asp-for="Email">Email</label><br />
+    <input asp-for="Email" type="Text" /><br />
+    <span asp-validation-for="Email" class="text-danger"></span><br />
 
-        <label asp-for="PhoneNumber">Phone number</label><br />
-        <input asp-for="PhoneNumber" type="Text" /><br />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span><br />
+    <label asp-for="PhoneNumber">Phone number</label><br />
+    <input asp-for="PhoneNumber" type="Text" /><br />
+    <span asp-validation-for="PhoneNumber" class="text-danger"></span><br />
 
-        <h3>Your address information</h3>
-        <label asp-for="OneAddress.Country">Country</label><br />
-        <input asp-for="OneAddress.Country" type="Text" /><br />
+    <h3>Your address information</h3>
+    <label asp-for="AddressVm.Country">Country</label><br />
+    <input asp-for="AddressVm.Country" type="Text" /><br />
+    <span asp-validation-for="AddressVm.Country" class="text-danger"></span><br />
 
-        <label asp-for="OneAddress.City">City </label><br />
-        <input asp-for="OneAddress.City" type="Text" /><br />
+    <label asp-for="AddressVm.City">City </label><br />
+    <input asp-for="AddressVm.City" type="Text" /><br />
+    <span asp-validation-for="AddressVm.City" class="text-danger"></span><br />
 
-        <label asp-for="OneAddress.Street">Street</label><br />
-        <input asp-for="OneAddress.Street" type="Text" /><br />
+    <label asp-for="AddressVm.Street">Street</label><br />
+    <input asp-for="AddressVm.Street" type="Text" /><br />
+    <span asp-validation-for="AddressVm.Street" class="text-danger"></span><br />
 
-
-  
     <button type="submit" class="btn btn-primary">Save changes</button>
 </form>
