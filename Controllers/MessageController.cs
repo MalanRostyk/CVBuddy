@@ -28,13 +28,13 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> SendMsg(Message msg)
         {
-            ViewBag.WillEnterName = false;
-            if (!User.Identity!.IsAuthenticated)
-            {
-                ViewBag.WillEnterName = true;
-            }
-            if (!ModelState.IsValid)
-                return View(msg);
+            //ViewBag.WillEnterName = false;
+            //if (!User.Identity!.IsAuthenticated)
+            //{
+            //    ViewBag.WillEnterName = true;
+            //}
+            //if (!ModelState.IsValid)
+            //    return View(msg);
 
             await _context.AddAsync(msg);
             await _context.SaveChangesAsync();
