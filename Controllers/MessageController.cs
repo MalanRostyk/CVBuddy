@@ -19,11 +19,6 @@ namespace CVBuddy.Controllers
         {
             MessageVM msg = new();
             msg.RecieverId = userId;
-            //ViewBag.WillEnterName = false;
-            //if (!User.Identity!.IsAuthenticated)
-            //{
-            //    ViewBag.WillEnterName = true;
-            //}
             ViewBag.WillEnterName = !User.Identity!.IsAuthenticated;
 
             return View(msg);
