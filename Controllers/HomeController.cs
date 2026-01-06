@@ -34,7 +34,7 @@ namespace CVBuddy.Controllers
             }
 
             users = users
-                .OrderByDescending(u => u.OneCv.PublishDate)
+                .OrderByDescending(u => u.OneCv?.PublishDate)
                 .Take(9)
                 .ToList();
 
