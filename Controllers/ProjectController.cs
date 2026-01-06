@@ -79,17 +79,20 @@ namespace CVBuddy.Controllers
                                                //eftersom att Pid tilldelas först när den har serialiserats till Db
 
             var userId = _userManager.GetUserId(User); //Hämtar användarens id
-                                                       //var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
+            //HÄR
+            //var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
             var projId = await _context.Projects.Where(createdProject => createdProject.Pid == proj.Pid).Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades
 
+
+            //HÄR
             //await _context.CvProjects.AddAsync(new CvProject //Lägg till CvProject direkt i DbSet
             //{
             //    ProjId = projId,
             //    CvId = cvId
 
             //});
-
-            //await _context.SaveChangesAsync(); //Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
+            //HÄR
+            /*await _context.SaveChangesAsync(); *///Serialisera utan konfikt, kan möjligen inte behövas. Har ej prövat, gäster har kommit
 
             await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
             {
