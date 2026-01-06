@@ -61,16 +61,34 @@ namespace CVBuddy.Controllers
             var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
 
-            ViewBag.CanSend = true;
-            if (User.Identity!.IsAuthenticated)
-            {
-                var userId = _userManager.GetUserId(User);
-                if (ViewBag.HasCv)
-                {
-                    if (userId == usersCv!.UserId)
-                        ViewBag.CanSend = false;
-                }
-            }
+
+            //Behövde göra kontrollen i view istället eftersom att kontrollen
+            //görs en gång här, måste ha 1 kontroll för varje cv mot 1 userId
+            //Därför ViewBag.userId
+            //ViewBag.CanSend = true;
+            ViewBag.userId = _userManager.GetUserId(User);
+
+
+            //if (User.Identity!.IsAuthenticated)//Om användaren är inloggad
+            //{
+            //    if (ViewBag.HasCv)//och har ett cv
+            //    {
+            //        var userId = _userManager.GetUserId(User);
+            //        if(usersCv!.OneUser!.Id == userId)//kolla om det är inloggade användarens cv
+            //            ViewBag.CanSend = false;
+
+            //    }
+            //}
+
+            //if (User.Identity!.IsAuthenticated)
+            //{
+            //    var userId = _userManager.GetUserId(User);
+            //    if (ViewBag.HasCv)
+            //    {
+            //        if (userId != usersCv!.UserId)
+            //            ViewBag.CanSend = false;
+            //    }
+            //}
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
