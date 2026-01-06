@@ -51,9 +51,10 @@ function ShowNotification() {
     }
 }
 
-let containerSkills = document.getElementById("Skill-Container");
-let skillIndex = parseInt(containerSkills.dataset.skillIndex);
+
 function addSkill() {
+    let containerSkills = document.getElementById("Skill-Container");
+    let skillIndex = parseInt(containerSkills.dataset.skillIndex);
     containerSkills.insertAdjacentHTML('beforeend', `<p>Skill Title</p>
     <input type="text" name="Skills[${skillIndex}].ASkill" class="border-primary"/>
         <p>Skill Description</p>
@@ -64,9 +65,10 @@ function addSkill() {
 
 }
 
-let containerExperience = document.getElementById("Experience-Container");
-let experienceIndex = parseInt(containerExperience.dataset.experienceIndex);
+
 function addExperience() {
+    let containerExperience = document.getElementById("Experience-Container");
+    let experienceIndex = parseInt(containerExperience.dataset.experienceIndex);
     containerExperience.insertAdjacentHTML('beforeend', `<p class="mb-0">Enter title for working experience</p>
      <input type="text" name="Experiences[${experienceIndex}].Title"  class="border-primary"/>
             
@@ -90,9 +92,10 @@ function addExperience() {
 
 
 
-let containerCertificates = document.getElementById("Certificates-Container");
-let certificatesIndex = parseInt(containerCertificates.dataset.certificatesIndex);
+
 function addCertificates() {
+    let containerCertificates = document.getElementById("Certificates-Container");
+    let certificatesIndex = parseInt(containerCertificates.dataset.certificatesIndex);
     containerCertificates.insertAdjacentHTML('beforeend', `<p class="mb-0">Add certificate</p>
             <input type="text" name="Certificates[${certificatesIndex}].CertName"  class="border-primary"/>`);
     certificatesIndex++;
@@ -101,17 +104,19 @@ function addCertificates() {
 
 
 
-let containerPersonalCharacteristics = document.getElementById("PersonalCharacteristics-Container");
-let personalCharacteristicsIndex = parseInt(containerPersonalCharacteristics.dataset.personalcharacteristicsIndex);
+
 function addPersonalCharacteristic() {
+    let containerPersonalCharacteristics = document.getElementById("PersonalCharacteristics-Container");
+    let personalCharacteristicsIndex = parseInt(containerPersonalCharacteristics.dataset.personalcharacteristicsIndex);
     containerPersonalCharacteristics.insertAdjacentHTML('beforeend', `<p class="mb-0">Add Personal Characteristics</p>
             <input type="text" name="PersonalCharacteristics[${personalCharacteristicsIndex}].CharacteristicName" class="border-primary"/>`);
     personalCharacteristicsIndex++;
 }
 
-let containerInterests = document.getElementById("Interests-Container");
-let interestsIndex = parseInt(containerInterests.dataset.interestsIndex);
+
 function addInterests() {
+    let containerInterests = document.getElementById("Interests-Container");
+    let interestsIndex = parseInt(containerInterests.dataset.interestsIndex);
     containerInterests.insertAdjacentHTML('beforeend', `<p class="mb-0">Add your interest(s)</p>
             <input type="text" name="Interests[${interestsIndex}].InterestName" class="border-primary"/>`);
     interestsIndex++;
