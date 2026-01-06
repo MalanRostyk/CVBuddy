@@ -29,7 +29,7 @@ namespace CVBuddy.Models.CVInfo
         public List<PersonalCharacteristic> PersonalCharacteristics{ get; set; } = new();//Objekt i List borde vara nullable
 
 
-        public bool IsPrivate { get; set; }
+        //----------------------------------------------------------------------------------------------------------------------------public bool IsPrivate { get; set; }
 
         public DateTime PublishDate { get; set; } = DateTime.Now;
 

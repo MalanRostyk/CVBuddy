@@ -7,13 +7,13 @@
 
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
                                                                                                     @*IsPrivate *@
-    <div class="mb-2">
+    @* <div class="mb-2">
         <b>Private profile - </b>
         <select asp-for="@Model.IsPrivate">
             <option selected value="false">Public</option>
             <option value="true">Private</option>
         </select>
-    </div>
+    </div> *@
 
     @* <h3>@ViewBag.HeadlineEducation</h3>  *@                                                       @*Education*@
     <h3>Education</h3> @* Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall *@

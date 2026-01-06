@@ -90,9 +90,6 @@ namespace CVBuddy.Migrations
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime2");
 

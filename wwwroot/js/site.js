@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Funktionen som anropas
 function ShowNotification() {
-    
     const notReadCount = Number(notification.textContent)//parsear elementets text innehåll till ett nummer
     if (notReadCount > 0) {
         notification.classList.add("notification-container");//lägg till till styling för elemetet

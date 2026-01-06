@@ -1,4 +1,5 @@
 ﻿using CVBuddy.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Messages()
         {
             var userId = _userManager.GetUserId(User);

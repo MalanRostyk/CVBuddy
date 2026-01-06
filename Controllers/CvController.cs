@@ -96,8 +96,9 @@ namespace CVBuddy.Controllers
             return false;
         }
 
-        [Authorize]
+        
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> CreateCv()
         {
             //Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall
@@ -116,6 +117,7 @@ namespace CVBuddy.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
             try
@@ -297,7 +299,7 @@ namespace CVBuddy.Controllers
             
             if (cv != null)
             {
-                ViewBag.IsPrivate = cv.IsPrivate;
+                //----------------------------------------------------------------------------------------------------------------------------ViewBag.IsPrivate = cv.IsPrivate;
                 return View(cv);
             }
             else
@@ -316,7 +318,7 @@ namespace CVBuddy.Controllers
             if (cvOldVersion == null)
                 return NotFound();
 
-            cvOldVersion.IsPrivate = cv.IsPrivate;
+            //----------------------------------------------------------------------------------------------------------------------------cvOldVersion.IsPrivate = cv.IsPrivate;
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
             

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260106011851_d-new-master-2")]
-    partial class dnewmaster2
+    [Migration("20260106134951_without-isPrivate-on-cv")]
+    partial class withoutisPrivateoncv
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,9 +92,6 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("ImageFilePath")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("datetime2");

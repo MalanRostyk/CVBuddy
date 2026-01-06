@@ -47,6 +47,10 @@ body {
     text-decoration: underline;
 }
 
+.locked-out-for-text{
+    text-decoration: line-through;
+}
+
 img{
     height: auto;
     width: 7em;

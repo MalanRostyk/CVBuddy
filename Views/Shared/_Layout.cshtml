@@ -39,6 +39,10 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="Register"><i class="fa-solid fa-pen"></i>Register</a>
                             </li>
+                            <a class="nav-link locked-out-for-text" asp-controller="Message" asp-action="Messages">
+                                <i class="fa-solid fa-envelope"></i>
+                                Messages <b id="notification"></b><i class="fa-sharp-duotone fa-solid fa-lock"></i>
+                            </a>
                         }
                         else
                         {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class dnewmaster2 : Migration
+    public partial class withoutisPrivateoncv : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -205,7 +205,6 @@ namespace CVBuddy.Migrations
                 {
                     Cid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsPrivate = table.Column<bool>(type: "bit", nullable: false),
                     PublishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ImageFilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReadCount = table.Column<int>(type: "int", nullable: false),

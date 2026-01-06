@@ -20,7 +20,7 @@
     </div>
 
                                                                                                                 @*IsPrivate *@
-    <div class="mb-2">
+    @* <div class="mb-2">
         <b>Private profile - </b>
         <select asp-for="@Model.IsPrivate">
             @if (ViewBag.IsPrivate)
@@ -34,7 +34,7 @@
                 <option value="true">Private</option>
             }
                 </select>
-    </div> 
+    </div>  *@
 
     <h3>@ViewBag.HeadlineExperiences</h3>                                                        @* Experiences *@
     <div class="mb-4" id="Experience-Container" data-experience-index="@Model.Experiences.Count">
