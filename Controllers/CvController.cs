@@ -219,7 +219,7 @@ namespace CVBuddy.Controllers
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
-                    if(cv != null)
+                    if(cv != null && User.Identity!.IsAuthenticated) //Måste vara inloggad för att se projekt i cv-sida
                         cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
 
                     var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
