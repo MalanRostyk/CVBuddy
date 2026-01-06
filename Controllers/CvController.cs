@@ -35,6 +35,17 @@ namespace CVBuddy.Controllers
                 
             //Ingen transaktion, Select statements(dvs, await _context...) är atomära, om ej i sekvens, behövs ej transaktion
             var userId = _userManager.GetUserId(User); //Datan kommer från db men man läser inte från Db i realtid, utan man hämtar det från inloggningscontexten, via ClaimsPrincipal, dvs user laddas vid inloggningen, läggs till i ClaimsPrincipal. Kan ej vara opålitlig. Därmet endast en read operation görs
+            //Cv? cv = await _context.Cvs
+            //        .Include(cv => cv.Education)
+            //        .Include(cv => cv.Experiences)
+            //        .Include(cv => cv.Skills)
+            //        .Include(cv => cv.Certificates)
+            //        .Include(cv => cv.PersonalCharacteristics)
+            //        .Include(cv => cv.Interests)
+            //        .Include(cv => cv.OneUser)
+            //        .Include(cv => cv.CvProjects)
+            //        .ThenInclude(cp => cp.OneProject)
+            //        .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -43,14 +54,28 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.PersonalCharacteristics)
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
-                    .ThenInclude(cp => cp.OneProject)
+                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
-
+            if(cv != null)
+                cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
             //if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
             //    throw new NullReferenceException("Users Cv was not found");
 
             return cv;
+        }
+
+        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
+        {
+            List<Project> projectList = await _context.ProjectUsers
+                .Where(pu => pu.UserId == userId)
+                .Join(
+                _context.Projects,
+                pu => pu.ProjId,
+                p => p.Pid,
+                (pu, p) => p)
+                .ToListAsync(); ;
+
+            return projectList;
         }
 
         private bool IsValidFileSize(long fileSizeInBits)
@@ -172,6 +197,17 @@ namespace CVBuddy.Controllers
                 if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
                 {
                     //  Är inte Logged in Users cv som ska hämtas här, detta cv är det som ska visas
+                    //cv = await _context.Cvs
+                    //.Include(cv => cv.Education)
+                    //.Include(cv => cv.Experiences)
+                    //.Include(cv => cv.Skills)
+                    //.Include(cv => cv.Certificates)
+                    //.Include(cv => cv.PersonalCharacteristics)
+                    //.Include(cv => cv.Interests)
+                    //.Include(cv => cv.OneUser)
+                    //.Include(cv => cv.CvProjects)//Relationen finns inte längre
+                    //.ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
+                    //.FirstOrDefaultAsync(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
                     cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -180,11 +216,11 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.PersonalCharacteristics)
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)//Relationen finns inte längre
-                    .ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
-                    .FirstOrDefaultAsync(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
+                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
+                    .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
-
+                    if(cv != null)
+                        cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
 
                     var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
                     ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
@@ -265,7 +301,12 @@ namespace CVBuddy.Controllers
                 }
 
                 //Projects
-                if (cv?.CvProjects.Count > 0)
+                //if (cv?.CvProjects.Count > 0)
+                //{
+                //    ViewBag.HeadlineProjects = "Projects";
+                //    ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
+                //}
+                if (cv?.UsersProjects.Count > 0)
                 {
                     ViewBag.HeadlineProjects = "Projects";
                     ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
