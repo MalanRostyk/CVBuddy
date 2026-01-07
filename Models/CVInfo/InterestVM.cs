@@ -3,15 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CVBuddy.Models.CVInfo
 {
-    public class Interest
+    public class InterestVM
     {
-        [Key]
-        public int InterestId { get; set; }
 
+        [Required]
+        [StringLength(90, MinimumLength = 3)]
         public string InterestName { get; set; }
 
-        public int CvId { get; set; }
-        [ForeignKey(nameof(CvId))]
-        public Cv? Cv { get; set; }
+        //public int CvId { get; set; }
     }
 }
