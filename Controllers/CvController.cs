@@ -4,10 +4,12 @@ using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection.PortableExecutable;
@@ -148,6 +150,7 @@ namespace CVBuddy.Controllers
 
             if (!ModelState.IsValid)
                 return View(cv);
+                
             try
             {
                 if (cv.ImageFile == null || cv.ImageFile.Length == 0)

@@ -8,21 +8,23 @@ namespace CVBuddy.Models.CVInfo
         [Key]
         public int Exid { get; set; }
 
-        [Required(ErrorMessage = "You need to enter what the experience title is, don't leave empty.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
+        [Required] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
         [StringLength(90, MinimumLength = 2)]
         public string Title { get; set; }
 
-        
+
         [StringLength(120)]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Don't leave company field empty, if it was a freelance experience enter ''Freelance''.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
-        [StringLength(90, MinimumLength = 2)]
+        [StringLength(90, MinimumLength = 2 ,ErrorMessage = "You must enter a company name with 2-90 characters.")]
         public string Company{ get; set; }
 
         [Required(ErrorMessage = "An added experience must have a start date, dont leave unentered.")]
-        [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; }
+        [DataType(DataType.Date)]//Måste ha en viewmodel för experience, dataannotations
+                                 //hinner inte se att webbläsaren gör värdet till tom sträng innan
+                                 //datannotations får se det.Så måste ha en viewmodel med nullable datetime här
+        public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
         public int CvId { get; set; }
