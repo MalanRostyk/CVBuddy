@@ -18,7 +18,7 @@ namespace CVBuddy.Models.CVInfo
 
         [StringLength(100)]
         public string? UniProgram { get; set; } // = Computer Science
-        public string? UniDate { get; set; } // = 2023-
+        public string? UniDate { get; set; } // Ska inte
 
     }
 }

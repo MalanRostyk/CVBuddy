@@ -1,0 +1,25 @@
+﻿@model CVBuddy.Models.CVInfo.EducationVM
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <h4 class="text-danger">You need to make some changes:</h4>
+    <ul class="text-danger">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>
+                @err.ErrorMessage
+            </li>
+        }
+    </ul>
+}
+
+<h2>Interest</h2>
+<form asp-action="AddEducation" method="post">
+    <input type="text" asp-for="@Model.HighSchool" />
+    <input type="text" asp-for="@Model.HSProgram" />
+    <input type="date" asp-for="@Model.HSDate" />
+    <input type="text" asp-for="@Model.Univeristy" />
+    <input type="text" asp-for="@Model.UniProgram" />
+    <input type="date" asp-for="@Model.UniDate" />
+    <button type="submit" class="d-block btn btn-primary">Create Cv</button>
+</form>

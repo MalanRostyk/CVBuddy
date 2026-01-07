@@ -72,7 +72,7 @@ namespace CVBuddy.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddInterest(InterestVM ivm, int cid)
+        public async Task<IActionResult> AddInterest(InterestVM ivm)
         {
             if (!ModelState.IsValid)
                 return View(ivm);
@@ -84,6 +84,34 @@ namespace CVBuddy.Controllers
 
             var cv = await GetLoggedInUsersCvAsync();
             cv.Interests.Add(interest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> AddEducation()
+        {
+            return View(new EducationVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddEducation(EducationVM evm)
+        {
+            if (!ModelState.IsValid)
+                return View(evm);
+
+            var cv = await GetLoggedInUsersCvAsync();
+
+            cv.Education.Univeristy = evm.Univeristy;
+            cv.Education.UniProgram = evm.UniProgram;
+            cv.Education.UniDate = evm.UniDate;
+
+            cv.Education.HighSchool = evm.HighSchool;
+            cv.Education.HSProgram = evm.HSProgram;
+            cv.Education.HSDate = evm.HSDate;
+
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }

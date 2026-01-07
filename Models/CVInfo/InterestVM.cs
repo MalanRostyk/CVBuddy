@@ -9,7 +9,5 @@ namespace CVBuddy.Models.CVInfo
         [Required]
         [StringLength(90, MinimumLength = 3)]
         public string InterestName { get; set; }
-
-        //public int CvId { get; set; }
     }
 }
