@@ -65,23 +65,23 @@ function addSkill() {
 }
 
 
-function addExperience() {
+function addExperience() { //LA TILL ASP-FOR="XXXXX" FÖR VALIDERING
     let containerExperience = document.getElementById("Experience-Container");
     let experienceIndex = parseInt(containerExperience.dataset.experienceIndex);
     containerExperience.insertAdjacentHTML('beforeend', `<p class="mb-0">Enter title for working experience</p>
-     <input type="text" name="Experiences[${experienceIndex}].Title"  class="border-primary"/>
-            
+     <input asp-for="Experiences[i].Title" type="text" name="Experiences[${experienceIndex}].Title"  class="border-primary"/>
+
      <p class="mb-0">Give a short description of the working experience</p>
-     <input type="text" name="Experiences[${experienceIndex}].Description"  class="border-primary"/>
+     <input asp-for="Experiences[i].Description" type="text" name="@Experiences[${experienceIndex}].Description"  class="border-primary"/>
             
      <p class="mb-0">What company was this working experience at?</p>
-     <input type="text" name="Experiences[${experienceIndex}].Company"  class="border-primary"/>
+     <input asp-for="Experiences[i].Company" type="text" name="@Experiences[${experienceIndex}].Company"  class="border-primary"/>
             
      <p class="mb-0">Enter a the starting date for your experience</p>
-     <input type="date" name="Experiences[${experienceIndex}].StarDate"  class="border-primary"/>
+     <input asp-for="Experiences[i].StarDate" type="date" name="@Experiences[${experienceIndex}].StarDate"  class="border-primary"/> SDGAGDGADGADGAD
 
      <p class="mb-0">Enter a the ending date for your experience</p>
-     <input type="date" name="Experiences[${experienceIndex}].EndDate"  class="border-primary"/>`);
+     <input asp-for="Experiences[i].EndDate" type="date" name="@Experiences[${experienceIndex}].EndDate"  class="border-primary"/>`);
     experienceIndex++;
 
 }

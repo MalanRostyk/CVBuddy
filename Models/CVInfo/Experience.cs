@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CVBuddy.Models.CVInfo
@@ -8,8 +9,9 @@ namespace CVBuddy.Models.CVInfo
         [Key]
         public int Exid { get; set; }
 
+        //[Required(ErrorMessage = "You need to enter what the experience title is, don't leave empty.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
         [Required(ErrorMessage = "You need to enter what the experience title is, don't leave empty.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
-        [StringLength(90, MinimumLength = 2)]
+        [StringLength(90, MinimumLength = 20)]
         public string Title { get; set; } = "";
 
         
@@ -20,7 +22,9 @@ namespace CVBuddy.Models.CVInfo
         [StringLength(90, MinimumLength = 2)]
         public string Company { get; set; } = "";
 
+        [DisplayName("Start Date")]
         [Required(ErrorMessage = "An added experience must have a start date, dont leave unentered.")]
+        [DataType(DataType.DateTime)]
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
