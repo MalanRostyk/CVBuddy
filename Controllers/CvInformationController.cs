@@ -17,15 +17,6 @@ namespace CVBuddy.Controllers
         [Authorize]
         public async Task<IActionResult> BuildCv()//TILL BUILD CV-SIDAN ----->>>>
         {
-            var userIdentityId = _userManager.GetUserId(User);
-            var user = await _context.Users.Where(u => u.Id == userIdentityId).FirstOrDefaultAsync();
-            
-            //ViewBag för att se om vi ska uppdate cv eller om vi ska build cv
-            ViewBag.HasCv = user!.OneCv != null;
-            if (ViewBag.HasCv)
-            {
-                return View(user.OneCv);
-            }
             return View(new CvVM());
         }
 
