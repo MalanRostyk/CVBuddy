@@ -40,7 +40,7 @@ namespace CVBuddy.Models.CVInfo
 
         [NotMapped]
         [Required(ErrorMessage = "Upload an image please.")]
-        
+        [ExtensionValidation("jpg,png,jfif,webp")]
         public IFormFile ImageFile { get; set; } //Borde vara nullable
         public int ReadCount { get; set; }
         public string? UserId { get; set; } //Vart null
