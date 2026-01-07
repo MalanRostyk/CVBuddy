@@ -88,6 +88,30 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddCertificate()
+        {
+            
+            return View(new CertificateVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCertificate(CertificateVM cvm)
+        {
+            if (!ModelState.IsValid)
+                return View(cvm);
+
+            Certificate certificate = new Certificate
+            {
+                CertName = cvm.CertName
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Certificates.Add(certificate);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
         
         [HttpGet]
         [Authorize]
