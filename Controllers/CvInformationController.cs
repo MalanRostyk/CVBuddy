@@ -162,6 +162,34 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddExperience()
+        {
+            
+            return View(new ExperienceVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddExperience(ExperienceVM evm)
+        {
+            if (!ModelState.IsValid)
+                return View(evm);
+
+            Experience exp = new Experience
+            {
+                Title = evm.Title,
+                Description = evm.Description,
+                Company = evm.Company,
+                StartDate = evm.StartDate,
+                EndDate = evm.EndDate
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Experiences.Add(exp);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
 
 
 
