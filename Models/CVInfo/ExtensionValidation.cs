@@ -25,9 +25,10 @@ namespace CVBuddy.Models.CVInfo
         {
             //Object? value = själva värdet som kommer från den property på den model som valideras
             //ValidationContext validationContext = objektet som valideras och dess properties
-            if (value != null)
+            
+            if (value != null)//Om property på objektet som valideras är null, returnera felmeddelande till ViewData.ModelState.Values, är samma som [Requiered]
             {
-                if (value is IFormFile file)
+                if (value is IFormFile file)//om value är IFormFile, skapa då en variabel som heter file,tilldela den values värde och anänd den i resten av i satsen
                 {
                     var extension = Path.GetExtension(file.FileName)
                         .TrimStart('.') //"" betyder string, '' betyder char, alltså character, tecken.
@@ -40,29 +41,6 @@ namespace CVBuddy.Models.CVInfo
                 }
             }
             return new ValidationResult($"Only filetypes allowed are: {extensionsString}");//Lägg till ett felmeddelande i ViewData.ModelState.Values 
-
-
-
-
-            //if (value != null) //Om värdet på property är null, ge ModelState true för objektets property
-            //    return ValidationResult.Success;
-
-            ////Om propertys värde är en fil, ge ModelState true för objektets property
-            //if (value is not IFormFile file)
-            //    return ValidationResult.Success;
-
-            ////Om värdet på property var en fil, hämta dens extension
-            //var extension = Path.GetExtension(file.FileName)
-            //    .TrimStart('.') //"" betyder string, '' betyder char, alltså character, tecken.
-            //    .ToLower();
-
-
-
-            //if (extensionsArray.Contains(extension))//Vaidera om filens extension är rätt format som angetts i model klassen
-            //{
-            //    return new ValidationResult($"Only filetypes allowed are: {extensionsString}");//Lägg till ett felmeddelande i ViewData.ModelState.Values 
-            //}
-            //return ValidationResult.Success;
         }
     }
 }
