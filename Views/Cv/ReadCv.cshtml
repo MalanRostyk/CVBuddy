@@ -63,21 +63,21 @@
 
 <div class="mb-4">
     <h2>@ViewBag.HeadlineEducation</h2>
-    @if (Model.Education.HighSchool != null)
+    @if (ViewBag.hasHighSchool)
     {
         <div class="mb-2 content-item">
             <h5>HighSchool</h5>
-            <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
-            <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
+            <p class="mb-0">High School: @(Model.Education.HighSchool ?? "Not specified")</p>
+            <p class="mb-0">Program: @(Model.Education.HSProgram ?? "Not specified")</p>
             <p class="mb-0">Date: @(Model.Education.HSDate ?? "Ongoing")</p>
         </div>
     }
-    @if (Model.Education.Univeristy != null)
+    @if (ViewBag.hasUniversity)
     {
         <div class="mb-2 content-item">
             <h5>University</h5>
-            <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
-            <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
+            <p class="mb-0">University: @(Model.Education.Univeristy ?? "Not specified")</p>
+            <p class="mb-0">Program: @(Model.Education.UniProgram ?? "Not specified")</p>
             <p class="mb-0">Date: @(Model.Education.UniDate ?? "Ongoing")</p>
         </div>
     }

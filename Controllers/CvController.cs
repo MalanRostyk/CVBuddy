@@ -145,6 +145,7 @@ namespace CVBuddy.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCv(Cv cv)
         {
+
             if (!ModelState.IsValid)
                 return View(cv);
             try
@@ -261,17 +262,20 @@ namespace CVBuddy.Controllers
                     ViewBag.HeadlineExperiences = "Experiences";
                 }
 
+
                 //Education
-                bool hasEducation = false;
+                ViewBag.hasUniversity = false;
+                ViewBag.hasHighSchool = false;
                 var cvEdu = cv?.Education;
 
                 if (cvEdu?.HighSchool != null || cvEdu?.HSProgram != null || cvEdu?.HSDate != null)
-                    hasEducation = true;
+                    ViewBag.hasHighSchool = true;
 
                 if (cvEdu?.Univeristy != null || cvEdu?.UniProgram != null || cvEdu?.UniDate != null)
-                    hasEducation = true;
+                    ViewBag.hasUniversity = true;
 
-                if (hasEducation)
+                ViewBag.hasEducation = ViewBag.hasUniversity || ViewBag.hasHighSchool;
+                if (ViewBag.hasEducation)
                     ViewBag.HeadlineEducation = "Education";
 
                 //Skills
@@ -357,6 +361,9 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
             var cvOldVersion = await GetLoggedInUsersCvAsync();
+
+            if (ModelState.IsValid && cv.Education.DateOnlyEntered("Both"))
+                Console.WriteLine("BIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifhBIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIISDFÅosifh ");
 
             if (cvOldVersion == null)
                 return NotFound();
