@@ -30,7 +30,7 @@ namespace CVBuddy.Models
         [NotMapped]
         public string? UserId{ get; set; }
 
-        public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
+        //public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
         public ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
     }
 }

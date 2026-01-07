@@ -2,7 +2,7 @@
 
 <h3>Search results</h3>
 
-@if (!Model.Any())
+@if (ViewBag.ResultCount)
 {
     <p class="text-muted">No results found.</p>
 }
@@ -13,6 +13,11 @@ else
         {
             <li class="list-group-item">
                 <strong>@user.FirstName @user.LastName</strong>
+                @* <a asp-action="ReadCv" asp-controller="Cv" asp-route-id="@user.OneCv.Cid">See more</a> *@
+                @if(user.OneCv != null)
+                {
+                    <a asp-action="ReadCv" asp-controller="Cv" asp-route-Cid="@user.OneCv.Cid" class="btn btn-primary">See Cv</a>
+                }
             </li>
         }
     </ul>

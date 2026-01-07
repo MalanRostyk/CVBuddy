@@ -1,8 +1,12 @@
 ﻿@model CVBuddy.Models.User
 
-<div class="mb-4"><q><i>@ViewBag.LogoutAreYouSure</i></q></div>
-
 <form asp-action="Logout" asp-controller="Account" method="post">
-    <button type="submit" class="btn btn-danger">Logout</button>
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="mb-3 text-center mt-4">
+                <q><i>@ViewBag.LogoutAreYouSure</i></q>
+            </div>
+            <button type="submit" class="btn btn-danger w-100">Logout</button>
+        </div>
+    </div>
 </form>
-

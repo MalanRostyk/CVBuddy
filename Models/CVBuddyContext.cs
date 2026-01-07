@@ -58,18 +58,18 @@ namespace CVBuddy.Models
             builder.Entity<CvProject>().HasKey(cp => new { cp.CvId, cp.ProjId });//CVProject har komposit PK(CvId, Pid)
 
             //One Cv har många CvProjects
-            builder.Entity<CvProject>()
-                .HasOne(cv => cv.OneCv)
-                .WithMany(cv => cv.CvProjects)
-                .HasForeignKey(cv => cv.CvId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<CvProject>()
+            //    .HasOne(cv => cv.OneCv)
+            //    .WithMany(cv => cv.CvProjects)
+            //    .HasForeignKey(cv => cv.CvId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             //One Project har många CvProjects
-            builder.Entity<CvProject>()
-                .HasOne(p => p.OneProject)
-                .WithMany(p => p.CvProjects)
-                .HasForeignKey(p => p.ProjId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<CvProject>()
+            //    .HasOne(p => p.OneProject)
+            //    .WithMany(p => p.CvProjects)
+            //    .HasForeignKey(p => p.ProjId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
 
             //Cv > Skill 1:M

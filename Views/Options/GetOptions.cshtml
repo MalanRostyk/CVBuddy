@@ -4,21 +4,6 @@
 </div>
 
 <form asp-action="GetOptions" method="post">
-   @*  <div class="mb-2">
-        <b>Private profile - </b>
-        <select asp-for="@Model.IsPrivate">
-            @if (ViewBag.IsSetToPrivate)
-            {
-                <option value="false">Public</option>
-                <option selected value="true">Private</option>
-            }
-            else
-            {
-                <option selected value="false">Public</option>
-                <option value="true">Private</option>
-            }
-        </select>
-    </div> *@
     <div class="mb-2">
         <b>Deactivated Account - </b>
         <select asp-for="@Model.IsDeactivated">

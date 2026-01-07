@@ -41,9 +41,19 @@ namespace CVBuddy.Controllers
         {
             return View(new UserRegisterViewModel());
         }
+
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel usr)
         {
+            if (_userManager.Users.Any(u => u.Email == usr.Email))
+                ModelState.AddModelError(nameof(usr.Email), "Email already exists");
+
+            if (_userManager.Users.Any(u => u.PhoneNumber == usr.PhoneNumber))
+                ModelState.AddModelError(nameof(usr.PhoneNumber), "Phone number already exists");
+
+            if (_userManager.Users.Any(u => u.UserName == usr.UserName))
+                ModelState.AddModelError(nameof(usr.UserName), "User name already exists");
+
             if (ModelState.IsValid)
             {
                 User user = new User();

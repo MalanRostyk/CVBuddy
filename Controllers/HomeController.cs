@@ -66,7 +66,8 @@ namespace CVBuddy.Controllers
             //görs en gång här, måste ha 1 kontroll för varje cv mot 1 userId
             //Därför ViewBag.userId
             //ViewBag.CanSend = true;
-            ViewBag.userId = _userManager.GetUserId(User);
+
+            // kommenterade bort vid manual merge -------------------------------------------------------------------ViewBag.userId = _userManager.GetUserId(User);
 
 
             //if (User.Identity!.IsAuthenticated)//Om användaren är inloggad
@@ -114,6 +115,18 @@ namespace CVBuddy.Controllers
         {
 
             var userId = _userManager.GetUserId(User);
+            //Cv? cv = await _context.Cvs----------------------------- byttes ut mot den nedan vid MANUAL MERGE
+            //        .Include(cv => cv.Education)
+            //        .Include(cv => cv.Experiences)
+            //        .Include(cv => cv.Skills)
+            //        .Include(cv => cv.Certificates)
+            //        .Include(cv => cv.PersonalCharacteristics)
+            //        .Include(cv => cv.Interests)
+            //        .Include(cv => cv.OneUser)
+            //        .Include(cv => cv.CvProjects)
+            //        .ThenInclude(cp => cp.OneProject)
+            //        .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+
             Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -122,8 +135,7 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.PersonalCharacteristics)
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
-                    .ThenInclude(cp => cp.OneProject)
+                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             if (cv == null)
                 NotFound();

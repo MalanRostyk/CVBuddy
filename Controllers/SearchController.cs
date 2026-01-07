@@ -9,63 +9,83 @@ namespace CVBuddy.Controllers
     {
         public SearchController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
-
         }
+
         [HttpGet]
         public async Task<IActionResult> Search(string searchTerm)
         {
-            //var users = _context.Users.AsQueryable();//gör så att man bygger frågan först, och sen kör den som filter i db, inte i c#
-            //if (!string.IsNullOrWhiteSpace(searchTerm))
-            //{
-            //    users = users.Where(u =>
-            //        (u.FirstName.ToLower().Contains(searchTerm.ToLower()) ||
-            //        u.LastName.ToLower().Contains(searchTerm.ToLower())) &&
-            //        u.IsDeactivated != true).ToList();
-            //}
-
-            //Måste göras stegvis för att annars kan man få users som har avaktiverade konton i tom söksträng
-
             List<User> users = new();
+            users = _context.Users
+                .Include(u => u.OneAddress)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Experiences)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Education)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Skills)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Certificates)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Interests)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.Interests)
+                .Include(u => u.OneCv)
+                .ThenInclude(cv => cv.PersonalCharacteristics)
+                .ToList();
 
-            if (User.Identity!.IsAuthenticated)
+            if (!User.Identity!.IsAuthenticated)
             {
-                //Inloggad göm deactivated account
-                users = await _context.Users
-                .Where(u => !u.IsDeactivated)
-                .ToListAsync();
+                users = users.Where(u => !u.IsDeactivated).ToList();
             }
             else
             {
-                //utloggad göm alla deactivated account och privata profiler
-                users = await _context.Users
-                .Where(u => !u.IsDeactivated && !u.HasPrivateProfile)
-                .ToListAsync();
+                users = users.Where(u => !u.IsDeactivated && !u.HasPrivateProfile).ToList();
             }
-
-            //if (User.Identity!.IsAuthenticated)
-            //{
-            //    users = await _context.Users
-            //    .Where(u => !u.IsDeactivated)
-            //    .ToListAsync();
-            //}
-            //else
-            //{
-            //    users = await _context.Users
-            //    .Where(u => !u.IsDeactivated && !u.OneCv.IsPrivate)
-            //    .ToListAsync();
-            //}
-
-
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                users = users
-                    .Where(u =>
-                    u.FirstName.ToLower().Contains(searchTerm.ToLower()) ||
+                users = users.Where(
+                    u => u.FirstName.ToLower().Contains(searchTerm.ToLower()) ||
                     u.LastName.ToLower().Contains(searchTerm.ToLower()))
                     .ToList();
             }
+
+            ViewBag.ResultCount = users.Count() == 0;
+
             return View(users);
+
+            //var result = new List<User>();
+
+            //if (!string.IsNullOrWhiteSpace(searchTerm))
+            //{
+            //    result = _context.Users.Where(u =>
+            //        u.FirstName.ToLower().Contains(searchTerm.ToLower()) ||
+            //        u.LastName.ToLower().Contains(searchTerm.ToLower()))
+            //        .ToList();
+            //    if (result.Count > 0)
+            //    {
+
+            //        if (User.Identity!.IsAuthenticated)
+            //        {
+            //            result = await _context.Users
+            //            .Where(u => !u.IsDeactivated)
+            //            .ToListAsync();
+            //            return View(result);
+            //        }
+            //        else
+            //        {
+            //            result = await _context.Users
+            //            .Where(u => !u.IsDeactivated && !u.HasPrivateProfile)
+            //            .ToListAsync();
+            //            return View(result);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ViewBag.NoResult = "No results found";
+            //    }
+            //}
+            //return View(result);
         }
     }
 }

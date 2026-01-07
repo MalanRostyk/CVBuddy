@@ -76,75 +76,6 @@
     {
         <p>No cvs was found</p>
     }
-
-
-    @* @foreach(var item in Model)
-    { *@
-@*         @if(item?.OneCv != null)
-                {
-
-                    <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
-
-                        <div class="flex-grow-0">
-                            <img src="@item.OneCv.ImageFilePath" alt="Profile Image" />
-                        </div>
-
-                        <div class="flex-grow-1">
-                            <b class="d-block text-truncate">@item.FirstName @item.LastName - @item.OneCv.ReadCount Reads</b>
-                            @(item.OneCv.Education.Univeristy! ?? @item.OneCv.Education.HighSchool! ?? "")
-                        </div>
-
-
-
-
-                            <div class="flex-grow-0 d-flex flex-column gap-2">
-                                <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@item.OneCv.Cid" class="btn btn-outline-primary btn-sm">
-                                    <i class="fa-regular fa-address-card me-1"></i>
-                                    See profile
-                                </a>
-                                <a class="btn btn-outline-secondary btn-sm">
-                                    <i class="fa-regular fa-message me-1"></i>
-                                    Send message
-                                </a>
-                            </div>
-
-                    </div>
-
-
-                }
-        @if(item?.OneCv != null)
-                {
-
-                    <div class="d-flex align-items-center gap-3 p-3 cv-container flex-wrap">
-
-                        <div class="flex-grow-0">
-                            <img src="@item.OneCv.ImageFilePath" alt="Profile Image" />
-                        </div>
-
-                        <div class="flex-grow-1">
-                            <b class="d-block text-truncate">@item.FirstName @item.LastName - @item.OneCv.ReadCount Reads</b>
-                            @("Education:" + item.OneCv.Education.Univeristy! ?? @item.OneCv.Education.HighSchool! ?? "")
-                        </div>
-
-
-
-
-                            <div class="flex-grow-0 d-flex flex-column gap-2">
-                                <a asp-controller="Cv" asp-action="ReadCv" asp-route-cid="@item.OneCv.Cid" class="btn btn-outline-primary btn-sm">
-                                    <i class="fa-regular fa-address-card me-1"></i>
-                                    See profile
-                                </a>
-                                <a class="btn btn-outline-secondary btn-sm">
-                                    <i class="fa-regular fa-message me-1"></i>
-                                    Send message
-                                </a>
-                            </div>
-
-                    </div>
-
-
-                }*@
-    @* }  *@
 </div>
 
 @* -------------------------------------------------------Projects--------------------------------------------------------------------------- *@
@@ -155,15 +86,25 @@
     var currentUserId = _userManager.GetUserId(User);
 }
 
-@foreach (var project in Model.ProjectList)
+<h2>Recent projects</h2>
+@if(Model.ProjectList.Count > 0)
 {
-    var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
-
-    var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-
-     <div class="min-vh-80 read-banner">
-
+    @foreach (var project in Model.ProjectList)
+    {
+        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
+        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile  || User.Identity.IsAuthenticated).ToList();
+        var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
+        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+        @if (owner == null || owner.User.IsDeactivated)
+        {
+            continue;
+        }
+        <div class="min-vh-80 read-banner">
             <div class="row">
+                <div class="col-12 text-center">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
                 @if (owner != null)
                 {
                     <div class="col-12">
@@ -171,77 +112,50 @@
                     </div>
                 }
                 <div class="col-12">
-                    <p><strong>Title : </strong>@project.Title</p>
+                    <p><strong>Description : </strong>@project.Description</p>
                 </div>
 
                 <div class="col-12">
-                    <p><strong>Project description : </strong>@project.Description</p>
+                    <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
+                    <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
+                    <span>
+                        <strong>Status : </strong>
+                        @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
+                    </span>
                 </div>
-
-                <div class="col-12">
-                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
-                </div>
-                <p><strong>Published : </strong>@project.PublishDate.ToShortDateString()</p>
-                @if (!isUserInProject)
-                {
-                    <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
-                        <div class="col-5 d-flex justify-content-end align-items-end">
+                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                    <p class="mb-0">
+                        @if(activeUsers.Count > 0)
+                        {
+                            <strong>Participants : </strong>
+                            @for(int i = 0; i<userIsPrivate.Count; i++)
+                            {
+                                @userIsPrivate[i].FirstName @userIsPrivate[i].LastName
+                                @if(i < userIsPrivate.Count - 1)
+                                {
+                                    <span>, </span>
+                                }
+                            }
+                        }
+                    </p>
+                    @if (!isUserInProject)
+                    {//kraschar om man lyckades spara projekt utan user
+                        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
                             <button class="btn btn-primary">Join project!</button>
-                        </div>
-                    </form>
-                }
-                else
-                {
-                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        </form>
+                    }
+                    else
+                    {
                         <button class="btn btn-info">Already joined</button>
-                    </div>
-                }
+                    }
+                </div>
+
             </div>
 
-     </div>
+        </div>
+    }
 }
-
-@* <table class="table table-dark">
-    <thead>
-        <tr>
-            <td>Name</td>
-            <td>Read Count</td>
-            <td>Buttons</td>
-        </tr>
-    </thead>
-    <tbody>
-        @if(Model != null && Model.Any())
-        {
-            @foreach(var item in Model)
-            {
-                @if(item.OneCv != null)
-                {
-                    <tr>
-                        <td>@item.UserName</td>
-                        <td>@item.OneCv.ReadCount</td>
-                        <td>
-                            <a asp-controller="Cv" asp-Action="ReadCv" asp-route-Cid="@item.OneCv.Cid">See Cv</a>
-                        </td>
-                    </tr>
-                }
-            }
-        }
-    </tbody>
-</table>
-
-@* <form asp-action="Search" asp-controller="Search" method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="searchTerm" class="form-control" placeholder="Search by name..." />
-        <button class="btn btn-primary" type="submit">Search</button>
-    </div>
-</form>
-<form method="post" asp-controller="Account" asp-action="Logout">
-<AuthorizeView>
-    <Authorized>
-            <h2>Welcome @User.Identity.Name</h2>
-            <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
-            <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
-            <a asp-controller="Account" asp-action="Logout" class="btn-link">Logout</a>
-    </Authorized>
-</AuthorizeView>
-</form> *@
+else
+{
+    <p>No projects available.</p>
+}
