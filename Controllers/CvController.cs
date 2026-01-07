@@ -356,6 +356,10 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
+
+            if (!ModelState.IsValid)
+                return View(cv);
+
             var cvOldVersion = await GetLoggedInUsersCvAsync();
 
             if (cvOldVersion == null)
