@@ -161,8 +161,8 @@ namespace CVBuddy.Controllers
 
                 var ext = Path.GetExtension(cv.ImageFile.FileName);//null
 
-                if (!IsValidExtension(ext))
-                    return View(cv);
+                //if (!IsValidExtension(ext))
+                //    return View(cv);
 
                 var fileName = Guid.NewGuid().ToString() + ext;
 

@@ -34,11 +34,13 @@ namespace CVBuddy.Models.CVInfo
         public DateTime PublishDate { get; set; } = DateTime.Now;
 
         public List<Interest> Interests { get; set; } = new();
-        public string? ImageFilePath { get; set; }
+
+
+        public string? ImageFilePath { get; set; } = "pic.png";
 
         [NotMapped]
         [Required(ErrorMessage = "Upload an image please.")]
-        [FileExtensions(Extensions = "jpg,png,jfif,webp")]
+        
         public IFormFile ImageFile { get; set; } //Borde vara nullable
         public int ReadCount { get; set; }
         public string? UserId { get; set; } //Vart null
