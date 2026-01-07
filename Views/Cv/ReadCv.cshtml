@@ -56,7 +56,7 @@
             <p class="mb-0">Title: @experience.Title</p>
             <p class="mb-0">Company: @experience.Company</p>
             <p class="mb-0">Description: @experience.Description</p>
-            <p class="mb-0">@experience.StartDate?.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
+            <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
         </div>
     }
 </div>

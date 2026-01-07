@@ -364,14 +364,14 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
 
-            foreach (var entry in ModelState)
+            foreach (var entry in ModelState)//SE VILKA FÄLT SOM TILLDELAS FELMEDDELANDEN I CONSOLE
             {
                 var errors = entry.Value.Errors.Select(e => e.ErrorMessage);
                 Console.WriteLine($"{entry.Key} => {string.Join(" | ", errors)}");
             }
 
-            if (!ModelState.IsValid)
-                return View(cv);
+            //if (!ModelState.IsValid)
+            //    return View(cv);
 
             var cvOldVersion = await GetLoggedInUsersCvAsync();
 
@@ -385,35 +385,7 @@ namespace CVBuddy.Controllers
             cvOldVersion.ReadCount = cv.ReadCount;
             cvOldVersion.UserId = cv.UserId;
             
-            if(cv.ImageFile != null)
-            {
-
-                if (!IsValidFileSize(cv.ImageFile.Length))
-                    return View(cv);
-
-                //var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-
-                //accept räcker inte måste validera extension på server nivå
-
-                var extension = Path.GetExtension(cv.ImageFile.FileName);
-
-                if (!IsValidExtension(extension))
-                    return View(cv);
-               
-                var newFileName = Guid.NewGuid() + extension;
-                var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-                var fullPath = Path.Combine(directory, newFileName);
-
-                DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
-
-                using (var fs = new FileStream(fullPath, FileMode.Create))
-                {
-                    await cv.ImageFile.CopyToAsync(fs);
-                }
-
-                cvOldVersion.ImageFile = cv.ImageFile;
-                cvOldVersion.ImageFilePath = "/CvImages/" + newFileName;
-            }          
+            
 
             //Tilldela nya värdena från ViewModel objektet till det trackade Cvt från db
 
@@ -421,7 +393,11 @@ namespace CVBuddy.Controllers
             for(int i = 0; i < cv.Experiences.Count; i++)
             {
                 if (cvOldVersion.Experiences.Count < cv.Experiences.Count)
+                {
                     cvOldVersion.Experiences.Add(new());
+                    await _context.Experiences.AddAsync(cvOldVersion.Experiences[i]);
+                }
+                    
 
                 cvOldVersion.Experiences[i].Title = cv.Experiences[i].Title;
                 cvOldVersion.Experiences[i].Description = cv.Experiences[i].Description;
@@ -429,6 +405,7 @@ namespace CVBuddy.Controllers
                 cvOldVersion.Experiences[i].StartDate = cv.Experiences[i].StartDate;
                 cvOldVersion.Experiences[i].EndDate = cv.Experiences[i].EndDate;
             }
+            
 
             //Education
             cvOldVersion.Education.HighSchool = cv.Education.HighSchool;
@@ -443,43 +420,85 @@ namespace CVBuddy.Controllers
             for (int i = 0; i < cv.Skills.Count; i++)
             {
                 if (cvOldVersion.Skills.Count < cv.Skills.Count)
+                {
                     cvOldVersion.Skills.Add(new());
-
+                    await _context.Skills.AddAsync(cvOldVersion.Skills[i]);
+                }
+                
                 cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
                 cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
                 cvOldVersion.Skills[i].Date = cv.Skills[i].Date;
             }
-
+            
             //Interests
             for (int i = 0; i < cv.Interests.Count; i++)
             {
                 if (cvOldVersion.Interests.Count < cv.Interests.Count)
+                {
                     cvOldVersion.Interests.Add(new());
+                    await _context.Interests.AddAsync(cvOldVersion.Interests[i]);
+                }
 
                 cvOldVersion.Interests[i].InterestName = cv.Interests[i].InterestName;
             }
-
 
             //Certificates
             for (int i = 0; i < cv.Certificates.Count; i++)
             {
                 if (cvOldVersion.Certificates.Count < cv.Certificates.Count)
+                {
                     cvOldVersion.Certificates.Add(new());
+                    await _context.Certificates.AddAsync(cvOldVersion.Certificates[i]);
+                }
+                    
 
                 cvOldVersion.Certificates[i].CertName = cv.Certificates[i].CertName;
             }
-
 
             //PersonalCharacteristics
             for (int i = 0; i < cv.PersonalCharacteristics.Count; i++)
             {
                 if (cvOldVersion.PersonalCharacteristics.Count < cv.PersonalCharacteristics.Count)
+                {
                     cvOldVersion.PersonalCharacteristics.Add(new());
+                    await _context.PersonalCharacteristics.AddAsync(cvOldVersion.PersonalCharacteristics[i]);
+                }
+
                 cvOldVersion.PersonalCharacteristics[i].CharacteristicName = cv.PersonalCharacteristics[i].CharacteristicName;
             }
 
-            
+            if (cv.ImageFile != null)
+            {
 
+                if (!IsValidFileSize(cv.ImageFile.Length))
+                    return View(cv);
+
+                //var oldImageFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+
+                //accept räcker inte måste validera extension på server nivå
+
+                var extension = Path.GetExtension(cv.ImageFile.FileName);
+
+                if (!IsValidExtension(extension))
+                    return View(cv);
+
+                var newFileName = Guid.NewGuid() + extension;
+                var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                var fullPath = Path.Combine(directory, newFileName);
+
+                DeleteOldImageLocally(cvOldVersion); //Radera gamla bilden lokalt
+
+                using (var fs = new FileStream(fullPath, FileMode.Create))
+                {
+                    await cv.ImageFile.CopyToAsync(fs);
+                }
+
+                cvOldVersion.ImageFile = cv.ImageFile;
+                cvOldVersion.ImageFilePath = "/CvImages/" + newFileName;
+            }
+
+            if (!ModelState.IsValid)
+                return View(cv);
 
 
             await _context.SaveChangesAsync();

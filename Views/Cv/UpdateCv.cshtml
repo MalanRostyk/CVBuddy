@@ -53,30 +53,33 @@
     <div class="mb-4" id="Experience-Container" data-experience-index="@Model.Experiences.Count">
         @for (int i = 0; i < Model.Experiences.Count; i++)
         {
+
+            @* TROR ATT DET ÄR ATT DENNA KOD SKA INSERTAS VIA JAVASCRIPT, TROR DET ÄR VARFÖR VI FÅR PROBLEM MED VALIDERINGEN, SÅ JAG BLIR TVINGEN ATT SKAPA VIEWMODEL OCH KÖRA MODELSTATE.ISVALID ISLUTET INNAN SERIALISERING *@
+
             <input type="hidden" asp-for="Experiences[i].Exid" />
             <input type="hidden" asp-for="Experiences[i].CvId" />
 
             <div class="mb-4">
                 <div class="mb-2">
-                    Title: <input asp-for="Experiences[i].Title" type="text" value="@Model.Experiences[i].Title" name="@Model.Experiences[i].Title" />
+                    Title: <input asp-for="Experiences[i].Title" type="text" value="@Model.Experiences[i].Title"/>
                 </div>
                 <div class="mb-2">
-                    Company: <input asp-for="Experiences[i].Description" type="text" value="@(Model.Experiences[i].Description ?? "")" name="Model.Experiences[i].Description" /> @* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
+                    Company: <input asp-for="Experiences[i].Description" type="text" value="@(Model.Experiences[i].Description ?? "")"/> @* string som är nullable, kolla om dem får tom stäng automatiskt eller om dem behöver manuellt *@
 
                 </div>
                 <div class="mb-2">
-                    Description: <input asp-for="Experiences[i].Company" type="text" value="@Model.Experiences[i].Company" name="@Model.Experiences[i].Company" />
+                    Description: <input asp-for="Experiences[i].Company" type="text" value="@Model.Experiences[i].Company"/>
                 </div>
                 <div class="mb-2">
-                    Start date: <input asp-for="Experiences[i].StartDate" type="date" value="@Model.Experiences[i].StartDate" name="@Model.Experiences[i].StartDate" /> @* DATE VALUE FUNKAR EJ *@
+                    Start date: <input asp-for="Experiences[i].StartDate" type="date" value="@Model.Experiences[i].StartDate?"/> @* DATE VALUE FUNKAR EJ *@
                 </div>
                 <div class="mb-2">
-                    End date: <input asp-for="Experiences[i].EndDate" type="date" value="@Model.Experiences[i].EndDate" name="@Model.Experiences[i].EndDate" />
+                    End date: <input asp-for="Experiences[i].EndDate" type="date" value="@Model.Experiences[i].EndDate"/>
                 </div>
             </div>
         }
     </div>
-    <button type="button" onclick="addExperience()">Add Experience</button>
+    <button type="button" onclick="addExperience()">Add Experience</button> @* OCH ATT DENNA KNAPP ÄR DET SOM EGENTLIGEN LÄSES NÄR DET VALIDERAS *@
 
 
 
@@ -130,7 +133,7 @@
                     Description: <input asp-for="Skills[i].Description" type="text" value="@(@Model.Skills[i].Description ?? "")" />
                 </div>
                 <div class="mb-2">
-                    Skill Since: <input asp-for="Skills[i].Date" type="date" value="@Model.Skills[i].Date" />
+                    Skill Since: <input asp-for="Skills[i].Date" type="date" value="@Model.Skills[i].Date"/>
                 </div>
 
             </div>
