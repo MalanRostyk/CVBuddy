@@ -363,6 +363,13 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
+
+            foreach (var entry in ModelState)
+            {
+                var errors = entry.Value.Errors.Select(e => e.ErrorMessage);
+                Console.WriteLine($"{entry.Key} => {string.Join(" | ", errors)}");
+            }
+
             if (!ModelState.IsValid)
                 return View(cv);
 
@@ -472,6 +479,9 @@ namespace CVBuddy.Controllers
             }
 
             
+
+
+
             await _context.SaveChangesAsync();
             
 

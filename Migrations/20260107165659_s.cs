@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class ada : Migration
+    public partial class s : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,9 +98,9 @@ namespace CVBuddy.Migrations
                 {
                     AddressId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Street = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    City = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -227,8 +227,8 @@ namespace CVBuddy.Migrations
                 {
                     Mid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Sender = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    MessageString = table.Column<string>(type: "nvarchar(350)", maxLength: 350, nullable: false),
+                    Sender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MessageString = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SendDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     RecieverId = table.Column<string>(type: "nvarchar(450)", nullable: false)
@@ -277,7 +277,7 @@ namespace CVBuddy.Migrations
                 {
                     CertId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CertName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CertName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -321,11 +321,11 @@ namespace CVBuddy.Migrations
                 {
                     Eid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    HighSchool = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HSProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HighSchool = table.Column<string>(type: "nvarchar(95)", maxLength: 95, nullable: true),
+                    HSProgram = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     HSDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Univeristy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UniProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Univeristy = table.Column<string>(type: "nvarchar(95)", maxLength: 95, nullable: true),
+                    UniProgram = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     UniDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -347,8 +347,8 @@ namespace CVBuddy.Migrations
                     Exid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Company = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
+                    Company = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
@@ -370,7 +370,7 @@ namespace CVBuddy.Migrations
                 {
                     InterestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InterestName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InterestName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -390,7 +390,7 @@ namespace CVBuddy.Migrations
                 {
                     PCId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CharacteristicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CharacteristicName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -410,8 +410,8 @@ namespace CVBuddy.Migrations
                 {
                     Sid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ASkill = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ASkill = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },

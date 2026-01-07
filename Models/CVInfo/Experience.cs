@@ -9,7 +9,7 @@ namespace CVBuddy.Models.CVInfo
         public int Exid { get; set; }
 
         [Required] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
-        [StringLength(90, MinimumLength = 2)]
+        //[StringLength(90, MinimumLength = 2)]
         public string Title { get; set; }
 
 

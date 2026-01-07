@@ -31,19 +31,13 @@ namespace CVBuddy.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
                     b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -67,7 +61,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("CertName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
@@ -123,19 +118,23 @@ namespace CVBuddy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HSProgram")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("HighSchool")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(95)
+                        .HasColumnType("nvarchar(95)");
 
                     b.Property<string>("UniDate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UniProgram")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Univeristy")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(95)
+                        .HasColumnType("nvarchar(95)");
 
                     b.HasKey("Eid");
 
@@ -155,13 +154,15 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Company")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
@@ -193,7 +194,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("InterestName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
 
                     b.HasKey("InterestId");
 
@@ -212,7 +214,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("CharacteristicName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
@@ -234,7 +237,8 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("ASkill")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(90)
+                        .HasColumnType("nvarchar(90)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
@@ -243,7 +247,8 @@ namespace CVBuddy.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.HasKey("Sid");
 
@@ -280,8 +285,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("MessageString")
                         .IsRequired()
-                        .HasMaxLength(350)
-                        .HasColumnType("nvarchar(350)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RecieverId")
                         .IsRequired()
@@ -292,8 +296,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Sender")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Mid");
 
@@ -664,13 +667,13 @@ namespace CVBuddy.Migrations
             modelBuilder.Entity("CVBuddy.Models.CvProject", b =>
                 {
                     b.HasOne("CVBuddy.Models.CVInfo.Cv", "OneCv")
-                        .WithMany("CvProjects")
+                        .WithMany()
                         .HasForeignKey("CvId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CVBuddy.Models.Project", "OneProject")
-                        .WithMany("CvProjects")
+                        .WithMany()
                         .HasForeignKey("ProjId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -765,8 +768,6 @@ namespace CVBuddy.Migrations
                 {
                     b.Navigation("Certificates");
 
-                    b.Navigation("CvProjects");
-
                     b.Navigation("Education")
                         .IsRequired();
 
@@ -781,8 +782,6 @@ namespace CVBuddy.Migrations
 
             modelBuilder.Entity("CVBuddy.Models.Project", b =>
                 {
-                    b.Navigation("CvProjects");
-
                     b.Navigation("ProjectUsers");
                 });
 
@@ -790,8 +789,7 @@ namespace CVBuddy.Migrations
                 {
                     b.Navigation("MessageList");
 
-                    b.Navigation("OneAddress")
-                        .IsRequired();
+                    b.Navigation("OneAddress");
 
                     b.Navigation("OneCv")
                         .IsRequired();
