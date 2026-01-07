@@ -16,63 +16,56 @@
     @foreach (var project in Model.MyProjects)
     {
         var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
         var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);
+        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
 
         <div class="min-vh-80 read-banner">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 text-center">
                     <p><strong>Title : </strong>@project.Title</p>
                 </div>
+                @if (owner != null)
+                {
+                    <div class="col-12">
+                        <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+                    </div>
+                }
                 <div class="col-12">
                     <p><strong>Project description : </strong>@project.Description</p>
                 </div>
                 <div class="col-12">
-                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                    <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
+                    <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
+                    <span>
+                        <strong>Status : </strong>
+                        @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
+                    </span>
                 </div>
-
-                <div class="col-7">
-                    @if (project.Enddate == null)
+                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                    <p class ="mb-0">
+                        @if (activeUsers.Count > 0)
+                        {
+                            <strong>Participants : </strong>
+                            @for (int i = 0; i < activeUsers.Count; i++)
+                            {
+                                @activeUsers[i].FirstName @activeUsers[i].LastName
+                                @if (i < activeUsers.Count - 1)
+                                {
+                                    <span>, </span>
+                                }
+                            }
+                        }
+                    </p>
+                    @if (relation.IsOwner)
                     {
-                        <p><strong>Project status : </strong>Ongoing project</p>
+                        <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
                     }
                     else
                     {
-                        <p><strong>Project ended : </strong>@project.Enddate?.ToString("yyyy-mm-dd")</p>
+                        <button class="btn btn-info">Participant</button>
                     }
                 </div>
-                <div class="col-12">
-                    <p>
-                        <strong>Participants : </strong>
-                        @{
-                            int i = usersInProject.Count() - 1;
-                        }
-                        @for (int x = 0; x < usersInProject.Count(); x++)
-                        {
-                            <span>
-                                @usersInProject[x].FirstName @usersInProject[x].LastName
-                                @if (i > 0)
-                                {
-                                    <span>, </span>
-                                    i--;
-                                }
-                            </span>
-
-                        }
-                    </p>
-                </div>
-
-                @if (relation.IsOwner)
-                {
-                    <div class="col-5 d-flex justify-content-end align-items-end">
-                        <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
-                    </div>
-                }
-                else
-                {
-                    <div class="col-5 d-flex justify-content-end align-items-end">
-                        <button class="btn btn-info">Participant</button>
-                    </div>
-                }
             </div>
         </div>
     }
@@ -89,12 +82,19 @@ else
     @foreach (var project in Model.OtherProjects)
     {
         var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
         var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
         var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-
+        @if(owner == null || owner.User.IsDeactivated)
+        {
+            continue;
+        }
         <div class="min-vh-80 read-banner">
 
             <div class="row">
+                <div class="col-12 text-center">
+                    <p><strong>Title : </strong>@project.Title</p>
+                </div>
                 @if (owner != null)
                 {
                     <div class="col-12">
@@ -102,53 +102,42 @@ else
                     </div>
                 }
                 <div class="col-12">
-                    <p><strong>Title : </strong>@project.Title</p>
-                </div>
-
-                <div class="col-12">
                     <p><strong>Project description : </strong>@project.Description</p>
                 </div>
-
                 <div class="col-12">
-                    <p><strong>Project started : </strong>@project.StartDate.ToShortDateString()</p>
+                    <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
+                    <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
+                    <span>
+                        <strong>Status : </strong>
+                        @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
+                    </span>
                 </div>
-                <p><strong>Published : </strong>@project.PublishDate.ToShortDateString()</p>
-
-                <div class="col-12">
-                    <p>
-                        <strong>Participants : </strong>
-                        @{
-                            int i = usersInProject.Count() - 1;
-                        }
-                        @for (int x = 0; x < usersInProject.Count(); x++)
+                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                    <p class="mb-0">
+                        @if (activeUsers.Count > 0)
                         {
-                            <span>
-                                @usersInProject[x].FirstName @usersInProject[x].LastName
-                                @if (i > 0)
+                            <strong>Participants : </strong>
+                            @for (int i = 0; i < activeUsers.Count; i++)
+                            {
+                                @activeUsers[i].FirstName @activeUsers[i].LastName
+                                @if (i < activeUsers.Count - 1)
                                 {
                                     <span>, </span>
-                                    i--;
                                 }
-                            </span>
-
+                            }
                         }
                     </p>
-                </div>
-
-                @if (!isUserInProject)
-                {
-                    <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
-                        <div class="col-5 d-flex justify-content-end align-items-end">
+                    @if (!isUserInProject)
+                    {
+                        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
                             <button class="btn btn-primary">Join project!</button>
-                        </div>
-                    </form>
-                }
-                else
-                {
-                    <div class="col-5 d-flex justify-content-end align-items-end">
+                        </form>
+                    }
+                    else
+                    {
                         <button class="btn btn-info">Already joined</button>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     }

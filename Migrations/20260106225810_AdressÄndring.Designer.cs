@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260106195502_AdressÄndring")]
+    [Migration("20260106225810_AdressÄndring")]
     partial class AdressÄndring
     {
         /// <inheritdoc />
@@ -34,19 +34,13 @@ namespace CVBuddy.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
                     b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

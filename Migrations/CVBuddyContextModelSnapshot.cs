@@ -31,16 +31,13 @@ namespace CVBuddy.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
 
                     b.Property<string>("City")
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
