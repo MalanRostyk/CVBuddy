@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace CVBuddy.Controllers
 {
@@ -14,13 +15,22 @@ namespace CVBuddy.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> BuildCv()
+        public async Task<IActionResult> BuildCv()//TILL BUILD CV-SIDAN ----->>>>
         {
+            var userIdentityId = _userManager.GetUserId(User);
+            var user = await _context.Users.Where(u => u.Id == userIdentityId).FirstOrDefaultAsync();
+            
+            //ViewBag för att se om vi ska uppdate cv eller om vi ska build cv
+            ViewBag.HasCv = user!.OneCv != null;
+            if (ViewBag.HasCv)
+            {
+                return View(user.OneCv);
+            }
             return View(new CvVM());
         }
 
+        //--------------------CREATE---------------------------------------------------
         [HttpPost]
-
         public async Task<IActionResult> BuildCv(CvVM cvVM)
         {
             if (!ModelState.IsValid)
@@ -190,10 +200,6 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-
-
-        
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> AddEducation()
@@ -221,10 +227,20 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        //--------------------UPDATE---------------------------------------------------
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateImg()
+        {
+            return RedirectToAction("Index", "Home");
+        }
 
 
 
+        //--------------------DELETE---------------------------------------------------
 
+
+        //--------------------PRIVATE---------------------------------------------------
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
             if (!(User.Identity!.IsAuthenticated))
@@ -272,6 +288,57 @@ namespace CVBuddy.Controllers
                 .ToListAsync(); ;
 
             return projectList;
+        }
+
+        private async Task<string> GetImageFilePathForCvImage(Cv cv) //Ska tilldelas cv.ImageFilePath
+        {
+            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            Directory.CreateDirectory(uploadeFolder);
+
+            var ext = Path.GetExtension(cv.ImageFile.FileName);//null
+
+            var fileName = Guid.NewGuid().ToString() + ext;
+
+            var filePath = Path.Combine(uploadeFolder, fileName);
+            
+            string imageFilePath = "/CvImages/" + fileName;
+
+            return imageFilePath;
+        }
+
+        private bool DeleteOldImageLocally(Cv cvOld)
+        {
+            string[]? cvOldFileImageNameArray = null;
+
+            try
+            {
+                if (cvOld.ImageFilePath != null)
+                {
+                    cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
+
+                    if (cvOldFileImageNameArray.Length != 0)
+                    {
+
+                        string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+
+                        string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
+
+                        //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
+                        if (System.IO.File.Exists(finalCvFilePath))
+                        {
+                            System.IO.File.Delete(finalCvFilePath);
+                            Debug.WriteLine("Old image was found. Bör ha try catch oså!");
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return false;
         }
     }
 }
