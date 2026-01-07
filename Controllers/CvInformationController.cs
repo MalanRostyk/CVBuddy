@@ -112,6 +112,33 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddPersonalCharacteristic()
+        {
+            
+            return View(new PersonalCharacteristicVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPersonalCharacteristic(PersonalCharacteristicVM pvm)
+        {
+            if (!ModelState.IsValid)
+                return View(pvm);
+
+            PersonalCharacteristic persChar = new PersonalCharacteristic
+            {
+                CharacteristicName = pvm.CharacteristicName
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.PersonalCharacteristics.Add(persChar);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+
         
         [HttpGet]
         [Authorize]
