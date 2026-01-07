@@ -360,6 +360,9 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCv(Cv cv)
         {
+            if (!ModelState.IsValid)
+                return View(cv);
+
             var cvOldVersion = await GetLoggedInUsersCvAsync();
 
             if (ModelState.IsValid && cv.Education.DateOnlyEntered("Both"))
@@ -429,9 +432,9 @@ namespace CVBuddy.Controllers
             //Skills
             for (int i = 0; i < cv.Skills.Count; i++)
             {
-                if(cvOldVersion.Skills.Count < cv.Skills.Count)
+                if (cvOldVersion.Skills.Count < cv.Skills.Count)
                     cvOldVersion.Skills.Add(new());
-                
+
                 cvOldVersion.Skills[i].ASkill = cv.Skills[i].ASkill;
                 cvOldVersion.Skills[i].Description = cv.Skills[i].Description;
                 cvOldVersion.Skills[i].Date = cv.Skills[i].Date;

@@ -12,7 +12,7 @@ namespace CVBuddy.Models.CVInfo
         [StringLength(90, MinimumLength = 2)]
         public string ASkill { get; set; }
 
-        [StringLength(90, MinimumLength = 2)]
+        [StringLength(120)]
         public string? Description{ get; set; }//TextArea ingen tecken validering
         public DateTime? Date{ get; set; }
     

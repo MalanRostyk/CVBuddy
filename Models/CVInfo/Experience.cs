@@ -21,6 +21,7 @@ namespace CVBuddy.Models.CVInfo
         public string Company{ get; set; }
 
         [Required(ErrorMessage = "An added experience must have a start date, dont leave unentered.")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
