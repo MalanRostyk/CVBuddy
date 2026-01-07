@@ -51,7 +51,6 @@ namespace CVBuddy.Controllers
             }
 
             ViewBag.ResultCount = users.Count() == 0;
-
             return View(users);
 
             //var result = new List<User>();

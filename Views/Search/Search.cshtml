@@ -1,4 +1,10 @@
 ﻿@model List<User>
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> _userManager;
+
+@{
+    var currentUserId = _userManager.GetUserId(User);
+}
 
 <h3>Search results</h3>
 
@@ -14,7 +20,12 @@ else
             <li class="list-group-item">
                 <strong>@user.FirstName @user.LastName</strong>
                 @* <a asp-action="ReadCv" asp-controller="Cv" asp-route-id="@user.OneCv.Cid">See more</a> *@
-                @if(user.OneCv != null)
+                @if(user.Id != currentUserId)
+                {
+                    <a asp-action="ReadProfile" asp-controller="Profile" asp-route-userId="@user.Id" class="btn btn-primary">See Profile</a>
+                }
+                <a asp-action="SendMsg" asp-controller="Message" asp-route-userId="@user.Id" class="btn btn-primary">Send Message</a>
+                @if (user.OneCv != null)
                 {
                     <a asp-action="ReadCv" asp-controller="Cv" asp-route-Cid="@user.OneCv.Cid" class="btn btn-primary">See Cv</a>
                 }
