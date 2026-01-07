@@ -4,8 +4,6 @@ namespace CVBuddy.Models
 {
     public class UserRegisterViewModel
     {
-
-
         [Required(ErrorMessage = "Must enter first name")]
         [StringLength(72, ErrorMessage = "Too long first Name, max 72 characters")]
         public string FirstName { get; set; }

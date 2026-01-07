@@ -18,6 +18,7 @@ namespace CVBuddy.Controllers
         {
             return View(new LoginViewModel());
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel lvm)
         {

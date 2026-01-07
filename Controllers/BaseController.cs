@@ -28,9 +28,9 @@ namespace CVBuddy.Controllers
             if (User.Identity!.IsAuthenticated)
             {
                 var userId = _userManager.GetUserId(User);
-                if(User == null)
+                if (User == null)
                 {
-                    _signInManager.SignOutAsync();
+                    _signInManager.SignOutAsync(); //RADERA COOKIES FRÅN SENSAT INLOGGADE ANVÄNDARE EFTER ATT MAN LAGT TILL NY MIGRATIONS
                 }
                 ViewBag.NotReadCount = _context.Messages
                     .Where(m => m.RecieverId == userId && !m.IsRead)

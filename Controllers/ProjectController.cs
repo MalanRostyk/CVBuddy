@@ -28,10 +28,10 @@ namespace CVBuddy.Controllers
                 .ToListAsync();
 
             var myProjects = projects
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();//&& pu.IsOwner
+                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
 
             var otherProjects = projects
-                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();//&& pu.IsOwner
+                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
 
             var vm = new ProjectIndexViewModel
             {
@@ -68,13 +68,6 @@ namespace CVBuddy.Controllers
 
             var userId = _userManager.GetUserId(User); //Hämtar användarens id
 
-            //var cvId = await _context.Cvs
-            //  .Where(cvs => cvs.UserId == userId)
-            //  .Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
-
-            //var projId = await _context.Projects
-            //    .Where(createdProject => createdProject.Pid == proj.Pid)
-            //    .Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades, kan köra direkt proj.Pid
 
             await _context.Projects.AddAsync(proj);
             await _context.SaveChangesAsync();
@@ -85,16 +78,6 @@ namespace CVBuddy.Controllers
                 UserId = userId!,
                 IsOwner = true
             });
-
-            //await _context.CvProjects.AddAsync(new CvProject //Lägg till CvProject direkt i DbSet
-            //{
-            //    ProjId = projId,
-            //    CvId = cvId
-
-            //});
-            //Lägg till proj i projects i snapshot
-            //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
-            //eftersom att Pid tilldelas först när den har serialiserats till Db
 
             await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
             
@@ -160,7 +143,6 @@ namespace CVBuddy.Controllers
 
             if (alreadyJoined)
                 return RedirectToAction("GetProject");
-
 
 
             await _context.ProjectUsers.AddAsync(new ProjectUser

@@ -95,8 +95,6 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.PersonalCharacteristics)
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
-                    .Include(cv => cv.CvProjects)
-                    .ThenInclude(cp => cp.OneProject)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             if (cv == null)
                 NotFound();
