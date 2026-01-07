@@ -136,6 +136,32 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddSkill()
+        {
+            
+            return View(new SkillVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSkill(SkillVM svm)
+        {
+            if (!ModelState.IsValid)
+                return View(svm);
+
+            Skill skill = new Skill
+            {
+                ASkill = svm.ASkill,
+                Description = svm.Description,
+                Date = svm.Date
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Skills.Add(skill);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
 
 
 

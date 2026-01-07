@@ -1,0 +1,24 @@
+﻿@model CVBuddy.Models.CVInfo.SkillVM
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <h4 class="text-danger">You need to make some changes:</h4>
+    <ul class="text-danger">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>
+                @err.ErrorMessage
+            </li>
+        }
+    </ul>
+}
+
+<h2>Skill</h2>
+<form asp-action="AddSkill" method="post">
+
+    <input type="text" asp-for="@Model.ASkill" />
+    <input type="text" asp-for="@Model.Description" />
+    <input type="date" asp-for="@Model.Date" />
+
+    <button type="submit" class="d-block btn btn-primary">Create Cv</button>
+</form>
