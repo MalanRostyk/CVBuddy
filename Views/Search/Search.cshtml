@@ -1,4 +1,10 @@
 ﻿@model List<User>
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> _userManager;
+
+@{
+    var currentUserId = _userManager.GetUserId(User);
+}
 
 <h3>Search results</h3>
 
@@ -11,14 +17,56 @@ else
     <ul class="list-group">
         @foreach (var user in Model)
         {
-            <li class="list-group-item">
-                <strong>@user.FirstName @user.LastName</strong>
-                @* <a asp-action="ReadCv" asp-controller="Cv" asp-route-id="@user.OneCv.Cid">See more</a> *@
-                @if(user.OneCv != null)
-                {
-                    <a asp-action="ReadCv" asp-controller="Cv" asp-route-Cid="@user.OneCv.Cid" class="btn btn-primary">See Cv</a>
-                }
-            </li>
+            if (!user.IsDeactivated)
+            {
+                <li class="list-group-item">
+                    <strong>@user.FirstName @user.LastName</strong>
+                    @* <a asp-action="ReadCv" asp-controller="Cv" asp-route-id="@user.OneCv.Cid">See more</a> *@
+
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a asp-action="SendMsg" asp-controller="Message" asp-route-userId="@user.Id" class="btn btn-primary">Send Message</a>
+                        @if (!user.HasPrivateProfile)
+                        {
+                            @if (user.OneCv != null)
+                            {
+                                <a asp-action="ReadCv" asp-controller="Cv" asp-route-Cid="@user.OneCv.Cid" class="btn btn-primary">See Cv</a>
+                            }
+                            else
+                            {
+                                <span>This person have no Cv!</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>This is private user <a asp-controller="Account" asp-action="Login">Log in</a> to see Cv!</span>
+                        }
+                    }
+                    else
+                    {
+                        @if (user.Id != currentUserId)
+                        {
+                            <a asp-action="SendMsg" asp-controller="Message" asp-route-userId="@user.Id" class="btn btn-primary">Send Message</a>
+                        }
+                        @if (user.OneCv != null)
+                        {
+                            <a asp-action="ReadCv" asp-controller="Cv" asp-route-Cid="@user.OneCv.Cid" class="btn btn-primary">See Cv</a>
+                        }
+                        else
+                        {
+                            @if (user.Id == currentUserId)
+                            {
+                                <span>You have no Cv! (Go to <a asp-controller="Cv" asp-action="CreateCv">create cv</a>)</span>
+                            }
+                            else
+                            {
+                                <span>This person have no Cv!</span>
+                            }
+
+                        }
+                    }
+                </li>
+            }
         }
     </ul>
 }

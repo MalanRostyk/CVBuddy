@@ -325,6 +325,7 @@ namespace CVBuddy.Controllers
         
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> UpdateCv()
         {
             ViewBag.Headline = "Cv";
@@ -472,6 +473,7 @@ namespace CVBuddy.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> DeleteCv(int Cid)
         {
 
@@ -486,6 +488,7 @@ namespace CVBuddy.Controllers
         }
 
         [HttpPost]
+
         public async Task<IActionResult> DeleteCv(Cv cv)
          {
             try

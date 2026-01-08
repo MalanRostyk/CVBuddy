@@ -12,7 +12,6 @@ namespace CVBuddy.Controllers
         {
         }
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> ReadProfile(string userId)
         {
 

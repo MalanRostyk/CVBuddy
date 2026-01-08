@@ -16,16 +16,19 @@
                 <a asp-controller="Cv" asp-action="UpdateCv">Update My Cv</a>
                 <a asp-controller="CvInformation" asp-action="UpdateCv" class="btn btn-primary">Update cv</a>
                 <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
-                
-            }
+
+                }
+                else
+                {
+                    <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
+                }
             @if(User.Identity.IsAuthenticated)
             {
-                    @if (ViewBag.HasCv != true)
-                    {
+                @if (ViewBag.HasCv != true)
+                {
                         
-                        <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a>
-                        <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
-                    }
+                    <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a>
+                }
                
                 @* <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a> FÖR TEST TYP*@
                     <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Logout</a> <br>
@@ -132,7 +135,7 @@
                 </div>
                 <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                     <p class="mb-0">
-                        @if(activeUsers.Count > 0)
+                        @if(userIsPrivate.Count > 0)
                         {
                             <strong>Participants : </strong>
                             @for(int i = 0; i<userIsPrivate.Count; i++)
