@@ -302,6 +302,8 @@ namespace CVBuddy.Controllers
             };
             return View(personalCharacteristicVm);
         }
+
+
         [HttpPost]
         public async Task<IActionResult> UpdatePersonalCharacteristic(PersonalCharacteristicVM pvm)
         {
@@ -317,6 +319,8 @@ namespace CVBuddy.Controllers
             }
             return View("UpdateCv", await UsersCvToCvVM());
         }
+
+
         [HttpGet]
         public async Task<IActionResult> DeletePersonalCharacteristic(int pcId)
         {
@@ -326,6 +330,8 @@ namespace CVBuddy.Controllers
             await _context.SaveChangesAsync();
             return View("UpdateCv", await UsersCvToCvVM());
         }
+
+
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
@@ -446,6 +452,14 @@ namespace CVBuddy.Controllers
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
         }
 
+        public async Task<IActionResult> DeleteExperience(int exid) 
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+            _context.Experiences.Remove(experience);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+        }
         //--------------------DELETE---------------------------------------------------
 
 

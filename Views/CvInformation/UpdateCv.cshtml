@@ -96,7 +96,7 @@
                 <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
                 <div class="d-flex gap-1">
                     <a asp-action="UpdateExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteExperience" class="btn btn-primary">Delete</a>
+                    <a asp-action="DeleteExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Delete</a>
                 </div>
             </div>
         }
