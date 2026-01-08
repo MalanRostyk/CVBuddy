@@ -1,4 +1,5 @@
-﻿using CVBuddy.Models;
+﻿using Castle.Components.DictionaryAdapter.Xml;
+using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -254,18 +255,31 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateImage(CvVM cvVM)
         {
+            var cv = await GetLoggedInUsersCvAsync();
+            cvVM.ImageFilePath = cv.ImageFilePath;
 
-            //if(!ModelState.IsValid)
-            //    return View(cvVM);
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
+                foreach (var entry in ModelState)
+                {
+                    Console.WriteLine($"FIELD: {entry.Key}");
+                    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        Console.WriteLine($"  ❌ {error.ErrorMessage}");
+                    }
+                }
+                return View("UpdateCv", cvVM);
+            }
+
 
             
 
-            if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
-            {
-                ModelState.AddModelError("ImageFile", "Please upload an image");
-                ViewBag.eror = "Please upload an image";
-                return View(cvVM);
-            }
+
+
+
 
             var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
             Directory.CreateDirectory(uploadeFolder);
@@ -279,9 +293,10 @@ namespace CVBuddy.Controllers
 
             var filePath = Path.Combine(uploadeFolder, fileName);
 
-            var cv = await GetLoggedInUsersCvAsync();
+            /*var cv = await GetLoggedInUsersCvAsync()*/;
+
             DeleteOldImageLocally(cv);
-            cvVM.ImageFilePath = cv.ImageFilePath;
+            //cvVM.ImageFilePath = cv.ImageFilePath;
             cv.ImageFile = cvVM.ImageFile;
             cv.ImageFilePath = "/CvImages/" + fileName;
             
