@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CVBuddy.Models.CVInfo
@@ -6,6 +7,9 @@ namespace CVBuddy.Models.CVInfo
     public class SkillVM
     {
         public int Sid { get; set; }
+
+        [DisplayName("Skill name")]
+
         [Required(ErrorMessage = "You need to enter what the skill is.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
         [StringLength(90, MinimumLength = 3)]
         public string ASkill { get; set; }
