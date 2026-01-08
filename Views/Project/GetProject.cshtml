@@ -6,88 +6,155 @@
 @{
     var currentUserId = _userManager.GetUserId(User);
 }
-
-<a asp-action="CreateProject" class="btn btn-primary mb-3">Create new Project</a>
-<h3>My projects</h3>
-@if (Model.MyProjects.Any())
+@if (User.Identity.IsAuthenticated)
 {
-    @foreach (var project in Model.MyProjects)
+    <a asp-action="CreateProject" class="btn btn-primary mb-3">Create new Project</a>
+    <h3>My projects</h3>
+    @if (Model.MyProjects.Any())
     {
-        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
-        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-        var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);
-        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+        @foreach (var project in Model.MyProjects)
+        {
+            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
+            var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);
+            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
 
-        <div class="min-vh-80 read-banner">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p><strong>Title : </strong>@project.Title</p>
-                </div>
-                @if (owner != null)
-                {
-                    <div class="col-12">
-                        <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+            <div class="min-vh-80 read-banner">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p><strong>Title : </strong>@project.Title</p>
                     </div>
-                }
-                <div class="col-12">
-                    <p><strong>Project description : </strong>@project.Description</p>
-                </div>
-                <div class="col-12">
-                    <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
-                    <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
-                    <span>
-                        <strong>Status : </strong>
-                        @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
-                    </span>
-                </div>
-                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
-                    <p class="mb-0">
-                        @if (activeUsers.Count > 0)
-                        {
-                            <strong>Participants : </strong>
-                            @for (int i = 0; i < activeUsers.Count; i++)
+                    @if (owner != null)
+                    {
+                        <div class="col-12">
+                            <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+                        </div>
+                    }
+                    <div class="col-12">
+                        <p><strong>Project description : </strong>@project.Description</p>
+                    </div>
+                    <div class="col-12">
+                        <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
+                        <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
+                        <span>
+                            <strong>Status : </strong>
+                            @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
+                        </span>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                        <p class="mb-0">
+                            @if (activeUsers.Count > 0)
                             {
-                                @activeUsers[i].FirstName @activeUsers[i].LastName
-                                @if (i < activeUsers.Count - 1)
+                                <strong>Participants : </strong>
+                                @for (int i = 0; i < activeUsers.Count; i++)
                                 {
-                                    <span>, </span>
+                                    @activeUsers[i].FirstName @activeUsers[i].LastName
+                                    @if (i < activeUsers.Count - 1)
+                                    {
+                                        <span>, </span>
+                                    }
                                 }
                             }
+                        </p>
+                        @if (relation.IsOwner)
+                        {
+                            <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
                         }
-                    </p>
-                    @if (relation.IsOwner)
-                    {
-                        <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
-                    }
-                    else
-                    {
-                        <button class="btn btn-info">Participant</button>
-                    }
+                        else
+                        {
+                            <button class="btn btn-info">Participant</button>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+    }
+    else
+    {
+        <p>You don´t own any projects.</p>
+    }
+
+    <h3>Other projects</h3>
+    @if (Model.OtherProjects.Any())
+    {
+        @foreach (var project in Model.OtherProjects)
+        {
+            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
+            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
+            var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
+            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+            @if (owner == null || owner.User.IsDeactivated)
+            {
+                continue;
+            }
+            <div class="min-vh-80 read-banner">
+
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p><strong>Title : </strong>@project.Title</p>
+                    </div>
+                    @if (owner != null)
+                    {
+                        <div class="col-12">
+                            <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
+                        </div>
+                    }
+                    <div class="col-12">
+                        <p><strong>Project description : </strong>@project.Description</p>
+                    </div>
+                    <div class="col-12">
+                        <span><strong>Started : </strong>@project.StartDate.ToShortDateString()</span>
+                        <span><strong>Published : </strong>@project.PublishDate.ToShortDateString()</span>
+                        <span>
+                            <strong>Status : </strong>
+                            @(project.Enddate == null ? "Ongoing project" : $"Ended: {project.Enddate:yyyy-mm-dd}")
+                        </span>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                        <p class="mb-0">
+                            @if (activeUsers.Count > 0)
+                            {
+                                <strong>Participants : </strong>
+                                @for (int i = 0; i < activeUsers.Count; i++)
+                                {
+                                    @activeUsers[i].FirstName @activeUsers[i].LastName
+                                    @if (i < activeUsers.Count - 1)
+                                    {
+                                        <span>, </span>
+                                    }
+                                }
+                            }
+                        </p>
+                        @if (!isUserInProject)
+                        {
+                            <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
+                                <button class="btn btn-primary">Join project!</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-info">Already joined</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No other projects available.</p>
     }
 }
 else
-{
-    <p>You don´t own any projects.</p>
-}
-
-<h3>Other projects</h3>
-@if (Model.OtherProjects.Any())
 {
     @foreach (var project in Model.OtherProjects)
     {
         var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
         var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-        var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
+        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile || User.Identity.IsAuthenticated).ToList();
         var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-        @if(owner == null || owner.User.IsDeactivated)
-        {
-            continue;
-        }
-        <div class="min-vh-80 read-banner">
 
+        <div class="min-vh-80 read-banner">
             <div class="row">
                 <div class="col-12 text-center">
                     <p><strong>Title : </strong>@project.Title</p>
@@ -111,35 +178,21 @@ else
                 </div>
                 <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                     <p class="mb-0">
-                        @if (activeUsers.Count > 0)
+                    @if (userIsPrivate.Count > 0)
                         {
                             <strong>Participants : </strong>
-                            @for (int i = 0; i < activeUsers.Count; i++)
+                        @for (int i = 0; i < userIsPrivate.Count; i++)
                             {
-                                @activeUsers[i].FirstName @activeUsers[i].LastName
-                                @if (i < activeUsers.Count - 1)
+                            @userIsPrivate[i].FirstName @userIsPrivate[i].LastName
+                                @if (i < userIsPrivate.Count - 1)
                                 {
                                     <span>, </span>
                                 }
                             }
                         }
                     </p>
-                    @if (!isUserInProject)
-                    {
-                        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
-                            <button class="btn btn-primary">Join project!</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <button class="btn btn-info">Already joined</button>
-                    }
                 </div>
             </div>
         </div>
     }
-}
-else
-{
-    <p>No other projects available.</p>
 }

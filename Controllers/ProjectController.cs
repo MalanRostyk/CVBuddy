@@ -17,29 +17,46 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetProject()
         {
-            var userId = _userManager.GetUserId(User);
-
-            var projects = await _context.Projects
-                .Include(p => p.ProjectUsers)
-                .ThenInclude(pu => pu.User)
-                .ToListAsync();
-
-            var myProjects = projects
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
-
-            var otherProjects = projects
-                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
-
-            var vm = new ProjectIndexViewModel
+            if (User.Identity.IsAuthenticated)
             {
-                MyProjects = myProjects,
-                OtherProjects = otherProjects
-            };
+                var userId = _userManager.GetUserId(User);
 
-            return View(vm);
+                var projects = await _context.Projects
+                    .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                    .ToListAsync();
+
+                var myProjects = projects
+                    .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+
+                var otherProjects = projects
+                    .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+
+                var vm = new ProjectIndexViewModel
+                {
+                    MyProjects = myProjects,
+                    OtherProjects = otherProjects
+                };
+
+                return View(vm);
+            }
+            else
+            {
+                var allProjects = await _context.Projects
+                    .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                    .Where(pr => pr.ProjectUsers.Any(pu => !pu.User.IsDeactivated || !pu.User.HasPrivateProfile))
+                    .ToListAsync();
+                var vm = new ProjectIndexViewModel
+                {
+                    MyProjects = new List<Project>(),
+                    OtherProjects = allProjects
+                };
+                return View(vm);
+            }
         }
 
         [HttpGet]
