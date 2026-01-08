@@ -27,6 +27,33 @@
 </form>
 
 
+<h2>Edit Certificate</h2> <a asp-action="AddCertificate" class="btn btn-primary">Add Certificate</a>
+<div>
+    @foreach (var certificate in Model.Certificates)
+    {
+        <div class="mb-2 content-item">
+            <p class="mb-0">Certificate: @certificate.CertName</p>
+            <div class="d-flex">
+                <a asp-action="UpdateCertificate" class="btn btn-primary">Update Certificate</a>
+                <a asp-action="DeleteCertificate" class="btn btn-primary">Delete Certificate</a>
+            </div>
+        </div>
+    }
+</div>
+
+<h2>Edit Skills</h2> <a asp-action="AddSkill" class="btn btn-primary">Add Skill</a>
+
+<div class="d-flex">
+    @foreach (var skill in Model.Skills)
+    {
+        <div class="mb-2 content-item">
+            <p class="mb-0">Skill: @skill.ASkill</p>
+            <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
+            <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
+        </div>
+    }
+</div>
+
 <a asp-action="UpdateCertificate" class="btn btn-primary">Update Certificate</a>
 
 <a asp-action="UpdateSkill" class="btn btn-primary">Update Skill</a>
