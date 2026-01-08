@@ -289,7 +289,9 @@ namespace CVBuddy.Controllers
                         Console.WriteLine($"  ❌ {error.ErrorMessage}");
                     }
                 }
-                return View("UpdateCv", cvVM);
+                return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
+                                                               //Så vi måste returnera ett cvVM med värden för att förse
+                                                               //UpdateCv view model med värden
             }
 
             var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
