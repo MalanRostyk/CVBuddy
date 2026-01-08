@@ -19,3 +19,17 @@
     <input type="text" asp-for="@Model.CharacteristicName" />
     <button type="submit" class="d-block btn btn-primary">Add</button>
 </form>
+
+<form asp-action="AddPersonalCharacteristic" method="post">
+    <div class="d-flex justify-content-center align-content-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <h3 class="text-center mb-4">Personal Characteristic</h3>
+
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.CharacteristicName" class="form-label"></label>
+                <input type="text" asp-for="@Model.CharacteristicName" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add</button>
+        </div>
+    </div>
+</form>
