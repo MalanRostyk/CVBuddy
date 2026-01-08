@@ -1,10 +1,52 @@
 ﻿@model CVBuddy.Models.MessageVM
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="d-flex justify-content-center align-items-center min-vh-90">
     <div class="col-md-6 col-lg-4">
         <div class="mb-3 text-center mt-4">
-            <q><i>Are you sure you would  like to permanently delete this message?</i></q>
+            <h2>Are you sure?</h2>
+            <div class="mb-3 text-center mt-4">
+                <q><i>Are you sure you would like to permanently delete this message?</i></q>
+            </div>
+            <div class="mb-3 text-center mt-4">
+                <table class="w-100 table table-dark">
+                    <thead>
+                        <tr>
+                            <td>Sender</td>
+                            <td>Received</td>
+                            <td>Read Status</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><b>@Model.Sender</b></p>
+                            </td>
+                            <td>
+                                <p>@Model.SendDate</p>
+                            </td>
+                            <td>
+                                @if (Model.IsRead)
+                                {
+                                    <p>Marked as read</p>
+                                }
+                                else
+                                {
+                                    <b>Not Read</b>
+                                }
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mb-3 text-center mt-4">
+                <q>@Model.MessageString</q>
+            </div>
         </div>
-        <a asp-action="DeleteMessage" asp-route-mid="@Model.Mid" class="btn btn-danger">Confirm</a>
+        <div class="mb-3 text-center mt-4">
+            <a asp-action="Messages" asp-route-mid="@Model.Mid" class="btn btn-outline-secondary">Back</a>
+            <a asp-action="DeleteMessage" asp-route-mid="@Model.Mid" class="btn btn-danger">Confirm</a>
+        </div>
     </div>
 </div>

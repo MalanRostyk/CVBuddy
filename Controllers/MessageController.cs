@@ -128,9 +128,10 @@ namespace CVBuddy.Controllers
 
                 //return RedirectToAction IEnumerable<Message> som tillhör användaren
                 //var userId = _userManager.GetUserId(User);
-                List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == mVM.RecieverId).ToListAsync();
-                
-                return RedirectToAction("Messages", usersMessages);
+                //List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == mVM.RecieverId).ToListAsync();
+
+                //return RedirectToAction("Messages", usersMessages);
+                return RedirectToAction("Messages");
             }
             catch(Exception e)
             {
