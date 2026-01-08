@@ -571,6 +571,16 @@ namespace CVBuddy.Controllers
             return View("UpdateCv", await UsersCvToCvVM());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteInterest(int interestId)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+            _context.Interests.Remove(interest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+        }
+
         //--------------------PRIVATE HELPERS---------------------------------------------------
 
         private async Task<CvVM> UsersCvToCvVM()
