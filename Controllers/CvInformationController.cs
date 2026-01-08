@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace CVBuddy.Controllers
 {
@@ -220,9 +221,82 @@ namespace CVBuddy.Controllers
 
         //--------------------UPDATE---------------------------------------------------
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateImg()
+        [HttpGet]
+        public async Task<IActionResult> UpdateCv()
         {
+            var cv = await GetLoggedInUsersCvAsync();
+
+            CvVM cvVM = new CvVM
+            {
+                Cid = cv.Cid,
+                Skills = cv.Skills,
+                Education = cv.Education,
+                Experiences = cv.Experiences,
+                Certificates = cv.Certificates,
+                PersonalCharacteristics = cv.PersonalCharacteristics,
+                PublishDate = cv.PublishDate,
+                Interests = cv.Interests,
+                ImageFilePath = cv.ImageFilePath,
+                ReadCount = cv.ReadCount,
+                UserId = cv.UserId
+            };
+
+            return View(cvVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateImage()
+        {
+            var cvVM = await UsersCvToCvVM();
+            return View(cvVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateImage(CvVM cvVM)
+        {
+
+            //if(!ModelState.IsValid)
+            //    return View(cvVM);
+
+            
+
+            if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
+            {
+                ModelState.AddModelError("ImageFile", "Please upload an image");
+                ViewBag.eror = "Please upload an image";
+                return View(cvVM);
+            }
+
+            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            Directory.CreateDirectory(uploadeFolder);
+
+            var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
+
+            //if (!IsValidExtension(ext))
+            //    return View(cv);
+
+            var fileName = Guid.NewGuid().ToString() + ext;
+
+            var filePath = Path.Combine(uploadeFolder, fileName);
+            DeleteOldImageLocally(cvVM);
+
+            var cv = await GetLoggedInUsersCvAsync();
+
+            cvVM.ImageFilePath = cv.ImageFilePath;
+            cv.ImageFile = cvVM.ImageFile;
+            cv.ImageFilePath = "/CvImages/" + fileName;
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await cv.ImageFile!.CopyToAsync(stream);
+            }
+
+            
+
+            
+            
+            await _context.SaveChangesAsync();
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -232,6 +306,30 @@ namespace CVBuddy.Controllers
 
 
         //--------------------PRIVATE---------------------------------------------------
+        
+        private async Task<CvVM> UsersCvToCvVM()
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+
+            CvVM cvVM = new CvVM
+            {
+                Cid = cv.Cid,
+                Skills = cv.Skills,
+                Education = cv.Education,
+                Experiences = cv.Experiences,
+                Certificates = cv.Certificates,
+                PersonalCharacteristics = cv.PersonalCharacteristics,
+                PublishDate = cv.PublishDate,
+                Interests = cv.Interests,
+                ImageFilePath = cv.ImageFilePath,
+                ReadCount = cv.ReadCount,
+                UserId = cv.UserId
+            };
+
+            return cvVM;
+        }
+
+        
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
             if (!(User.Identity!.IsAuthenticated))
@@ -297,7 +395,7 @@ namespace CVBuddy.Controllers
             return imageFilePath;
         }
 
-        private bool DeleteOldImageLocally(Cv cvOld)
+        private bool DeleteOldImageLocally(CvVM cvOld)
         {
             string[]? cvOldFileImageNameArray = null;
 

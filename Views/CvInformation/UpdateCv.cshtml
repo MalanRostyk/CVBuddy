@@ -1,5 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model CVBuddy.Models.CVInfo.CvVM
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <h4 class="text-danger">You need to make some changes:</h4>
+    <ul class="text-danger">
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <li>
+                @err.ErrorMessage
+            </li>
+        }
+    </ul>
 }
+
+<h2>Update your Cv</h2>
+<img src="@Model.ImageFilePath" alt="Profile Image" />
+<h3>Upload your image</h3>
+>
+
+<form method="post" asp-action="UpdateImage" enctype="multipart/form-data">
+    <div>
+        <label>Update Cv Image</label>
+        <input type="hidden" name="Cid" value="@Model.Cid"/>
+        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
+    </div>
+    <button type="submit" asp-action="UpdateImage" class="d-block btn btn-primary">Update Image</button>
+</form>
+
+
+<a asp-action="UpdateCertificate" class="btn btn-primary">Update Certificate</a>
+
+<a asp-action="UpdateSkill" class="btn btn-primary">Update Skill</a>
+
+<a asp-action="UpdateExperience" class="btn btn-primary">Update Experience</a>
+
+<a asp-action="UpdateEducation" class="btn btn-primary">Update Education</a>
+
+<a asp-action="UpdatePersonalCharacteristic" class="btn btn-primary">Update Personal Characteristic</a>
+
+<a asp-action="UpdateInterest" class="btn btn-primary">Update Interest</a>
+
+
+
