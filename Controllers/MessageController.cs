@@ -84,6 +84,12 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> DeleteMessageConfirm(int mid)
+        {
+            return View(mid);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> DeleteMessage(int mid)
         {
             //Undantagshantering ska göras för exceptionella situationer, det ska inte funka som en if sats för att fånga null värden här och var

@@ -116,12 +116,6 @@ function addInterests() {
     interestsIndex++;
 }
 
-
-
-
-
-
-
 //let expIndex = Model.Experiences.Count();
 //function addExperience() {
 //    let container = document.getElementById("Experience-Container");

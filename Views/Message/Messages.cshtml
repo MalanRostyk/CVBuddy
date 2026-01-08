@@ -4,6 +4,7 @@
 <div>
     <table class="table table-dark">
         <tbody>
+            
             @foreach (var message in Model)
             {
                 <tr>
@@ -28,7 +29,7 @@
                         </form>
                     </td>
                     <td>
-                        <a asp-action="DeleteMessage" asp-route-mid="@message.Mid" class="btn btn-danger">Delete</a>
+                        <a asp-action="DeleteMessageConfirm" asp-route-mid="@message.Mid" class="btn btn-danger">Delete</a>
                     </td>
                 </tr>
             }
