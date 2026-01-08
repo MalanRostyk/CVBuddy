@@ -17,6 +17,8 @@ namespace CVBuddy.Controllers
         public CvInformationController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm) { }
 
 
+        //---------------------BuildCv------------------------------------------BuildCv---------------------
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> BuildCv()//TILL BUILD CV-SIDAN ----->>>>
@@ -24,7 +26,95 @@ namespace CVBuddy.Controllers
             return View(new CvVM());
         }
 
-        //--------------------CREATE---------------------------------------------------
+
+        //---------------------UpdateCv------------------------------------------UpdateCv---------------------
+
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCv()
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+
+            CvVM cvVM = new CvVM
+            {
+                Cid = cv.Cid,
+                Skills = cv.Skills,
+                Education = cv.Education,
+                Experiences = cv.Experiences,
+                Certificates = cv.Certificates,
+                PersonalCharacteristics = cv.PersonalCharacteristics,
+                PublishDate = cv.PublishDate,
+                Interests = cv.Interests,
+                ImageFilePath = cv.ImageFilePath,
+                ReadCount = cv.ReadCount,
+                UserId = cv.UserId
+            };
+
+            return View(cvVM);
+        }
+
+
+        //---------------------Image---------------------Image---------------------Image---------------------
+
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateImage()
+        {
+            var cvVM = await UsersCvToCvVM();
+            return View(cvVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateImage(CvVM cvVM)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            cvVM.ImageFilePath = cv.ImageFilePath;
+
+            if (!ModelState.IsValid)
+            {
+                //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
+                //foreach (var entry in ModelState)
+                //{
+                //    Console.WriteLine($"FIELD: {entry.Key}");
+                //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+
+                //    foreach (var error in entry.Value.Errors)
+                //    {
+                //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
+                //    }
+                //}
+                return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
+                                                               //Så vi måste returnera ett cvVM med värden för att förse
+                                                               //UpdateCv view model med värden
+            }
+
+            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+            Directory.CreateDirectory(uploadeFolder);
+
+            var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
+
+            var fileName = Guid.NewGuid().ToString() + ext;
+
+            var filePath = Path.Combine(uploadeFolder, fileName);
+
+            DeleteOldImageLocally(cv);
+
+            cv.ImageFile = cvVM.ImageFile;
+            cv.ImageFilePath = "/CvImages/" + fileName;
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await cv.ImageFile!.CopyToAsync(stream);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        //---------------------BuildCv------------------------------------------BuildCv---------------------
+
         [HttpPost]
         public async Task<IActionResult> BuildCv(CvVM cvVM)
         {
@@ -69,138 +159,22 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> AddInterest()
-        {
-            
-            return View(new InterestVM());
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> AddInterest(InterestVM ivm)
-        {
-            if (!ModelState.IsValid)
-                return View(ivm);
 
-            Interest interest = new Interest
-            {
-                InterestName = ivm.InterestName
-            };
 
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.Interests.Add(interest);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> AddCertificate()
-        {
-            
-            return View(new CertificateVM());
-        }
+        
 
-        [HttpPost]
-        public async Task<IActionResult> AddCertificate(CertificateVM cvm)
-        {
-            if (!ModelState.IsValid)
-                return View(cvm);
+        
 
-            Certificate certificate = new Certificate
-            {
-                CertName = cvm.CertName
-            };
+        
 
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.Certificates.Add(certificate);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-        }
+        
 
-        [HttpGet]
-        public async Task<IActionResult> AddPersonalCharacteristic()
-        {
-            
-            return View(new PersonalCharacteristicVM());
-        }
+        
 
-        [HttpPost]
-        public async Task<IActionResult> AddPersonalCharacteristic(PersonalCharacteristicVM pvm)
-        {
-            if (!ModelState.IsValid)
-                return View(pvm);
+        //---------------------Education------------------------------------------Education---------------------
 
-            PersonalCharacteristic persChar = new PersonalCharacteristic
-            {
-                CharacteristicName = pvm.CharacteristicName
-            };
-
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.PersonalCharacteristics.Add(persChar);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AddSkill()
-        {
-            
-            return View(new SkillVM());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddSkill(SkillVM svm)
-        {
-            if (!ModelState.IsValid)
-                return View(svm);
-
-            Skill skill = new Skill
-            {
-                ASkill = svm.ASkill,
-                Description = svm.Description,
-                Date = svm.Date
-            };
-
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.Skills.Add(skill);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> AddExperience()
-        {
-            
-            return View(new ExperienceVM());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddExperience(ExperienceVM evm)
-        {
-            if (!ModelState.IsValid)
-                return View(evm);
-
-            Experience exp = new Experience
-            {
-                Title = evm.Title,
-                Description = evm.Description,
-                Company = evm.Company,
-                StartDate = evm.StartDate ?? new DateTime(19000101),
-                EndDate = evm.EndDate
-            };
-
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.Experiences.Add(exp);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> AddEducation()
-        //{
-        //    return View(new EducationVM());
-        //}
 
         [HttpGet]
         [Authorize]
@@ -240,8 +214,31 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //--------------------UPDATE---------------------------------------------------
+        //---------------------Certificate------------------------------------------Certificate---------------------
 
+        [HttpGet]
+        public async Task<IActionResult> AddCertificate()
+        {
+
+            return View(new CertificateVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCertificate(CertificateVM cvm)
+        {
+            if (!ModelState.IsValid)
+                return View(cvm);
+
+            Certificate certificate = new Certificate
+            {
+                CertName = cvm.CertName
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Certificates.Add(certificate);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
 
         [HttpGet]
         public async Task<IActionResult> UpdateCertificate(int certId)
@@ -284,6 +281,33 @@ namespace CVBuddy.Controllers
             _context.Certificates.Remove(certificate); 
             await _context.SaveChangesAsync();
             return View("UpdateCv", await UsersCvToCvVM());
+        }
+
+
+        //---------------------PersonalCharacteristic------------------------------------------PersonalCharacteristic---------------------
+
+        [HttpGet]
+        public async Task<IActionResult> AddPersonalCharacteristic()
+        {
+
+            return View(new PersonalCharacteristicVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPersonalCharacteristic(PersonalCharacteristicVM pvm)
+        {
+            if (!ModelState.IsValid)
+                return View(pvm);
+
+            PersonalCharacteristic persChar = new PersonalCharacteristic
+            {
+                CharacteristicName = pvm.CharacteristicName
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.PersonalCharacteristics.Add(persChar);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
         }
 
         public int PCId { get; set; }
@@ -333,84 +357,37 @@ namespace CVBuddy.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateCv()
-        {
-            var cv = await GetLoggedInUsersCvAsync();
+        
 
-            CvVM cvVM = new CvVM
-            {
-                Cid = cv.Cid,
-                Skills = cv.Skills,
-                Education = cv.Education,
-                Experiences = cv.Experiences,
-                Certificates = cv.Certificates,
-                PersonalCharacteristics = cv.PersonalCharacteristics,
-                PublishDate = cv.PublishDate,
-                Interests = cv.Interests,
-                ImageFilePath = cv.ImageFilePath,
-                ReadCount = cv.ReadCount,
-                UserId = cv.UserId
-            };
-
-            return View(cvVM);
-        }
+        //---------------------Experience------------------------------------------Experience---------------------
 
         [HttpGet]
-        public async Task<IActionResult> UpdateImage()
+        public async Task<IActionResult> AddExperience()
         {
-            var cvVM = await UsersCvToCvVM();
-            return View(cvVM);
+
+            return View(new ExperienceVM());
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateImage(CvVM cvVM)
+        public async Task<IActionResult> AddExperience(ExperienceVM evm)
         {
-            var cv = await GetLoggedInUsersCvAsync();
-            cvVM.ImageFilePath = cv.ImageFilePath;
-
             if (!ModelState.IsValid)
+                return View(evm);
+
+            Experience exp = new Experience
             {
-                //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
-                //foreach (var entry in ModelState)
-                //{
-                //    Console.WriteLine($"FIELD: {entry.Key}");
-                //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+                Title = evm.Title,
+                Description = evm.Description,
+                Company = evm.Company,
+                StartDate = evm.StartDate ?? new DateTime(19000101),
+                EndDate = evm.EndDate
+            };
 
-                //    foreach (var error in entry.Value.Errors)
-                //    {
-                //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
-                //    }
-                //}
-                return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
-                                                               //Så vi måste returnera ett cvVM med värden för att förse
-                                                               //UpdateCv view model med värden
-            }
-
-            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-            Directory.CreateDirectory(uploadeFolder);
-
-            var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
-
-            var fileName = Guid.NewGuid().ToString() + ext;
-
-            var filePath = Path.Combine(uploadeFolder, fileName);
-
-            DeleteOldImageLocally(cv);
-
-            cv.ImageFile = cvVM.ImageFile;
-            cv.ImageFilePath = "/CvImages/" + fileName;
-            
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await cv.ImageFile!.CopyToAsync(stream);
-            }
-
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Experiences.Add(exp);
             await _context.SaveChangesAsync();
-
             return RedirectToAction("Index", "Home");
         }
-
 
         [HttpGet]
         public async Task<IActionResult> UpdateExperience(int exid)
@@ -463,6 +440,35 @@ namespace CVBuddy.Controllers
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
         }
 
+
+        //---------------------Skill------------------------------------------Skill---------------------
+
+        [HttpGet]
+        public async Task<IActionResult> AddSkill()
+        {
+
+            return View(new SkillVM());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSkill(SkillVM svm)
+        {
+            if (!ModelState.IsValid)
+                return View(svm);
+
+            Skill skill = new Skill
+            {
+                ASkill = svm.ASkill,
+                Description = svm.Description,
+                Date = svm.Date
+            };
+
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Skills.Add(skill);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         public async Task<IActionResult> UpdateSkill(int sid)
         {
@@ -508,33 +514,33 @@ namespace CVBuddy.Controllers
         }
 
 
+        //---------------------Interest------------------------------------------Interest---------------------
 
 
+        [HttpGet]
+        public async Task<IActionResult> AddInterest()
+        {
+            return View(new InterestVM());
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> AddInterest(InterestVM ivm)
+        {
+            if (!ModelState.IsValid)
+                return View(ivm);
 
+            Interest interest = new Interest
+            {
+                InterestName = ivm.InterestName
+            };
 
+            var cv = await GetLoggedInUsersCvAsync();
+            cv.Interests.Add(interest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //--------------------DELETE---------------------------------------------------
-
-
-        //--------------------PRIVATE---------------------------------------------------
+        //--------------------PRIVATE HELPERS---------------------------------------------------
 
         private async Task<CvVM> UsersCvToCvVM()
         {
