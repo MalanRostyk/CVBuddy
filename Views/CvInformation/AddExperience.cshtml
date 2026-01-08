@@ -13,18 +13,6 @@
     </ul>
 }
 
-<h2>Experience</h2>
-<form asp-action="AddExperience" method="post">
-
-    <input type="text" asp-for="@Model.Title" />
-    <input type="text" asp-for="@Model.Description" />
-    <input type="text" asp-for="@Model.Company" />
-    <input type="date" asp-for="@Model.StartDate" />
-    <input type="date" asp-for="@Model.EndDate" />
-
-    <button type="submit" class="d-block btn btn-primary">Create Cv</button>
-</form>
-
 <form asp-action="AddExperience" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">
