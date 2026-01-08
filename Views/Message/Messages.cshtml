@@ -27,6 +27,9 @@
                             <input type="submit" class="btn btn-outline-success"  value="Mark read status"/>
                         </form>
                     </td>
+                    <td>
+                        <a asp-action="DeleteMessage" asp-route-mid="@message.Mid" class="btn btn-danger">Delete</a>
+                    </td>
                 </tr>
             }
             @if (ViewBag.HasMesseges != true)
