@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -280,7 +281,7 @@ namespace CVBuddy.Controllers
         {
             var userCv = await GetLoggedInUsersCvAsync();
             var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-            _context.Certificates.Remove(certificate); //<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---BLEV NULL HÄR!
+            _context.Certificates.Remove(certificate); 
             await _context.SaveChangesAsync();
             return View("UpdateCv", await UsersCvToCvVM());
         }
@@ -460,6 +461,66 @@ namespace CVBuddy.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateSkill(int sid)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
+
+            SkillVM sVM = new SkillVM
+            {
+                Sid = skill.Sid,
+                ASkill = skill.ASkill,
+                Description = skill.Description,
+                Date = skill.Date
+            };
+            return View(sVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateSkill(SkillVM sVM)
+        {
+
+            if (!ModelState.IsValid)
+                return View(sVM);
+
+            var cv = await GetLoggedInUsersCvAsync();
+            var skill = cv.Skills.FirstOrDefault(s => s.Sid == sVM.Sid);
+
+            skill.ASkill = sVM.ASkill;
+            skill.Description = sVM.Description;
+            skill.Date = sVM.Date;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("UpdateCv", sVM);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //--------------------DELETE---------------------------------------------------
 
 

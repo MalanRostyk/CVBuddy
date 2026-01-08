@@ -64,7 +64,7 @@
 -------------------
 
 <div>
-    <h2>Edit Skills <a asp-action="AddSkill" class="btn btn-primary">Add</a></h2>
+    <h2>Edit Skills <a asp-action="UpdateSkill" class="btn btn-primary">Add</a></h2>
     <div class="d-flex flex-row">
         @foreach (var skill in Model.Skills)
         {
@@ -73,8 +73,8 @@
                 <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
                 <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
                 <div class="d-flex gap-1">
-                    <a asp-action="UpdateSkill" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteSkill" class="btn btn-primary">Delete</a>
+                    <a asp-action="UpdateSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Update</a>
+                    <a asp-action="DeleteSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Delete</a>
                 </div>
             </div>
         }
