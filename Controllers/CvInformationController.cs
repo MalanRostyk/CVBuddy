@@ -540,6 +540,37 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateInterest(int interestId)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+
+            InterestVM iVM = new InterestVM
+            {
+                InterestId = interest.InterestId,
+                InterestName = interest.InterestName
+            };
+
+            return View(iVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateInterest(InterestVM iVM)
+        {
+            if (!ModelState.IsValid)
+                return View(iVM);
+
+            var cv = await GetLoggedInUsersCvAsync();
+            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == iVM.InterestId);
+
+            interest.InterestName = iVM.InterestName;
+
+            await _context.SaveChangesAsync();
+
+            return View("UpdateCv", await UsersCvToCvVM());
+        }
+
         //--------------------PRIVATE HELPERS---------------------------------------------------
 
         private async Task<CvVM> UsersCvToCvVM()
