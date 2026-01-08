@@ -22,3 +22,26 @@
 
     <button type="submit" class="d-block btn btn-primary">Create Cv</button>
 </form>
+
+<form asp-action="AddSkill" method="post">
+    <div class="d-flex justify-content-center align-content-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <h3 class="text-center mb-4">Skill</h3>
+
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.ASkill" class="form-label"></label>
+                <input type="text" asp-for="@Model.ASkill" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.Description" class="form-label"></label>
+                <input type="text" asp-for="@Model.Description" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.Date" class="form-label"></label>
+                <input type="date" asp-for="@Model.Date" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add</button>
+        </div>
+    </div>
+</form>
+
