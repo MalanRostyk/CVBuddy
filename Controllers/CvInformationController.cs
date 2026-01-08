@@ -453,6 +453,7 @@ namespace CVBuddy.Controllers
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
         }
 
+        [HttpGet]
         public async Task<IActionResult> DeleteExperience(int exid) 
         {
             var cv = await GetLoggedInUsersCvAsync();
@@ -496,6 +497,15 @@ namespace CVBuddy.Controllers
             return RedirectToAction("UpdateCv", sVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteSkill(int sid)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
+            _context.Skills.Remove(skill);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+        }
 
 
 
