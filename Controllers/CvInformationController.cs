@@ -319,12 +319,37 @@ namespace CVBuddy.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateExperience(int exid)
+        {
+            var cv = await GetLoggedInUsersCvAsync();
+            var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+
+            ExperienceVM exVM = new ExperienceVM
+            {
+                Exid = exid,
+                Title = experience.Title,
+                Description = experience.Description,
+                Company = experience.Company,
+                StartDate = experience.StartDate,
+                EndDate = experience.EndDate
+            };
+            return View(exVM);
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateExperience(ExperienceVM exVM)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View(exVM);
+
+        //}
 
         //--------------------DELETE---------------------------------------------------
 
 
         //--------------------PRIVATE---------------------------------------------------
-        
+
         private async Task<CvVM> UsersCvToCvVM()
         {
             var cv = await GetLoggedInUsersCvAsync();

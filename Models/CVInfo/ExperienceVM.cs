@@ -6,7 +6,7 @@ namespace CVBuddy.Models.CVInfo
 {
     public class ExperienceVM
     {
-
+        public int Exid { get; set; }
         //[Required(ErrorMessage = "You need to enter what the experience title is, don't leave empty.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
         [Required(ErrorMessage = "You need to enter what the experience title is, don't leave empty.")] //Få ha alla tecken vid fall att "ASP.NET" eller "Fork-lift license"
         [StringLength(90, MinimumLength = 3)]
