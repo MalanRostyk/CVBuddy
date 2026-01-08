@@ -22,6 +22,7 @@ namespace CVBuddy.Models.CVInfo
 
         //[DisplayName("Start Date")]
         [Required(ErrorMessage = "An added experience must have a start date, dont leave unentered.")]
+        [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
         //[DataType(DataType.DateTime)]
         //[DisplayFormat(DataFormatString = "{0:yyyy-mm-dd}", ApplyFormatInEditMode = true)]
         public DateTime? StartDate { get; set; }

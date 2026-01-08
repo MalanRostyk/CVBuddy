@@ -12,6 +12,8 @@ namespace CVBuddy.Models.CVInfo
 
         [StringLength(90, MinimumLength = 2)]
         public string? Description { get; set; }//TextArea ingen tecken validering
+
+        [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
         public DateTime? Date { get; set; }
 
     }

@@ -280,7 +280,7 @@ namespace CVBuddy.Controllers
         {
             var userCv = await GetLoggedInUsersCvAsync();
             var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-            _context.Certificates.Remove(certificate);
+            _context.Certificates.Remove(certificate); //<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---<<<<---BLEV NULL HÄR!
             await _context.SaveChangesAsync();
             return View("UpdateCv", await UsersCvToCvVM());
         }

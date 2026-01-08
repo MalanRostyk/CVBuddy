@@ -32,11 +32,11 @@
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.StartDate" class="form-label"></label>
-                <input type="date" asp-for="@Model.StartDate" class="form-control" />
+                <input type="date" asp-for="@Model.StartDate" min="1900-01-01" max="2049-12-31" class="form-control" />
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.EndDate" class="form-label"></label>
-                <input type="date" asp-for="@Model.EndDate" class="form-control" />
+                <input type="date" asp-for="@Model.EndDate" min="1900-01-01" max="2049-12-31" class="form-control" />
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Add</button>

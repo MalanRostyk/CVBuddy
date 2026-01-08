@@ -10,6 +10,8 @@ namespace CVBuddy.Models.CVInfo
 
         [StringLength(100)]
         public string? HSProgram { get; set; } // = Programmering
+
+        [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
         public string? HSDate { get; set; } // = 2020-2023
 
 
@@ -18,6 +20,9 @@ namespace CVBuddy.Models.CVInfo
 
         [StringLength(100)]
         public string? UniProgram { get; set; } // = Computer Science
+
+
+        [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
         public string? UniDate { get; set; } // Ska inte
 
     }

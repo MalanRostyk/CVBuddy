@@ -28,7 +28,7 @@
             </div>
             <div class="mb-3 form-check">
                 <label asp-for="@Model.HSDate" class="form-label"></label>
-                <input type="text" asp-for="@Model.HSDate" class="form-control" />
+                <input type="date" asp-for="@Model.HSDate" class="form-control" />
             </div>
             <div class="mb-3 form-check">
                 <label asp-for="@Model.Univeristy" class="form-label"></label>
@@ -36,11 +36,11 @@
             </div>
             <div class="mb-3 form-check">
                 <label asp-for="@Model.UniProgram" class="form-label"></label>
-                <input type="text" asp-for="@Model.UniProgram" class="form-control" />
+                <input type="text" asp-for="@Model.UniProgram" min="1900-01-01" max="2049-12-31" class="form-control" />
             </div>
             <div class="mb-3 form-check">
                 <label asp-for="@Model.UniDate" class="form-label"></label>
-                <input type="text" asp-for="@Model.UniDate" class="form-control" />
+                <input type="date" asp-for="@Model.UniDate" min="1900-01-01" max="2049-12-31" class="form-control" />
             </div>
             <button type="submit" class="btn btn-primary w-100">Add</button>
         </div>

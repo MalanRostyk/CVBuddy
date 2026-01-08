@@ -5,6 +5,7 @@ namespace CVBuddy.Models.CVInfo
 {
     public class ImageEditVM
     {
+        //Används inte ta bort efter commit
         public int Cid { get; set; }
 
         //[NotMapped]
