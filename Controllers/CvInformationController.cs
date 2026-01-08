@@ -241,6 +241,50 @@ namespace CVBuddy.Controllers
 
         //--------------------UPDATE---------------------------------------------------
 
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateCertificate(int certId)
+        {
+            var userCv = await GetLoggedInUsersCvAsync();
+            var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+            if (certificate == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var certificateVm = new CertificateVM
+            {
+                CertId = certificate.CertId,
+                CertName = certificate.CertName
+            };
+            return View(certificateVm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCertificate(CertificateVM cvm)
+        {
+            if (!ModelState.IsValid)
+                return View(cvm);
+
+            var cv = await GetLoggedInUsersCvAsync();
+            var certToUpdate = cv.Certificates.FirstOrDefault(c => c.CertId == cvm.CertId);
+            if (certToUpdate != null)
+            {
+                certToUpdate.CertName = cvm.CertName;
+                await _context.SaveChangesAsync();
+            }
+            return View("UpdateCv", await UsersCvToCvVM());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteCertificate(int certId)
+        {
+            var userCv = await GetLoggedInUsersCvAsync();
+            var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+            _context.Certificates.Remove(certificate);
+            await _context.SaveChangesAsync();
+            return View("UpdateCv", await UsersCvToCvVM());
+        }
+
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
