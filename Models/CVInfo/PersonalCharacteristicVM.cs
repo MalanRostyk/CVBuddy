@@ -6,8 +6,10 @@ namespace CVBuddy.Models.CVInfo
     public class PersonalCharacteristicVM
     {
 
+        public int PCId { get; set; }
+
         [Required(ErrorMessage = "An added personal characteristic cannot be left empty.")]
-        [StringLength(90)]
+        [StringLength(90, MinimumLength = 3)]
         public string CharacteristicName { get; set; }
 
     }

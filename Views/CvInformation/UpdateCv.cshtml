@@ -114,11 +114,11 @@
             <div class="mb-2 content-item">
                 <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
                 <div class="d-flex gap-1">
-                    <a asp-action="UpdateCertificate" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteCertificate" class="btn btn-primary">Delete</a>
+                    <a asp-action="UpdatePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Update</a>
+                    <a asp-action="DeletePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Delete</a>
                 </div>
             </div>
-            
+
         }
     </div>
 </div>

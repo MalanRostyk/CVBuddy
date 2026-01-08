@@ -285,6 +285,47 @@ namespace CVBuddy.Controllers
             return View("UpdateCv", await UsersCvToCvVM());
         }
 
+        public int PCId { get; set; }
+        [HttpGet]
+        public async Task<IActionResult> UpdatePersonalCharacteristic(int pcId)
+        {
+            var userCv = await GetLoggedInUsersCvAsync();
+            var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+            if (personalCharacteristic == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var personalCharacteristicVm = new PersonalCharacteristicVM
+            {
+                PCId = personalCharacteristic.PCId,
+                CharacteristicName = personalCharacteristic.CharacteristicName
+            };
+            return View(personalCharacteristicVm);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdatePersonalCharacteristic(PersonalCharacteristicVM pvm)
+        {
+            if (!ModelState.IsValid)
+                return View(pvm);
+
+            var cv = await GetLoggedInUsersCvAsync();
+            var personalCharacteristic = cv.PersonalCharacteristics.FirstOrDefault(pc => pc.PCId == pvm.PCId);
+            if (personalCharacteristic != null)
+            {
+                personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
+                await _context.SaveChangesAsync();
+            }
+            return View("UpdateCv", await UsersCvToCvVM());
+        }
+        [HttpGet]
+        public async Task<IActionResult> DeletePersonalCharacteristic(int pcId)
+        {
+            var userCv = await GetLoggedInUsersCvAsync();
+            var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+            _context.PersonalCharacteristics.Remove(personalCharacteristic);
+            await _context.SaveChangesAsync();
+            return View("UpdateCv", await UsersCvToCvVM());
+        }
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
