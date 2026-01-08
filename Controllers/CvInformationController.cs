@@ -278,14 +278,13 @@ namespace CVBuddy.Controllers
             var fileName = Guid.NewGuid().ToString() + ext;
 
             var filePath = Path.Combine(uploadeFolder, fileName);
-            DeleteOldImageLocally(cvVM);
 
             var cv = await GetLoggedInUsersCvAsync();
-
+            DeleteOldImageLocally(cv);
             cvVM.ImageFilePath = cv.ImageFilePath;
             cv.ImageFile = cvVM.ImageFile;
             cv.ImageFilePath = "/CvImages/" + fileName;
-
+            
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await cv.ImageFile!.CopyToAsync(stream);
@@ -395,7 +394,7 @@ namespace CVBuddy.Controllers
             return imageFilePath;
         }
 
-        private bool DeleteOldImageLocally(CvVM cvOld)
+        private bool DeleteOldImageLocally(Cv cvOld)
         {
             string[]? cvOldFileImageNameArray = null;
 
