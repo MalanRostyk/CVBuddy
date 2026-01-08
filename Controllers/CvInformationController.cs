@@ -274,29 +274,17 @@ namespace CVBuddy.Controllers
                 return View("UpdateCv", cvVM);
             }
 
-
-            
-
-
-
-
-
             var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
             Directory.CreateDirectory(uploadeFolder);
 
             var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
 
-            //if (!IsValidExtension(ext))
-            //    return View(cv);
-
             var fileName = Guid.NewGuid().ToString() + ext;
 
             var filePath = Path.Combine(uploadeFolder, fileName);
 
-            /*var cv = await GetLoggedInUsersCvAsync()*/;
-
             DeleteOldImageLocally(cv);
-            //cvVM.ImageFilePath = cv.ImageFilePath;
+
             cv.ImageFile = cvVM.ImageFile;
             cv.ImageFilePath = "/CvImages/" + fileName;
             
@@ -305,10 +293,6 @@ namespace CVBuddy.Controllers
                 await cv.ImageFile!.CopyToAsync(stream);
             }
 
-            
-
-            
-            
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
@@ -348,20 +332,7 @@ namespace CVBuddy.Controllers
         {
             if (!(User.Identity!.IsAuthenticated))
                 return new();
-
-            //Ingen transaktion, Select statements(dvs, await _context...) är atomära, om ej i sekvens, behövs ej transaktion
-            var userId = _userManager.GetUserId(User); //Datan kommer från db men man läser inte från Db i realtid, utan man hämtar det från inloggningscontexten, via ClaimsPrincipal, dvs user laddas vid inloggningen, läggs till i ClaimsPrincipal. Kan ej vara opålitlig. Därmet endast en read operation görs
-            //Cv? cv = await _context.Cvs
-            //        .Include(cv => cv.Education)
-            //        .Include(cv => cv.Experiences)
-            //        .Include(cv => cv.Skills)
-            //        .Include(cv => cv.Certificates)
-            //        .Include(cv => cv.PersonalCharacteristics)
-            //        .Include(cv => cv.Interests)
-            //        .Include(cv => cv.OneUser)
-            //        .Include(cv => cv.CvProjects)
-            //        .ThenInclude(cp => cp.OneProject)
-            //        .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+            var userId = _userManager.GetUserId(User); 
             Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -374,9 +345,6 @@ namespace CVBuddy.Controllers
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
             if (cv != null)
                 cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
-            //if (cv == null) // Ska trigga try catch i action metod, INTE I PRIVAT HELPER METOD
-            //    throw new NullReferenceException("Users Cv was not found");
-
             return cv;
         }
         private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
@@ -389,30 +357,12 @@ namespace CVBuddy.Controllers
                 p => p.Pid,
                 (pu, p) => p)
                 .ToListAsync(); ;
-
             return projectList;
-        }
-
-        private async Task<string> GetImageFilePathForCvImage(Cv cv) //Ska tilldelas cv.ImageFilePath
-        {
-            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-            Directory.CreateDirectory(uploadeFolder);
-
-            var ext = Path.GetExtension(cv.ImageFile.FileName);//null
-
-            var fileName = Guid.NewGuid().ToString() + ext;
-
-            var filePath = Path.Combine(uploadeFolder, fileName);
-            
-            string imageFilePath = "/CvImages/" + fileName;
-
-            return imageFilePath;
         }
 
         private bool DeleteOldImageLocally(Cv cvOld)
         {
             string[]? cvOldFileImageNameArray = null;
-
             try
             {
                 if (cvOld.ImageFilePath != null)
