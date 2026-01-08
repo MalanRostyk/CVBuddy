@@ -13,9 +13,22 @@
     </ul>
 }
 
-<h2>Certificate</h2>
+@* <h2>Certificate</h2>
 <form asp-action="AddCertificate" method="post">
 
     <input type="text" asp-for="@Model.CertName" />
-    <button type="submit" class="d-block btn btn-primary">Create Cv</button>
+</form> *@
+
+<form asp-action="AddCertificate" method="post">
+    <div class="d-flex justify-content-center align-content-center w-100">
+        <div class="col-md-6 col-lg-4">
+            <h3 class="text-center mb-4">Certificate</h3>
+            
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.CertName" class="form-label"></label>
+                <input type="text" asp-for="@Model.CertName" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add</button>
+        </div>
+    </div>
 </form>
