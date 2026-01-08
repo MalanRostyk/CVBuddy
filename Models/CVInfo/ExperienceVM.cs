@@ -20,10 +20,12 @@ namespace CVBuddy.Models.CVInfo
         [StringLength(90, MinimumLength = 2)]
         public string Company { get; set; } = "";
 
-        [DisplayName("Start Date")]
+        //[DisplayName("Start Date")]
         [Required(ErrorMessage = "An added experience must have a start date, dont leave unentered.")]
-        [DataType(DataType.DateTime)]
-        public DateTime StartDate { get; set; }
+        //[DataType(DataType.DateTime)]
+        //[DisplayFormat(DataFormatString = "{0:yyyy-mm-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? StartDate { get; set; }
+
         public DateTime? EndDate { get; set; }
 
     }

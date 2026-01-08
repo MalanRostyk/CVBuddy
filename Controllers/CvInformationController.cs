@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CVBuddy.Controllers
 {
@@ -183,7 +184,7 @@ namespace CVBuddy.Controllers
                 Title = evm.Title,
                 Description = evm.Description,
                 Company = evm.Company,
-                StartDate = evm.StartDate,
+                StartDate = evm.StartDate ?? new DateTime(19000101),
                 EndDate = evm.EndDate
             };
 
@@ -327,7 +328,7 @@ namespace CVBuddy.Controllers
 
             ExperienceVM exVM = new ExperienceVM
             {
-                Exid = exid,
+                Exid = experience.Exid,
                 Title = experience.Title,
                 Description = experience.Description,
                 Company = experience.Company,
@@ -337,13 +338,28 @@ namespace CVBuddy.Controllers
             return View(exVM);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateExperience(ExperienceVM exVM)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(exVM);
+        [HttpPost]
+        public async Task<IActionResult> UpdateExperience(ExperienceVM exVM)
+        {
+            var cvVMForInvalidState = await UsersCvToCvVM();
+            var exVMForInvalidState = cvVMForInvalidState.Experiences.FirstOrDefault(evm => evm.Exid == exVM.Exid);
+            if (!ModelState.IsValid)
+                return View(exVM);
+                
 
-        //}
+            var cv = await GetLoggedInUsersCvAsync();
+            var experience = cv.Experiences.FirstOrDefault(exp => exp.Exid == exVM.Exid);
+
+            experience.Title = exVM.Title;
+            experience.Description = exVM.Description;
+            experience.Company = exVM.Company;
+            experience.StartDate = exVM.StartDate ?? new DateTime(19000101);
+            experience.EndDate = exVM.EndDate;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+        }
 
         //--------------------DELETE---------------------------------------------------
 
