@@ -13,7 +13,7 @@
     </ul>
 }
 
-<h2>Interest</h2>
+@* <h2>Education</h2>
 <form asp-action="AddEducation" method="post">
     <input type="text" asp-for="@Model.HighSchool" />
     <input type="text" asp-for="@Model.HSProgram" />
@@ -22,4 +22,38 @@
     <input type="text" asp-for="@Model.UniProgram" />
     <input type="date" asp-for="@Model.UniDate" />
     <button type="submit" class="d-block btn btn-primary">Create Cv</button>
+</form> *@
+
+<form asp-action="AddEducation" method="post">
+    <div class="d-flex justify-content-center align-content-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <h3 class="text-center mb-4">Education</h3>
+
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.HighSchool" class="form-label"></label>
+                <input type="text" asp-for="@Model.HighSchool" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.HSProgram" class="form-label"></label>
+                <input type="text" asp-for="@Model.HSProgram" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.HSDate" class="form-label"></label>
+                <input type="text" asp-for="@Model.HSDate" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.Univeristy" class="form-label"></label>
+                <input type="text" asp-for="@Model.Univeristy" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.UniProgram" class="form-label"></label>
+                <input type="text" asp-for="@Model.UniProgram" class="form-control" />
+            </div>
+            <div class="mb-3 form-check">
+                <label asp-for="@Model.UniDate" class="form-label"></label>
+                <input type="text" asp-for="@Model.UniDate" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add</button>
+        </div>
+    </div>
 </form>
