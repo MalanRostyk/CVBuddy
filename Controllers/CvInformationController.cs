@@ -193,11 +193,29 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<IActionResult> AddEducation()
+        //{
+        //    return View(new EducationVM());
+        //}
+
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> AddEducation()
+        public async Task<IActionResult> AddEducation()//GLÖM EJ KNAPPAR BORT NÄR MAN SKAPOAR CV
         {
-            return View(new EducationVM());
+            var cv = await GetLoggedInUsersCvAsync();
+
+            EducationVM eduVM = new EducationVM();
+            eduVM.Univeristy = cv.Education.Univeristy;
+            eduVM.UniProgram = cv.Education.UniProgram;
+            eduVM.UniDate = cv.Education.UniDate;
+
+            eduVM.HighSchool = cv.Education.HighSchool;
+            eduVM.HSProgram = cv.Education.HSProgram;
+            eduVM.HSDate = cv.Education.HSDate;
+
+            return View(eduVM);
         }
 
         [HttpPost]
