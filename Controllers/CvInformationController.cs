@@ -278,17 +278,17 @@ namespace CVBuddy.Controllers
 
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
-                foreach (var entry in ModelState)
-                {
-                    Console.WriteLine($"FIELD: {entry.Key}");
-                    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+                //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
+                //foreach (var entry in ModelState)
+                //{
+                //    Console.WriteLine($"FIELD: {entry.Key}");
+                //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
 
-                    foreach (var error in entry.Value.Errors)
-                    {
-                        Console.WriteLine($"  ❌ {error.ErrorMessage}");
-                    }
-                }
+                //    foreach (var error in entry.Value.Errors)
+                //    {
+                //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
+                //    }
+                //}
                 return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
                                                                //Så vi måste returnera ett cvVM med värden för att förse
                                                                //UpdateCv view model med värden

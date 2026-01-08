@@ -20,7 +20,7 @@
 
 <form method="post" asp-action="UpdateImage" enctype="multipart/form-data">
     <div>
-        <label>Update Cv Image</label><span asp-validation-for="ImageFile" class="text-danger"></span>
+        <label>Update Cv Image</label>
         <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
     </div>
     <button type="submit" asp-action="UpdateImage" class="d-block btn btn-primary">Update Image</button>
