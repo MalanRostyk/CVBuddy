@@ -1,10 +1,10 @@
-﻿@model int
+﻿@model CVBuddy.Models.MessageVM
 
 <div class="d-flex justify-content-center align-items-center min-vh-100">
     <div class="col-md-6 col-lg-4">
         <div class="mb-3 text-center mt-4">
             <q><i>Are you sure you would  like to permanently delete this message?</i></q>
         </div>
-        <a asp-action="DeleteMessage" asp-route-mid="@Model" class="btn btn-danger">Confirm</a>
+        <a asp-action="DeleteMessage" asp-route-mid="@Model.Mid" class="btn btn-danger">Confirm</a>
     </div>
 </div>

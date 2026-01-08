@@ -86,11 +86,26 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteMessageConfirm(int mid)
         {
-            return View(mid);
+            var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mid);
+
+            if (message == null)
+                return NotFound("This message could not be found.");
+
+            MessageVM mVM = new MessageVM
+            {
+                Mid = message.Mid,
+                Sender = message.Sender,
+                MessageString = message.MessageString,
+                SendDate = message.SendDate,
+                IsRead = message.IsRead,
+                RecieverId = message.RecieverId
+            };
+
+            return View(mVM);
         }
 
         [HttpGet]
-        public async Task<IActionResult> DeleteMessage(int mid)
+        public async Task<IActionResult> DeleteMessage(MessageVM mVM)
         {
             //Undantagshantering ska göras för exceptionella situationer, det ska inte funka som en if sats för att fånga null värden här och var
             //utan det ska hanteras med kontroller, alltså en if-sats. Och då skriver vi ut ett informativt felmeddelande som ska ses av användare.
@@ -100,9 +115,8 @@ namespace CVBuddy.Controllers
             try
             {
                 //Hitta meddelandet med mid
-                var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mid);
+                var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mVM.Mid);
 
-                
                 if (message == null)
                     return NotFound("The message you want to delete could not be found.");
                 
@@ -113,14 +127,15 @@ namespace CVBuddy.Controllers
                 await _context.SaveChangesAsync();
 
                 //return RedirectToAction IEnumerable<Message> som tillhör användaren
-                var userId = _userManager.GetUserId(User);
-                List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == userId).ToListAsync();
+                //var userId = _userManager.GetUserId(User);
+                List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == mVM.RecieverId).ToListAsync();
                 
                 return RedirectToAction("Messages", usersMessages);
             }
             catch(Exception e)
             {
                 return StatusCode(500, "An issue occured while trying to remove the message.");//StatusCode 500 betyder internal error.
+                throw;
             }
             
         }
