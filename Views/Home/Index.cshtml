@@ -14,7 +14,9 @@
             @if (ViewBag.HasCv)//Visa rätt knappar beroende på om man har ett cv eller inte
             {
                 <a asp-controller="Cv" asp-action="UpdateCv">Update My Cv</a>
+                
                 <a asp-controller="CvInformation" asp-action="UpdateCv" class="btn btn-primary">Update cv</a>
+                
                 <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
 
                 }

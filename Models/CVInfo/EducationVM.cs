@@ -5,6 +5,7 @@ namespace CVBuddy.Models.CVInfo
 {
     public class EducationVM
     {
+        public int Eid { get; set; }
         [StringLength(95)]
         public string? HighSchool { get; set; } // = NTI
 

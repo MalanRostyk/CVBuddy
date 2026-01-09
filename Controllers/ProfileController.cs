@@ -11,7 +11,9 @@ namespace CVBuddy.Controllers
         public ProfileController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
+
         [HttpGet]
+        [Authorize]//Fråga varför den togs bort, utan den hamnar vi i not found vid utloggad
         public async Task<IActionResult> ReadProfile(string userId)
         {
 
@@ -31,13 +33,16 @@ namespace CVBuddy.Controllers
                 .ThenInclude(cv => cv.Interests)
                 .Include(u => u.OneCv)
                 .ThenInclude(cv => cv.PersonalCharacteristics)
-                .Where(u => u.Id.Equals(userId))
-                .FirstOrDefaultAsync();
+
+                //.Where(u => u.Id.Equals(userId))
+
+                .FirstOrDefaultAsync(u => u.Id.Equals(userId));
+
 
             
-
             if (user == null)
-                return NotFound("This Cvs user could not be found.");
+                return NotFound("Users Cv could not be found.");
+
 
             ViewBag.HasOneAdress = user.OneAddress != null;
             ViewBag.HasOneCv = user.OneCv != null; //HasOneCv för att om vi planerar på att man

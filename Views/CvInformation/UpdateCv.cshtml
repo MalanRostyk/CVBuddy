@@ -29,7 +29,7 @@
 
 -------------------
 
-<h2>Edit Education <a asp-action="AddEducation" class="btn btn-primary">Edit</a></h2>
+<h2>Edit Education <a asp-action="AddEducation" asp-route-eid="@Model.Education!.Eid" class="btn btn-primary">Edit</a></h2>
 <div class="mb-2 content-item">
     <h5>HighSchool</h5>
     <p class="mb-0">High School: @(Model.Education!.HighSchool ?? "Not entered")</p>

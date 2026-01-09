@@ -1,4 +1,5 @@
 ﻿using CVBuddy.Models;
+using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,10 @@ namespace CVBuddy.Controllers
 
             if (user == null)
             {
-                return RedirectToAction("Login", "Account");
+                //return RedirectToAction("Login", "Account");
+                
+                //David - jag la till detta, men ingen annan stans såg det bara när jag testade efter mina ändringar och jag kom till login när jag skulle ändra mina uppgifter
+                return NotFound("User could not be found.");
             }
             var userVm = new UserViewModel
             {

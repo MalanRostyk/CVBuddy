@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
@@ -34,6 +35,9 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateCv()
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
 
             CvVM cvVM = new CvVM
             {
@@ -68,6 +72,9 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateImage(CvVM cvVM)
         {
             var cv = await GetLoggedInUsersCvAsync();
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             cvVM.ImageFilePath = cv.ImageFilePath;
 
             if (!ModelState.IsValid)
@@ -178,18 +185,33 @@ namespace CVBuddy.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> AddEducation()//GLÖM EJ KNAPPAR BORT NÄR MAN SKAPOAR CV
+        public async Task<IActionResult> AddEducation(int eid)//GLÖM EJ KNAPPAR BORT NÄR MAN SKAPOAR CV
         {
-            var cv = await GetLoggedInUsersCvAsync();
 
-            EducationVM eduVM = new EducationVM();
-            eduVM.Univeristy = cv.Education.Univeristy;
-            eduVM.UniProgram = cv.Education.UniProgram;
-            eduVM.UniDate = cv.Education.UniDate;
+            //Om model som håller properties med komplexa objekt, Include + FirstOrDefaultAsync + null check
+            //Om model med ej komplexa objekt som properties, FindAsync + null ckeck
 
-            eduVM.HighSchool = cv.Education.HighSchool;
-            eduVM.HSProgram = cv.Education.HSProgram;
-            eduVM.HSDate = cv.Education.HSDate;
+            //FINNS INGEN DBSET FÖR EDUCATION
+            //var edu = await _context.Education.FindAsync(eid); Annars ska detta funka
+            /*var cv = await _context.Cvs.FindAsync(eid);*/ //Funkar ej, cv håller komplexa objekt
+            var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
+            
+            if (cv == null)
+                return NotFound("No Cv was found");
+
+            var edu = cv.Education;
+
+            EducationVM eduVM = new EducationVM
+            {
+                Univeristy = cv.Education.Univeristy,
+                UniProgram = cv.Education.UniProgram,
+                UniDate = cv.Education.UniDate,
+
+                HighSchool = cv.Education.HighSchool,
+                HSProgram = cv.Education.HSProgram,
+                HSDate = cv.Education.HSDate
+            };
+            
 
             return View(eduVM);
         }
@@ -201,6 +223,9 @@ namespace CVBuddy.Controllers
                 return View(evm);
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
 
             cv.Education.Univeristy = evm.Univeristy;
             cv.Education.UniProgram = evm.UniProgram;
@@ -235,6 +260,10 @@ namespace CVBuddy.Controllers
             };
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             cv.Certificates.Add(certificate);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
@@ -244,6 +273,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateCertificate(int certId)
         {
             var userCv = await GetLoggedInUsersCvAsync();
+
+            if (userCv == null)
+                return NotFound("Users Cv could not be found.");
+
             var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
             if (certificate == null)
             {
@@ -264,6 +297,10 @@ namespace CVBuddy.Controllers
                 return View(cvm);
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var certToUpdate = cv.Certificates.FirstOrDefault(c => c.CertId == cvm.CertId);
             if (certToUpdate != null)
             {
@@ -277,6 +314,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> DeleteCertificate(int certId)
         {
             var userCv = await GetLoggedInUsersCvAsync();
+
+            if (userCv == null)
+                return NotFound("Users Cv could not be found.");
+
             var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
             _context.Certificates.Remove(certificate); 
             await _context.SaveChangesAsync();
@@ -305,6 +346,9 @@ namespace CVBuddy.Controllers
             };
 
             var cv = await GetLoggedInUsersCvAsync();
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             cv.PersonalCharacteristics.Add(persChar);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
@@ -315,6 +359,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdatePersonalCharacteristic(int pcId)
         {
             var userCv = await GetLoggedInUsersCvAsync();
+
+            if (userCv == null)
+                return NotFound("Users Cv could not be found.");
+
             var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
             if (personalCharacteristic == null)
             {
@@ -336,12 +384,24 @@ namespace CVBuddy.Controllers
                 return View(pvm);
 
             var cv = await GetLoggedInUsersCvAsync();
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var personalCharacteristic = cv.PersonalCharacteristics.FirstOrDefault(pc => pc.PCId == pvm.PCId);
-            if (personalCharacteristic != null)
-            {
-                personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
-                await _context.SaveChangesAsync();
-            }
+            
+            if (personalCharacteristic == null)
+                return NotFound("The personal characteristic could not be found.");
+
+            personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
+            await _context.SaveChangesAsync();
+            
+            //if (personalCharacteristic != null)
+            //{
+            //    personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
+            //    await _context.SaveChangesAsync();
+            //}
+
+
             return View("UpdateCv", await UsersCvToCvVM());
         }
 
@@ -350,6 +410,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> DeletePersonalCharacteristic(int pcId)
         {
             var userCv = await GetLoggedInUsersCvAsync();
+
+            if (userCv == null)
+                return NotFound("Users Cv could not be found.");
+
             var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
             _context.PersonalCharacteristics.Remove(personalCharacteristic);
             await _context.SaveChangesAsync();
@@ -393,6 +457,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateExperience(int exid)
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
 
             ExperienceVM exVM = new ExperienceVM
@@ -417,7 +485,14 @@ namespace CVBuddy.Controllers
                 
 
             var cv = await GetLoggedInUsersCvAsync();
+            
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var experience = cv.Experiences.FirstOrDefault(exp => exp.Exid == exVM.Exid);
+            
+            if (experience == null)
+                return NotFound("Users experience could not be found.");
 
             experience.Title = exVM.Title;
             experience.Description = exVM.Description;
@@ -434,6 +509,10 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> DeleteExperience(int exid) 
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
             _context.Experiences.Remove(experience);
             await _context.SaveChangesAsync();
@@ -464,6 +543,10 @@ namespace CVBuddy.Controllers
             };
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             cv.Skills.Add(skill);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
@@ -473,7 +556,14 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateSkill(int sid)
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
+
+            if (skill == null)
+                return NotFound("Users skill could not be found.");
 
             SkillVM sVM = new SkillVM
             {
@@ -493,7 +583,14 @@ namespace CVBuddy.Controllers
                 return View(sVM);
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var skill = cv.Skills.FirstOrDefault(s => s.Sid == sVM.Sid);
+
+            if (skill == null)
+                return NotFound("Users Cv could not be found.");
 
             skill.ASkill = sVM.ASkill;
             skill.Description = sVM.Description;
@@ -507,7 +604,14 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> DeleteSkill(int sid)
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
+
+            if (skill == null)
+                return NotFound("Users Cv could not be found.");
             _context.Skills.Remove(skill);
             await _context.SaveChangesAsync();
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
@@ -535,6 +639,10 @@ namespace CVBuddy.Controllers
             };
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             cv.Interests.Add(interest);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
@@ -544,7 +652,14 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> UpdateInterest(int interestId)
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+
+            if (interest == null)
+                return NotFound("Users Cv could not be found.");
 
             InterestVM iVM = new InterestVM
             {
@@ -562,7 +677,14 @@ namespace CVBuddy.Controllers
                 return View(iVM);
 
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var interest = cv.Interests.FirstOrDefault(i => i.InterestId == iVM.InterestId);
+
+            if (interest == null)
+                return NotFound("Users Cv could not be found.");
 
             interest.InterestName = iVM.InterestName;
 
@@ -575,7 +697,13 @@ namespace CVBuddy.Controllers
         public async Task<IActionResult> DeleteInterest(int interestId)
         {
             var cv = await GetLoggedInUsersCvAsync();
+
+            if (cv == null)
+                return NotFound("Users Cv could not be found.");
+
             var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+            //var cv = await GetLoggedInUsersCvAsync();
+            //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
             _context.Interests.Remove(interest);
             await _context.SaveChangesAsync();
             return RedirectToAction("UpdateCv", await UsersCvToCvVM());
@@ -621,8 +749,10 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.OneUser)
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+
             if (cv != null)
                 cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
+
             return cv;
         }
         private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
