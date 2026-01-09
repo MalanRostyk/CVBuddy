@@ -68,9 +68,7 @@ namespace CVBuddy.Controllers
                 
             }
 
-            
-
-            List<Project> projList = await _context.ProjectUsers
+            List<Project> projList = await _context.ProjectUsers//ska ersättas
                 .Where(pu => pu.UserId == userId)
                 .Join(
                 _context.Projects,
@@ -79,7 +77,51 @@ namespace CVBuddy.Controllers
                 (pu, p) => p)
                 .ToListAsync();
 
-            ViewBag.HasJoinedProjects = projList.Count() > 0;
+
+            var projects = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                .ThenInclude(pu => pu.User)
+                .Where(u => u.ProjectUsers.Any(pu => pu.UserId == userId))
+                .ToListAsync();
+
+            var isAuthenticated = User.Identity!.IsAuthenticated;
+
+            var projectVMs = new List<ProjectVM>();
+            
+
+            foreach (var project in projects)
+            {
+                var owner = project.ProjectUsers
+                    .FirstOrDefault(pu => pu.IsOwner);
+
+                if (owner == null)
+                    continue;
+
+                if(owner.User.IsDeactivated)
+                    continue;
+
+                if (!isAuthenticated && owner.User.HasPrivateProfile)
+                    continue;
+
+                var usersInProject = project.ProjectUsers
+                    .Select(pu => pu.User).ToList();
+
+                var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
+
+                var relation = project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+
+                projectVMs.Add(new ProjectVM
+                {
+                    Project = project,
+                    Owner = owner,
+                    Relation = relation,
+                    IsUserInProject = true,
+                    ActiveUsers = isAuthenticated ? activeUsers : activeUsers.Where(u => !u.HasPrivateProfile).ToList()
+                });
+            }
+
+
+            ViewBag.HasJoinedProjects = projList.Count() > 0;//kommer inte behövas
 
             ViewBag.IsMyProfile = false;
             if (User.Identity!.IsAuthenticated)
@@ -93,7 +135,7 @@ namespace CVBuddy.Controllers
 
             profViewModel.ViewUser = user;
             profViewModel.Cv = user.OneCv;
-            profViewModel.Projects = projList;
+            profViewModel.Projects = projectVMs;
 
             return View(profViewModel);
         }
