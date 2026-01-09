@@ -133,10 +133,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
-            catch(InvalidOperationException e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
-            }
             catch(NullReferenceException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
@@ -819,7 +815,7 @@ namespace CVBuddy.Controllers
 
                     if (!System.IO.File.Exists(finalCvFilePath))
                         throw new ArgumentException("The old image could not be deleted since it was not found. " +
-                            "Attempted too look for it at: " + finalCvFilePath);
+                            "Attempted too look for it at: " + finalCvFilePath + " Did you move it?");
                     
                         System.IO.File.Delete(finalCvFilePath);
                 }
