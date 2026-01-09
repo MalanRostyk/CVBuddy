@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
@@ -47,40 +51,107 @@ namespace CVBuddy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<IActionResult> Messages()
+        //{
+        //    var userId = _userManager.GetUserId(User);
+        //    List<Message> msgList = await _context.Messages
+        //        .Where(m => m.RecieverId == userId)
+        //        .OrderByDescending(m => m.SendDate)
+        //        .ToListAsync();
+
+        //    ViewBag.HasMesseges = msgList.Count > 0;
+
+        //    return View(msgList);
+        //}
+
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<IActionResult> Messages()
+        //{
+        //    var userId = _userManager.GetUserId(User);
+        //    List<Message> msgList = await _context.Messages
+        //        .Where(m => m.RecieverId == userId)
+        //        .OrderByDescending(m => m.SendDate)
+        //        .ToListAsync();
+
+        //    List<MessageVM> messageVMList = new();
+        //    foreach(var message in msgList)
+        //    {
+        //        messageVMList.Add(new MessageVM
+        //        {
+        //            Mid = message.Mid,
+        //            Sender = message.Sender,
+        //            MessageString = message.MessageString,
+        //            SendDate = message.SendDate,
+        //            IsRead = message.IsRead,
+        //            RecieverId = message.RecieverId
+        //        });
+        //    }
+
+        //    ViewBag.HasMesseges = msgList.Count > 0;
+
+        //    return View(msgList);
+        //}
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Messages()
         {
             var userId = _userManager.GetUserId(User);
-            List<Message> msgList = await _context.Messages
+
+            List<MessageVM> mVMList = await _context.Messages
                 .Where(m => m.RecieverId == userId)
                 .OrderByDescending(m => m.SendDate)
+                .Select(m => new MessageVM
+                {
+                    Mid = m.Mid,
+                    Sender = m.Sender,
+                    MessageString = m.MessageString,
+                    SendDate = m.SendDate,
+                    IsRead = m.IsRead,
+                    RecieverId = m.RecieverId
+                })
                 .ToListAsync();
 
-            ViewBag.HasMesseges = msgList.Count > 0;
-
-            return View(msgList);
+            return View(mVMList);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateIsRead(Message message, int mid)
         {
-            Message? oldState = await _context.Messages
-                .Where(m => m.Mid == mid).FirstOrDefaultAsync();
+            //Message? oldState = await _context.Messages
+            //    .Where(m => m.Mid == mid).FirstOrDefaultAsync();
+
+            var oldState = await _context.Messages.FindAsync(mid);
 
             oldState!.IsRead = message.IsRead;
             await _context.SaveChangesAsync();
             return RedirectToAction("Messages");
+
         }
 
         [HttpGet]
         public async Task<IActionResult> ReadMsg(int mid)
         {
+            //var msg = await _context.Messages
+            //    .Where(m => m.Mid == mid).FirstOrDefaultAsync();
             var msg = await _context.Messages
-                .Where(m => m.Mid == mid).FirstOrDefaultAsync();
+                .FindAsync(mid);
+
             if (msg == null)
                 return NotFound("Message could not be found.");
-            return View(msg);
+
+            MessageVM mVM = new MessageVM
+            {
+                Mid = msg.Mid,
+                Sender = msg.Sender,
+                MessageString = msg.MessageString,
+                SendDate = msg.SendDate,
+                IsRead = msg.IsRead,
+                RecieverId = msg.RecieverId
+            };
+            return View(mVM);
         }
 
         [HttpGet]
