@@ -21,26 +21,32 @@
             <div class="mb-3">
                 <label asp-for="@Model.HighSchool" class="form-label"></label>
                 <input type="text" asp-for="@Model.HighSchool" class="form-control" />
+                <span asp-validation-for="HighSchool" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.HSProgram" class="form-label"></label>
                 <input type="text" asp-for="@Model.HSProgram" class="form-control" />
+                <span asp-validation-for="HighSchool" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.HSDate" class="form-label"></label>
                 <input type="date" asp-for="@Model.HSDate" class="form-control" />
+                <span asp-validation-for="HSDate" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.Univeristy" class="form-label"></label>
                 <input type="text" asp-for="@Model.Univeristy" class="form-control" />
+                <span asp-validation-for="Univeristy" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.UniProgram" class="form-label"></label>
                 <input type="text" asp-for="@Model.UniProgram" min="1900-01-01" max="2049-12-31" class="form-control" />
+                <span asp-validation-for="UniProgram" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="@Model.UniDate" class="form-label"></label>
                 <input type="date" asp-for="@Model.UniDate" min="1900-01-01" max="2049-12-31" class="form-control" />
+                <span asp-validation-for="UniDate" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary w-100">Add</button>
         </div>

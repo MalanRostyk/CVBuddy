@@ -23,28 +23,31 @@ namespace CVBuddy.Controllers
         {
             MessageVM msg = new();
             msg.RecieverId = userId;
-            ViewBag.WillEnterName = !User.Identity!.IsAuthenticated;
+            //ViewBag.WillEnterName = !User.Identity!.IsAuthenticated;
 
             return View(msg);
         }
         [HttpPost]
         public async Task<IActionResult> SendMsg(MessageVM msgVM)
         {
-            ViewBag.WillEnterName = !User.Identity!.IsAuthenticated;
+            //ViewBag.WillEnterName = !User.Identity!.IsAuthenticated; 
 
             if (!ModelState.IsValid)
             {
                 return View(msgVM);
             }
 
-            Message msg = new();
+            Message msg = new Message
+            {
+                Mid = msgVM.Mid,
+                Sender = msgVM.Sender,
+                MessageString = msgVM.MessageString,
+                SendDate = msgVM.SendDate,
+                IsRead = msgVM.IsRead,
+                RecieverId = msgVM.RecieverId
+            };
 
-            msg.Mid = msgVM.Mid;
-            msg.Sender = msgVM.Sender;
-            msg.MessageString = msgVM.MessageString;
-            msg.SendDate = msgVM.SendDate;
-            msg.IsRead = msgVM.IsRead;
-            msg.RecieverId = msgVM.RecieverId;
+
 
             await _context.AddAsync(msg);
             await _context.SaveChangesAsync();
@@ -66,34 +69,6 @@ namespace CVBuddy.Controllers
         //    return View(msgList);
         //}
 
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> Messages()
-        //{
-        //    var userId = _userManager.GetUserId(User);
-        //    List<Message> msgList = await _context.Messages
-        //        .Where(m => m.RecieverId == userId)
-        //        .OrderByDescending(m => m.SendDate)
-        //        .ToListAsync();
-
-        //    List<MessageVM> messageVMList = new();
-        //    foreach(var message in msgList)
-        //    {
-        //        messageVMList.Add(new MessageVM
-        //        {
-        //            Mid = message.Mid,
-        //            Sender = message.Sender,
-        //            MessageString = message.MessageString,
-        //            SendDate = message.SendDate,
-        //            IsRead = message.IsRead,
-        //            RecieverId = message.RecieverId
-        //        });
-        //    }
-
-        //    ViewBag.HasMesseges = msgList.Count > 0;
-
-        //    return View(msgList);
-        //}
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Messages()

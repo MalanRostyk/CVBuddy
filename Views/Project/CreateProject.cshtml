@@ -3,18 +3,28 @@
 <h2>@ViewBag.ProjectCreateHeadline</h2>
 
 <form method="post" asp-Controller="Project" asp-action="CreateProject">
-
-    <p>Enter a title for the project(max 100 characters)</p>
-    <input asp-for="Title" type="text" maxlength="100" />
-
-    <p>Describe the project in (max 200 characters)</p>
-    <input asp-for="Description" type="text" maxlength="200" />
-
-    <p>When did this project start and end?</p>
-    <input asp-for="StartDate" type="date" />
-    <label> to </label>
-    <input asp-for="Enddate" type="date" />
-    <label>- Don't enter a date here to state project as <q>Ongoing/not finished.</q></label>
-
+    <div class="mb-4">
+        <label>Enter a title for the project(max 100 characters)</label>
+        <input asp-for="Title" type="text" maxlength="100" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class ="mb-4">
+        <>Describe the project in (max 200 characters)</>
+        <input asp-for="Description" type="text" maxlength="200" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="mb-4">
+        <p>When did this project:</p>
+        <div class="mb-4">
+            Start <input asp-for="StartDate" type="date" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            End <input asp-for="Enddate" type="date" />
+            <label>- Don't enter a date here to state project as <q>Ongoing/not finished.</q></label>
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+    </div>
+    
     <button type="submit">Create Project</button>
 </form>
