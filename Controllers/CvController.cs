@@ -20,13 +20,13 @@ namespace CVBuddy.Controllers
         {
         }
 
-        private bool IsValidExtension(string extension)
-        {
-            string ext = extension.ToLower();
-            if (ext == ".png" || ext == ".jpg" || ext == ".jfif" || ext == ".webp")
-                return true;
-            return false;
-        }
+        //private bool IsValidExtension(string extension)
+        //{
+        //    string ext = extension.ToLower();
+        //    if (ext == ".png" || ext == ".jpg" || ext == ".jfif" || ext == ".webp")
+        //        return true;
+        //    return false;
+        //}
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
