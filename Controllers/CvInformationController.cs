@@ -362,19 +362,24 @@ namespace CVBuddy.Controllers
 
             try
             {
-                var userCv = await GetLoggedInUsersCvAsync();
+                //var userCv = await GetLoggedInUsersCvAsync();
 
-                if (userCv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (userCv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+                //var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+                //if (certificate == null)
+                //{
+                //    return RedirectToAction("Index", "Home");
+                //}
+
+                var certificate = await _context.Certificates.FindAsync(certId);
                 if (certificate == null)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                    throw new NullReferenceException("Certificate could not be found.");
+
                 var certificateVm = new CertificateVM
                 {
-                    CertId = certificate.CertId,
+                    CertId = certId,
                     CertName = certificate.CertName
                 };
                 return View(certificateVm);
@@ -433,12 +438,18 @@ namespace CVBuddy.Controllers
 
             try
             {
-                var userCv = await GetLoggedInUsersCvAsync();
+                //var userCv = await GetLoggedInUsersCvAsync();
 
-                if (userCv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (userCv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+                //var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+
+                var certificate = await _context.Certificates.FindAsync(certId);
+
+                if (certificate == null)
+                    throw new NullReferenceException("Certificate could not be found.");
+
                 _context.Certificates.Remove(certificate);
                 await _context.SaveChangesAsync();
                 return View("UpdateCv", await UsersCvToCvVM());
@@ -513,15 +524,17 @@ namespace CVBuddy.Controllers
             try
             {
 
-                var userCv = await GetLoggedInUsersCvAsync();
+                //var userCv = await GetLoggedInUsersCvAsync();
 
-                if (userCv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (userCv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
-                
+                //var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+
+                var personalCharacteristic = await _context.PersonalCharacteristics.FindAsync(pcId);
+
                 if (personalCharacteristic == null)
-                    return RedirectToAction("Index", "Home");
+                    throw new NullReferenceException("Personal characteristic could not be found.");
 
                 var personalCharacteristicVm = new PersonalCharacteristicVM
                 {
@@ -592,12 +605,17 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var userCv = await GetLoggedInUsersCvAsync();
+                //var userCv = await GetLoggedInUsersCvAsync();
 
-                if (userCv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (userCv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+                //var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+                var personalCharacteristic = await _context.PersonalCharacteristics.FindAsync(pcId);
+
+                if (personalCharacteristic == null)
+                    throw new NullReferenceException("Personal characteristic could not be found.");
+
                 _context.PersonalCharacteristics.Remove(personalCharacteristic);
                 await _context.SaveChangesAsync();
                 return View("UpdateCv", await UsersCvToCvVM());
@@ -673,12 +691,14 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
+                //var cv = await GetLoggedInUsersCvAsync();
 
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+                //var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+
+                var experience = await _context.Experiences.FindAsync(exid);
 
                 if (experience == null)
                     throw new NullReferenceException("Users experience could not be found.");
@@ -694,7 +714,7 @@ namespace CVBuddy.Controllers
                 };
                 return View(exVM);
             }
-            catch (NullReferenceException e)//För både cv och experience med olika throws
+            catch (NullReferenceException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
@@ -756,12 +776,14 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
+                //var cv = await GetLoggedInUsersCvAsync();
 
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+                //var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+
+                var experience = await _context.Experiences.FindAsync(exid);
 
                 if (experience == null)
                     throw new NullReferenceException("Users experience could not be found.");
@@ -838,12 +860,14 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
+                //var cv = await GetLoggedInUsersCvAsync();
 
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
+                //var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
+
+                var skill = await _context.Skills.FindAsync(sid);
 
                 if (skill == null)
                     throw new NullReferenceException("Skill could not be found.");
@@ -913,12 +937,14 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
+                //var cv = await GetLoggedInUsersCvAsync();
 
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
+                //var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
+
+                var skill = await _context.Skills.FindAsync(sid);
 
                 if (skill == null)
                     throw new NullReferenceException("Skill could not be found.");
@@ -991,12 +1017,14 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
+                //var cv = await GetLoggedInUsersCvAsync();
 
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
 
-                var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+                //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+
+                var interest = await _context.Interests.FindAsync(interestId);
 
                 if (interest == null)
                     throw new NullReferenceException("Interest could not be found.");
@@ -1063,14 +1091,19 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();
-
-                if (cv == null)
-                    throw new NullReferenceException("Users Cv could not be found.");
-
-                var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
                 //var cv = await GetLoggedInUsersCvAsync();
+
+                //if (cv == null)
+                //    throw new NullReferenceException("Users Cv could not be found.");
+
                 //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+                ////var cv = await GetLoggedInUsersCvAsync();
+                ////var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+
+                var interest = await _context.Interests.FindAsync(interestId);
+
+                if (interest == null)
+                    throw new NullReferenceException("Interest could not be found");
                 _context.Interests.Remove(interest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("UpdateCv", await UsersCvToCvVM());
