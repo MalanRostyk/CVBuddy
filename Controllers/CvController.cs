@@ -66,15 +66,16 @@ namespace CVBuddy.Controllers
 
         private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
         {
-            List<Project> projectList = await _context.ProjectUsers
-                .Where(pu => pu.UserId == userId)
-                .Join(
-                _context.Projects,
-                pu => pu.ProjId,
-                p => p.Pid,
-                (pu, p) => p)
-                .ToListAsync(); ;
+            var IsAuthenticated = User.Identity!.IsAuthenticated;
 
+            List<Project> projectList = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                .Where(p =>
+                    p.ProjectUsers.Any(pu => pu.UserId == userId) &&
+                    p.ProjectUsers.Any(pu => pu.IsOwner && !pu.User.IsDeactivated) &&
+                    (IsAuthenticated || !p.ProjectUsers.FirstOrDefault(pu => pu.IsOwner)!.User.HasPrivateProfile))
+                .ToListAsync();
             return projectList;
         }
 
@@ -198,18 +199,6 @@ namespace CVBuddy.Controllers
             {
                 if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
                 {
-                    //  Är inte Logged in Users cv som ska hämtas här, detta cv är det som ska visas
-                    //cv = await _context.Cvs
-                    //.Include(cv => cv.Education)
-                    //.Include(cv => cv.Experiences)
-                    //.Include(cv => cv.Skills)
-                    //.Include(cv => cv.Certificates)
-                    //.Include(cv => cv.PersonalCharacteristics)
-                    //.Include(cv => cv.Interests)
-                    //.Include(cv => cv.OneUser)
-                    //.Include(cv => cv.CvProjects)//Relationen finns inte längre
-                    //.ThenInclude(cp => cp.OneProject)//Inkludera relaterade project från cvProjects
-                    //.FirstOrDefaultAsync(cv => cv.Cid == Cid); //inkludera all detta för cv med Cid ett visst id och med first or default visas 404 not found istället för krasch
                     cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -221,7 +210,7 @@ namespace CVBuddy.Controllers
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
-                    if(cv != null && User.Identity!.IsAuthenticated) //Måste vara inloggad för att se projekt i cv-sida
+                    if(cv != null) 
                         cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
 
                     var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv

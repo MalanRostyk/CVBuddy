@@ -1,5 +1,4 @@
 ﻿@model ProjectIndexViewModel 
-@* all här ändraades *@
 
 @using Microsoft.AspNetCore.Identity
 
@@ -11,11 +10,6 @@
     {
         @foreach (var project in Model.MyProjects)//loopa igenom alla projekt som användaren äger
         {
-            @* var oneProject = project.Project;
-            var activeUsers = project.ActiveUsers;
-            var relation = project.Relation;
-            var owner = project.Owner; *@
-
             <div class="min-vh-80 read-banner">
                 <div class="row">
                     <div class="col-12 text-center">
@@ -188,8 +182,3 @@ else//om användaren inte är inloggad, visa bara andra projekt
         <p>No projects available.</p>
     }
 }
-@* 
-    kom tillbaka, en förbättring finns, som user med ett deaktiverat konto vill man kanske se sig själv i participants, 
-    dock ska andra inte se mig,
-    i en if sats komma på current user id om det är jag  skriv ut annars inte
-*@

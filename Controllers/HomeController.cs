@@ -97,11 +97,8 @@ namespace CVBuddy.Controllers
             var isAuthenticated = User.Identity!.IsAuthenticated;
 
             var projList = await _context.Projects
-                //.Where(p => p.Enddate == null)
                 .Include(p => p.ProjectUsers)
                 .ThenInclude(p => p.User)
-                //.OrderByDescending(p => p.PublishDate)
-                //.Take(10)
                 .ToListAsync();
 
             var filteredProjects = new List<ProjectVM>();

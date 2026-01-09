@@ -28,8 +28,6 @@ namespace CVBuddy.Controllers
                 .Include(u => u.OneCv)
                 .ThenInclude(cv => cv.Interests)
                 .Include(u => u.OneCv)
-                .ThenInclude(cv => cv.Interests)
-                .Include(u => u.OneCv)
                 .ThenInclude(cv => cv.PersonalCharacteristics)
                 .Where(u => u.Id.Equals(userId))
                 .FirstOrDefaultAsync();
