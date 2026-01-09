@@ -17,32 +17,64 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOptions()
         {
-            OptionsViewModel optViewModel = new();
+            try
+            {
+                OptionsViewModel optViewModel = new();
 
-            var user = await _userManager.GetUserAsync(User);
+                var user = await _userManager.GetUserAsync(User);
 
-            ViewBag.IsSetToDeactivated = user.IsDeactivated;
-            ViewBag.HasSetProfilePrivate = user.HasPrivateProfile;
-            optViewModel.IsDeactivated = ViewBag.IsSetToDeactivated;
-            optViewModel.HasPrivateProfile = ViewBag.HasSetProfilePrivate;
+                if (user == null)
+                    throw new NullReferenceException("User could not be retrieved.");
 
-            return View();
+                ViewBag.IsSetToDeactivated = user.IsDeactivated;
+                ViewBag.HasSetProfilePrivate = user.HasPrivateProfile;
+                optViewModel.IsDeactivated = ViewBag.IsSetToDeactivated;
+                optViewModel.HasPrivateProfile = ViewBag.HasSetProfilePrivate;
+
+                return View();
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
         }
 
         
         [HttpPost]
         public async Task<IActionResult> GetOptions(OptionsViewModel optModel)
         {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                
+                if (user == null)
+                    throw new NullReferenceException("User could not be retrieved.");
 
-            var user = await _userManager.GetUserAsync(User);
+                user.IsDeactivated = optModel.IsDeactivated;
+                user.HasPrivateProfile = optModel.HasPrivateProfile;
 
-            user.IsDeactivated = optModel.IsDeactivated;
-            user.HasPrivateProfile = optModel.HasPrivateProfile;
+                await _userManager.UpdateAsync(user);
 
-            await _userManager.UpdateAsync(user);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error saving the changes to the database."});
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
             
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
         }
     }
 }

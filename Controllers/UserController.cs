@@ -232,6 +232,7 @@ namespace CVBuddy.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
@@ -240,26 +241,42 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePassword cp)
         {
-            if (!ModelState.IsValid)
-                return View(cp);
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return RedirectToAction("Login", "Account");
-            var result = await _userManager.ChangePasswordAsync(user, cp.CurrentPassword, cp.NewPassword);
-
-            if (!result.Succeeded)
+            try
             {
-                foreach (var error in result.Errors)
-                    ModelState.AddModelError("", error.Description);
-                return View(cp);
+                if (!ModelState.IsValid)
+                    return View(cp);
+
+                var user = await _userManager.GetUserAsync(User);
+                //if (user == null)
+                //    return RedirectToAction("Login", "Account");
+                if (user == null)
+                    throw new NullReferenceException("User could was not found.");
+
+                var result = await _userManager.ChangePasswordAsync(user, cp.CurrentPassword, cp.NewPassword);
+
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                        ModelState.AddModelError("", error.Description);
+                    return View(cp);
+                }
+
+                await _signInManager.RefreshSignInAsync(user);
+
+                return RedirectToAction("GetUser", "User");
+                //skapade en klass just för att ändra lösenord, eftersom man ska använda ChangePasswordAsync metoden, detta är rätt sätt att byta 
+                //lösenord, den validerar och jämför om nuvarande lösenord användaren skrev in stämmer, och den hashar och har stämpel efteråt
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
 
-            await _signInManager.RefreshSignInAsync(user);
 
-            return RedirectToAction("GetUser", "User");
-            //skapade en klass just för att ändra lösenord, eftersom man ska använda ChangePasswordAsync metoden, detta är rätt sätt att byta 
-            //lösenord, den validerar och jämför om nuvarande lösenord användaren skrev in stämmer, och den hashar och har stämpel efteråt
         }
     }
 }
