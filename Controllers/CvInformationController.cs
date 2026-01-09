@@ -81,50 +81,129 @@ namespace CVBuddy.Controllers
             }
         }
 
-        //---------------------DeleteCv------------------------------------------DeleteCv---------------------
+        //---------------------ReadCv------------------------------------------ReadCv---------------------
 
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> DeleteCv(int Cid)
+        public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
-
-            ViewBag.Headline = "Delete Cv";
-            ViewBag.WarningMessage = "Are you sure you wan't to delete your Cv? This will permanently delete your Cv but" +
-                ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
-            //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
-            Cv? cv = await GetLoggedInUsersCvAsync();
-
-
-            return View(cv);
-        }
-
-        [HttpPost]
-
-        public async Task<IActionResult> DeleteCv(Cv cv)
-        {
+            Cv? cv;
             try
             {
-                _context.Cvs.Remove(cv);
-                DeleteOldImageLocally(cv);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
-            }
-            catch (ArgumentNullException e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = "Could not find Cv." });
+                if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
+                {
+                    
+                    cv = await _context.Cvs
+                    .Include(cv => cv.Education)
+                    .Include(cv => cv.Experiences)
+                    .Include(cv => cv.Skills)
+                    .Include(cv => cv.Certificates)
+                    .Include(cv => cv.PersonalCharacteristics)
+                    .Include(cv => cv.Interests)
+                    .Include(cv => cv.OneUser)
+                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
+                    .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
+                    if (cv != null) //Måste vara inloggad för att se projekt i cv-sida
+                        cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
+
+                    var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
+                    ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
+                    if (ViewBag.NotLoggedInUsersCv)
+                    {
+                        //Ingen transaktion behövd, Enskild Update-statements är atomära, sätter Row lock. Applikationen använder en lokal databas, alltså inga samtidiga updates kommer göras här. EJ ett problem
+                        await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
+                    }
+                }
+                else//I else hämtas den inloggade användarens Cv, för "My Cv"
+                {
+                    if (!User.Identity!.IsAuthenticated)
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                    else
+                    {
+                        cv = await GetLoggedInUsersCvAsync();
+                        if (cv?.OneUser == null)
+                            return RedirectToAction("CreateCv", "Cv");
+                    }
+
+                }
+
+                ViewBag.HasSetPrivateProfile = cv?.OneUser!.HasPrivateProfile;
+
+                //För headlines om det finns något att visa under headlinen
+                ViewBag.Headline = "Cv";
+
+
+                ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
+
+                //Experiences
+                if (cv?.Experiences.Count > 0)
+                {
+                    ViewBag.HeadlineExperiences = "Experiences";
+                }
+
+                //Education
+                bool hasEducation = false;
+                var cvEdu = cv?.Education;
+
+                if (cvEdu?.HighSchool != null || cvEdu?.HSProgram != null || cvEdu?.HSDate != null)
+                    hasEducation = true;
+
+                if (cvEdu?.Univeristy != null || cvEdu?.UniProgram != null || cvEdu?.UniDate != null)
+                    hasEducation = true;
+
+                if (hasEducation)
+                    ViewBag.HeadlineEducation = "Education";
+
+                //Skills
+                if (cv?.Skills.Count > 0)
+                {
+                    ViewBag.HeadlineSkill = "Skills";
+                }
+
+                //Certificates
+                if (cv?.Certificates.Count > 0)
+                {
+                    ViewBag.HeadlineCertificates = "Certificates";
+                    ViewBag.HeadlineCertificatesSmall = "My Certificates";
+                }
+
+                //Personal Characteristics
+                if (cv?.PersonalCharacteristics.Count > 0)
+                {
+                    ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
+                    ViewBag.HeadlinePersonalCharacteristicsSmall = "My personal characteristics";
+
+                }
+
+                //Interests
+                if (cv?.Interests.Count > 0)
+                {
+                    ViewBag.HeadlineInterest = "Interests";
+                    ViewBag.HeadlineInterestSmall = "These are my interests";
+                }
+
+                //Projects
+                //if (cv?.CvProjects.Count > 0)
+                //{
+                //    ViewBag.HeadlineProjects = "Projects";
+                //    ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
+                //}
+                if (cv?.UsersProjects.Count > 0)
+                {
+                    ViewBag.HeadlineProjects = "Projects";
+                    ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
+                }
             }
             catch (Exception e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
+                return NotFound(e);
             }
-            return RedirectToAction("Index", "Home");
+
+            return View(cv);
         }
-    
 
         //---------------------UpdateCv------------------------------------------UpdateCv---------------------
 
@@ -156,13 +235,13 @@ namespace CVBuddy.Controllers
 
                 return View(cvVM);
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while getting your cv from the database."});
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while getting your cv from the database." });
             }
         }
 
@@ -227,24 +306,68 @@ namespace CVBuddy.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update Cv, encountered an error while saving to database"});
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update Cv, encountered an error while saving to database" });
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            
 
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        //---------------------DeleteCv------------------------------------------DeleteCv---------------------
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteCv(int Cid)
+        {
+
+            ViewBag.Headline = "Delete Cv";
+            ViewBag.WarningMessage = "Are you sure you wan't to delete your Cv? This will permanently delete your Cv but" +
+                ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
+            //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
+            Cv? cv = await GetLoggedInUsersCvAsync();
+
+
+            return View(cv);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> DeleteCv(Cv cv)
+        {
+            try
+            {
+                _context.Cvs.Remove(cv);
+                DeleteOldImageLocally(cv);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
+            }
+            catch (ArgumentNullException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not find Cv." });
+
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
+            }
             return RedirectToAction("Index", "Home");
         }
 
