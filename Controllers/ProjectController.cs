@@ -16,49 +16,144 @@ namespace CVBuddy.Controllers
 
         }
 
-
         [HttpGet]
-        //[Authorize]
-        public async Task<IActionResult> GetProject()
+        public async Task<IActionResult> GetProject()//nytt metod för att erstta den gamla
         {
-            if (User.Identity.IsAuthenticated)
+            var userId = _userManager.GetUserId(User);
+
+            var projects = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                .ThenInclude(pu => pu.User)
+                .ToListAsync();
+
+            var myProjects = new List<ProjectVM>();
+            var otherProjects = new List<ProjectVM>();
+            var publicProjects = new List<ProjectVM>();
+           
+            foreach (var project in projects)
             {
-                var userId = _userManager.GetUserId(User);
+                var usersInProject = project.ProjectUsers
+                    .Select(pu => pu.User).ToList();
 
-                var projects = await _context.Projects
-                    .Include(p => p.ProjectUsers)
-                    .ThenInclude(pu => pu.User)
-                    .ToListAsync();
+                var activeUsers = usersInProject
+                    .Where(u => !u.IsDeactivated).ToList();
 
-                var myProjects = projects
-                    .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+                var owner = project.ProjectUsers
+                    .FirstOrDefault(pu => pu.IsOwner);
 
-                var otherProjects = projects
-                    .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
-
-                var vm = new ProjectIndexViewModel
+                if(userId != null && project.ProjectUsers.Any(pu =>pu.UserId == userId))
                 {
-                    MyProjects = myProjects,
-                    OtherProjects = otherProjects
-                };
+                    var relation = project.ProjectUsers
+                        .FirstOrDefault(pu => pu.UserId == userId);
 
-                return View(vm);
+                    if (owner == null)
+                        continue;
+
+                    if (!relation!.IsOwner && owner.User.IsDeactivated)
+                        continue;
+
+                    myProjects.Add(new ProjectVM
+                    {
+                        Project = project,
+                        UsersInProject = usersInProject,
+                        ActiveUsers = activeUsers,
+                        Relation = relation,
+                        Owner = owner
+                    });
+
+                    continue;
+                }
+
+                if(userId != null)
+                {
+                    if(owner == null || owner.User.IsDeactivated)
+                        continue;
+
+                    var isUserInProject = project.ProjectUsers
+                        .Any(pu => pu.UserId == userId);
+
+                    otherProjects.Add(new ProjectVM
+                    {
+                        Project = project,
+                        UsersInProject = usersInProject,
+                        ActiveUsers = activeUsers,
+                        Owner = owner,
+                        IsUserInProject = isUserInProject
+                    });
+
+                    continue;
+                }
+
+                if(owner == null || owner.User.IsDeactivated)
+                    continue;
+
+                if(owner.User.HasPrivateProfile)
+                    continue;
+
+                var publicUsers = activeUsers.Where(u => !u.HasPrivateProfile)
+                    .ToList();
+                
+                publicProjects.Add(new ProjectVM
+                {
+                    Project = project,
+                    UsersInProject = usersInProject,
+                    ActiveUsers = publicUsers,
+                    Owner = owner 
+                });
             }
-            else
+
+            var vm = new ProjectIndexViewModel
             {
-                var allProjects = await _context.Projects
-                    .Include(p => p.ProjectUsers)
-                    .ThenInclude(pu => pu.User)
-                    .Where(pr => pr.ProjectUsers.Any(pu => !pu.User.IsDeactivated || !pu.User.HasPrivateProfile))
-                    .ToListAsync();
-                var vm = new ProjectIndexViewModel
-                {
-                    MyProjects = new List<Project>(),
-                    OtherProjects = allProjects
-                };
-                return View(vm);
-            }
+                MyProjects = myProjects,
+                OtherProjects = otherProjects,
+                PublicProjects = publicProjects
+            };
+
+            return View(vm);
         }
+        //[HttpGet]
+        ////[Authorize]
+        //public async Task<IActionResult> GetProject()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //    {
+        //        var userId = _userManager.GetUserId(User);
+
+        //        var projects = await _context.Projects
+        //            .Include(p => p.ProjectUsers)
+        //            .ThenInclude(pu => pu.User)
+        //            .ToListAsync();
+
+        //        var myProjects = projects
+        //            .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+
+        //        var otherProjects = projects
+        //            .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+
+
+        //        var vm = new ProjectIndexViewModel
+        //        {
+        //            MyProjects = myProjects,
+        //            OtherProjects = otherProjects
+        //        };
+
+        //        return View(vm);
+        //    }
+        //    else
+        //    {
+        //        var allProjects = await _context.Projects
+        //            .Include(p => p.ProjectUsers)
+        //            .ThenInclude(pu => pu.User)
+        //            .Where(pr => pr.ProjectUsers.Any(pu => !pu.User.IsDeactivated || !pu.User.HasPrivateProfile))
+        //            .ToListAsync();
+        //        var vm = new ProjectIndexViewModel
+        //        {
+        //            MyProjects = new List<Project>(),
+        //            OtherProjects = allProjects
+        //        };
+        //        return View(vm);
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> CreateProject()

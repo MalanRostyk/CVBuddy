@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260108221548_BörjanAvViews")]
+    [Migration("20260109140221_BörjanAvViews")]
     partial class BörjanAvViews
     {
         /// <inheritdoc />
