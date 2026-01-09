@@ -64,7 +64,7 @@ namespace CVBuddy.Controllers
             }
             catch(Exception e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while getting your cv from the database."});
             }
         }
 
@@ -129,6 +129,10 @@ namespace CVBuddy.Controllers
 
                 await _context.SaveChangesAsync();
             }
+            catch(DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update Cv, encountered an error while saving to database"});
+            }
             catch(ArgumentException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
@@ -154,43 +158,55 @@ namespace CVBuddy.Controllers
         {
             if (!ModelState.IsValid)
                 return View(cvVM);
+            
 
-            Cv cv = new Cv
+            try
             {
-                ImageFilePath = cvVM.ImageFile.Name,
-                UserId = _userManager.GetUserId(User)
-            };
+                Cv cv = new Cv
+                {
+                    ImageFilePath = cvVM.ImageFile.Name,
+                    UserId = _userManager.GetUserId(User)
+                };
 
-            cv.Education = new();
+                cv.Education = new();
 
-            if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
-            {
-                ModelState.AddModelError("ImageFile", "Please upload an image");
-                ViewBag.eror = "Please upload an image";
-                return View(cvVM);
+                //if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
+                //{
+                //    ModelState.AddModelError("ImageFile", "Please upload an image");
+                //    ViewBag.eror = "Please upload an image";
+                //    return View(cvVM);
+                //}
+
+                var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                Directory.CreateDirectory(uploadeFolder);
+
+                var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
+
+                //if (!IsValidExtension(ext))
+                //    return View(cv);
+
+                var fileName = Guid.NewGuid().ToString() + ext;
+
+                var filePath = Path.Combine(uploadeFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await cvVM.ImageFile.CopyToAsync(stream);
+                }
+                cv.ImageFilePath = "/CvImages/" + fileName;
+
+                await _context.Cvs.AddAsync(cv);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
             }
-
-            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-            Directory.CreateDirectory(uploadeFolder);
-
-            var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
-
-            //if (!IsValidExtension(ext))
-            //    return View(cv);
-
-            var fileName = Guid.NewGuid().ToString() + ext;
-
-            var filePath = Path.Combine(uploadeFolder, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            catch (DbUpdateException e)
             {
-                await cvVM.ImageFile.CopyToAsync(stream);
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not create Cv, encountered an error while saving to database" });
             }
-            cv.ImageFilePath = "/CvImages/" + fileName;
-
-            await _context.Cvs.AddAsync(cv);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Home");
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while trying to create your Cv." });
+            }
         }
 
 
@@ -221,49 +237,77 @@ namespace CVBuddy.Controllers
             //FINNS INGEN DBSET FÖR EDUCATION
             //var edu = await _context.Education.FindAsync(eid); Annars ska detta funka
             /*var cv = await _context.Cvs.FindAsync(eid);*/ //Funkar ej, cv håller komplexa objekt
-            var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
-            
-            if (cv == null)
-                return NotFound("No Cv was found");
-
-            var edu = cv.Education;
-
-            EducationVM eduVM = new EducationVM
+            try
             {
-                Univeristy = cv.Education.Univeristy,
-                UniProgram = cv.Education.UniProgram,
-                UniDate = cv.Education.UniDate,
+                var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
 
-                HighSchool = cv.Education.HighSchool,
-                HSProgram = cv.Education.HSProgram,
-                HSDate = cv.Education.HSDate
-            };
+                if (cv == null)
+                    throw new NullReferenceException("No Cv was found");
+
+                var edu = cv.Education;
+
+                EducationVM eduVM = new EducationVM
+                {
+                    Univeristy = cv.Education.Univeristy,
+                    UniProgram = cv.Education.UniProgram,
+                    UniDate = cv.Education.UniDate,
+
+                    HighSchool = cv.Education.HighSchool,
+                    HSProgram = cv.Education.HSProgram,
+                    HSDate = cv.Education.HSDate
+                };
+
+                return View(eduVM);
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error processing your request." });
+
+            }
             
-
-            return View(eduVM);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddEducation(EducationVM evm)
         {
-            if (!ModelState.IsValid)
-                return View(evm);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(evm);
 
-            var cv = await GetLoggedInUsersCvAsync();
+                var cv = await GetLoggedInUsersCvAsync();
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            cv.Education.Univeristy = evm.Univeristy;
-            cv.Education.UniProgram = evm.UniProgram;
-            cv.Education.UniDate = evm.UniDate;
+                cv.Education.Univeristy = evm.Univeristy;
+                cv.Education.UniProgram = evm.UniProgram;
+                cv.Education.UniDate = evm.UniDate;
 
-            cv.Education.HighSchool = evm.HighSchool;
-            cv.Education.HSProgram = evm.HSProgram;
-            cv.Education.HSDate = evm.HSDate;
+                cv.Education.HighSchool = evm.HighSchool;
+                cv.Education.HSProgram = evm.HSProgram;
+                cv.Education.HSDate = evm.HSDate;
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }catch(DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not save changes to database!"});
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            
         }
 
         //---------------------Certificate------------------------------------------Certificate---------------------
@@ -278,77 +322,141 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCertificate(CertificateVM cvm)
         {
-            if (!ModelState.IsValid)
-                return View(cvm);
-
-            Certificate certificate = new Certificate
+            try
             {
-                CertName = cvm.CertName
-            };
+                if (!ModelState.IsValid)
+                    return View(cvm);
 
-            var cv = await GetLoggedInUsersCvAsync();
+                Certificate certificate = new Certificate
+                {
+                    CertName = cvm.CertName
+                };
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                var cv = await GetLoggedInUsersCvAsync();
 
-            cv.Certificates.Add(certificate);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                cv.Certificates.Add(certificate);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update Cv, encountered an error while saving to add certificate, the database could not save your changes" });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to add a certificate."});
+            }
+            
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateCertificate(int certId)
         {
-            var userCv = await GetLoggedInUsersCvAsync();
 
-            if (userCv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-            if (certificate == null)
+            try
             {
-                return RedirectToAction("Index", "Home");
+                var userCv = await GetLoggedInUsersCvAsync();
+
+                if (userCv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+                if (certificate == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                var certificateVm = new CertificateVM
+                {
+                    CertId = certificate.CertId,
+                    CertName = certificate.CertName
+                };
+                return View(certificateVm);
             }
-            var certificateVm = new CertificateVM
+            catch (NullReferenceException e)
             {
-                CertId = certificate.CertId,
-                CertName = certificate.CertName
-            };
-            return View(certificateVm);
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateCertificate(CertificateVM cvm)
         {
-            if (!ModelState.IsValid)
-                return View(cvm);
-
-            var cv = await GetLoggedInUsersCvAsync();
-
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var certToUpdate = cv.Certificates.FirstOrDefault(c => c.CertId == cvm.CertId);
-            if (certToUpdate != null)
+            try
             {
-                certToUpdate.CertName = cvm.CertName;
-                await _context.SaveChangesAsync();
+                if (!ModelState.IsValid)
+                    return View(cvm);
+
+                var cv = await GetLoggedInUsersCvAsync();
+
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var certToUpdate = cv.Certificates.FirstOrDefault(c => c.CertId == cvm.CertId);
+                if (certToUpdate != null)
+                {
+                    certToUpdate.CertName = cvm.CertName;
+                    await _context.SaveChangesAsync();
+                }
+                return View("UpdateCv", await UsersCvToCvVM());
             }
-            return View("UpdateCv", await UsersCvToCvVM());
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes to the database"});
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
+ 
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCertificate(int certId)
         {
-            var userCv = await GetLoggedInUsersCvAsync();
 
-            if (userCv == null)
-                return NotFound("Users Cv could not be found.");
 
-            var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-            _context.Certificates.Remove(certificate); 
-            await _context.SaveChangesAsync();
-            return View("UpdateCv", await UsersCvToCvVM());
+            try
+            {
+                var userCv = await GetLoggedInUsersCvAsync();
+
+                if (userCv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
+                _context.Certificates.Remove(certificate);
+                await _context.SaveChangesAsync();
+                return View("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error in the database while trying to delete certificate" });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
+
+            
         }
 
 
@@ -364,87 +472,148 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPersonalCharacteristic(PersonalCharacteristicVM pvm)
         {
+
             if (!ModelState.IsValid)
                 return View(pvm);
 
-            PersonalCharacteristic persChar = new PersonalCharacteristic
+            try
             {
-                CharacteristicName = pvm.CharacteristicName
-            };
+                
+                PersonalCharacteristic persChar = new PersonalCharacteristic
+                {
+                    CharacteristicName = pvm.CharacteristicName
+                };
 
-            var cv = await GetLoggedInUsersCvAsync();
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                var cv = await GetLoggedInUsersCvAsync();
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            cv.PersonalCharacteristics.Add(persChar);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                cv.PersonalCharacteristics.Add(persChar);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes to the database" });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
         }
 
-        public int PCId { get; set; }
+       
         [HttpGet]
         public async Task<IActionResult> UpdatePersonalCharacteristic(int pcId)
         {
-            var userCv = await GetLoggedInUsersCvAsync();
-
-            if (userCv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
-            if (personalCharacteristic == null)
+            try
             {
-                return RedirectToAction("Index", "Home");
+
+                var userCv = await GetLoggedInUsersCvAsync();
+
+                if (userCv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+                
+                if (personalCharacteristic == null)
+                    return RedirectToAction("Index", "Home");
+
+                var personalCharacteristicVm = new PersonalCharacteristicVM
+                {
+                    PCId = personalCharacteristic.PCId,
+                    CharacteristicName = personalCharacteristic.CharacteristicName
+                };
+                return View(personalCharacteristicVm);
             }
-            var personalCharacteristicVm = new PersonalCharacteristicVM
+            catch (NullReferenceException e)
             {
-                PCId = personalCharacteristic.PCId,
-                CharacteristicName = personalCharacteristic.CharacteristicName
-            };
-            return View(personalCharacteristicVm);
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
         }
 
 
         [HttpPost]
         public async Task<IActionResult> UpdatePersonalCharacteristic(PersonalCharacteristicVM pvm)
         {
-            if (!ModelState.IsValid)
-                return View(pvm);
 
-            var cv = await GetLoggedInUsersCvAsync();
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+            try
+            {
 
-            var personalCharacteristic = cv.PersonalCharacteristics.FirstOrDefault(pc => pc.PCId == pvm.PCId);
+                if (!ModelState.IsValid)
+                    return View(pvm);
+
+                var cv = await GetLoggedInUsersCvAsync();
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var personalCharacteristic = cv.PersonalCharacteristics.FirstOrDefault(pc => pc.PCId == pvm.PCId);
+
+                if (personalCharacteristic == null)
+                    throw new NullReferenceException("Personal characteristic could not be found.");
+
+                personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
+                await _context.SaveChangesAsync();
+
+                //if (personalCharacteristic != null)
+                //{
+                //    personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
+                //    await _context.SaveChangesAsync();
+                //}
+                return View("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes to the database" });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
+            }
+
             
-            if (personalCharacteristic == null)
-                return NotFound("The personal characteristic could not be found.");
-
-            personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
-            await _context.SaveChangesAsync();
-            
-            //if (personalCharacteristic != null)
-            //{
-            //    personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
-            //    await _context.SaveChangesAsync();
-            //}
-
-
-            return View("UpdateCv", await UsersCvToCvVM());
         }
 
 
         [HttpGet]
         public async Task<IActionResult> DeletePersonalCharacteristic(int pcId)
         {
-            var userCv = await GetLoggedInUsersCvAsync();
+            try
+            {
+                var userCv = await GetLoggedInUsersCvAsync();
 
-            if (userCv == null)
-                return NotFound("Users Cv could not be found.");
+                if (userCv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
-            _context.PersonalCharacteristics.Remove(personalCharacteristic);
-            await _context.SaveChangesAsync();
-            return View("UpdateCv", await UsersCvToCvVM());
+                var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
+                _context.PersonalCharacteristics.Remove(personalCharacteristic);
+                await _context.SaveChangesAsync();
+                return View("UpdateCv", await UsersCvToCvVM());
+            }
+            catch(DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not delete personal characteristic due to an error saving changes to database." });
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error deleting personal characteristic" });
+            }
         }
 
 
@@ -465,85 +634,155 @@ namespace CVBuddy.Controllers
             if (!ModelState.IsValid)
                 return View(evm);
 
-            Experience exp = new Experience
+            
+            try
             {
-                Title = evm.Title,
-                Description = evm.Description,
-                Company = evm.Company,
-                StartDate = evm.StartDate ?? new DateTime(19000101),
-                EndDate = evm.EndDate
-            };
+                Experience exp = new Experience
+                {
+                    Title = evm.Title,
+                    Description = evm.Description,
+                    Company = evm.Company,
+                    StartDate = evm.StartDate ?? new DateTime(19000101),
+                    EndDate = evm.EndDate
+                };
 
-            var cv = await GetLoggedInUsersCvAsync();
-            cv.Experiences.Add(exp);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                var cv = await GetLoggedInUsersCvAsync();
+
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+                cv.Experiences.Add(exp);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch(DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not add experience due to an error saving changes to database." });
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error adding experience." });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateExperience(int exid)
         {
-            var cv = await GetLoggedInUsersCvAsync();
-
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
-
-            ExperienceVM exVM = new ExperienceVM
+            try
             {
-                Exid = experience.Exid,
-                Title = experience.Title,
-                Description = experience.Description,
-                Company = experience.Company,
-                StartDate = experience.StartDate,
-                EndDate = experience.EndDate
-            };
-            return View(exVM);
+                var cv = await GetLoggedInUsersCvAsync();
+
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+
+                if (experience == null)
+                    throw new NullReferenceException("Users experience could not be found.");
+
+                ExperienceVM exVM = new ExperienceVM
+                {
+                    Exid = experience.Exid,
+                    Title = experience.Title,
+                    Description = experience.Description,
+                    Company = experience.Company,
+                    StartDate = experience.StartDate,
+                    EndDate = experience.EndDate
+                };
+                return View(exVM);
+            }
+            catch (NullReferenceException e)//För både cv och experience med olika throws
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to process your request." });
+            }
+            
+
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateExperience(ExperienceVM exVM)
         {
-            var cvVMForInvalidState = await UsersCvToCvVM();
-            var exVMForInvalidState = cvVMForInvalidState.Experiences.FirstOrDefault(evm => evm.Exid == exVM.Exid);
-            if (!ModelState.IsValid)
-                return View(exVM);
-                
 
-            var cv = await GetLoggedInUsersCvAsync();
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(exVM);
+
+
+                var cv = await GetLoggedInUsersCvAsync();
+
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var experience = cv.Experiences.FirstOrDefault(exp => exp.Exid == exVM.Exid);
+
+                if (experience == null)
+                    throw new NullReferenceException("Experience could not be found.");
+
+                experience.Title = exVM.Title;
+                experience.Description = exVM.Description;
+                experience.Company = exVM.Company;
+                experience.StartDate = exVM.StartDate ?? new DateTime(19000101);
+                experience.EndDate = exVM.EndDate;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not edit experience due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error updating experience." });
+            }
             
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var experience = cv.Experiences.FirstOrDefault(exp => exp.Exid == exVM.Exid);
-            
-            if (experience == null)
-                return NotFound("Users experience could not be found.");
-
-            experience.Title = exVM.Title;
-            experience.Description = exVM.Description;
-            experience.Company = exVM.Company;
-            experience.StartDate = exVM.StartDate ?? new DateTime(19000101);
-            experience.EndDate = exVM.EndDate;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteExperience(int exid) 
         {
-            var cv = await GetLoggedInUsersCvAsync();
+            try
+            {
+                var cv = await GetLoggedInUsersCvAsync();
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
-            _context.Experiences.Remove(experience);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
+
+                if (experience == null)
+                    throw new NullReferenceException("Users experience could not be found.");
+
+                _context.Experiences.Remove(experience);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not delete experience due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
+            }
+            
         }
 
 
@@ -568,80 +807,137 @@ namespace CVBuddy.Controllers
                 Description = svm.Description,
                 Date = svm.Date
             };
+            try
+            {
+                var cv = await GetLoggedInUsersCvAsync();
 
-            var cv = await GetLoggedInUsersCvAsync();
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            cv.Skills.Add(skill);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                cv.Skills.Add(skill);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not add skill due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
+            }
+                
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateSkill(int sid)
         {
-            var cv = await GetLoggedInUsersCvAsync();
-
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
-
-            if (skill == null)
-                return NotFound("Users skill could not be found.");
-
-            SkillVM sVM = new SkillVM
+            try
             {
-                Sid = skill.Sid,
-                ASkill = skill.ASkill,
-                Description = skill.Description,
-                Date = skill.Date
-            };
-            return View(sVM);
+                var cv = await GetLoggedInUsersCvAsync();
+
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
+
+                if (skill == null)
+                    throw new NullReferenceException("Skill could not be found.");
+
+                SkillVM sVM = new SkillVM
+                {
+                    Sid = skill.Sid,
+                    ASkill = skill.ASkill,
+                    Description = skill.Description,
+                    Date = skill.Date
+                };
+                return View(sVM);
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
+            }
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateSkill(SkillVM sVM)
         {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(sVM);
 
-            if (!ModelState.IsValid)
-                return View(sVM);
+                var cv = await GetLoggedInUsersCvAsync();
 
-            var cv = await GetLoggedInUsersCvAsync();
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                var skill = cv.Skills.FirstOrDefault(s => s.Sid == sVM.Sid);
 
-            var skill = cv.Skills.FirstOrDefault(s => s.Sid == sVM.Sid);
+                if (skill == null)
+                    throw new NullReferenceException("Skill could not be found.");
 
-            if (skill == null)
-                return NotFound("Users Cv could not be found.");
+                skill.ASkill = sVM.ASkill;
+                skill.Description = sVM.Description;
+                skill.Date = sVM.Date;
 
-            skill.ASkill = sVM.ASkill;
-            skill.Description = sVM.Description;
-            skill.Date = sVM.Date;
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("UpdateCv", sVM);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("UpdateCv", sVM);
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update skill due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
+            }
+            
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteSkill(int sid)
         {
-            var cv = await GetLoggedInUsersCvAsync();
+            try
+            {
+                var cv = await GetLoggedInUsersCvAsync();
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
+                var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
 
-            if (skill == null)
-                return NotFound("Users Cv could not be found.");
-            _context.Skills.Remove(skill);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                if (skill == null)
+                    throw new NullReferenceException("Skill could not be found.");
+                _context.Skills.Remove(skill);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not delete skill due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to delete skill, changes could not be saved." });
+            }
         }
 
 
@@ -657,83 +953,141 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> AddInterest(InterestVM ivm)
         {
-            if (!ModelState.IsValid)
-                return View(ivm);
-
-            Interest interest = new Interest
+            try
             {
-                InterestName = ivm.InterestName
-            };
+                if (!ModelState.IsValid)
+                    return View(ivm);
 
-            var cv = await GetLoggedInUsersCvAsync();
+                Interest interest = new Interest
+                {
+                    InterestName = ivm.InterestName
+                };
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                var cv = await GetLoggedInUsersCvAsync();
 
-            cv.Interests.Add(interest);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                cv.Interests.Add(interest);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not add interest due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to add interest, changes could not be saved." });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateInterest(int interestId)
         {
-            var cv = await GetLoggedInUsersCvAsync();
-
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-
-            if (interest == null)
-                return NotFound("Users Cv could not be found.");
-
-            InterestVM iVM = new InterestVM
+            try
             {
-                InterestId = interest.InterestId,
-                InterestName = interest.InterestName
-            };
+                var cv = await GetLoggedInUsersCvAsync();
 
-            return View(iVM);
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+
+                if (interest == null)
+                    throw new NullReferenceException("Interest could not be found.");
+
+                InterestVM iVM = new InterestVM
+                {
+                    InterestId = interest.InterestId,
+                    InterestName = interest.InterestName
+                };
+
+                return View(iVM);
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update interest, changes could not be saved." });
+            }
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateInterest(InterestVM iVM)
         {
-            if (!ModelState.IsValid)
-                return View(iVM);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(iVM);
 
-            var cv = await GetLoggedInUsersCvAsync();
+                var cv = await GetLoggedInUsersCvAsync();
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == iVM.InterestId);
+                var interest = cv.Interests.FirstOrDefault(i => i.InterestId == iVM.InterestId);
 
-            if (interest == null)
-                return NotFound("Users Cv could not be found.");
+                if (interest == null)
+                    throw new NullReferenceException("Interest could not be found.");
 
-            interest.InterestName = iVM.InterestName;
+                interest.InterestName = iVM.InterestName;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return View("UpdateCv", await UsersCvToCvVM());
+                return View("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not update interest due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update interest, changes could not be saved." });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteInterest(int interestId)
         {
-            var cv = await GetLoggedInUsersCvAsync();
+            try
+            {
+                var cv = await GetLoggedInUsersCvAsync();
 
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-            var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-            //var cv = await GetLoggedInUsersCvAsync();
-            //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-            _context.Interests.Remove(interest);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+                //var cv = await GetLoggedInUsersCvAsync();
+                //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
+                _context.Interests.Remove(interest);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not delete interest due to an error saving changes to database." });
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to delete interest, changes could not be saved." });
+            }
+            
         }
 
         //--------------------PRIVATE HELPERS---------------------------------------------------
@@ -761,7 +1115,7 @@ namespace CVBuddy.Controllers
         }
 
         
-        private async Task<Cv?> GetLoggedInUsersCvAsync() //Kan returnera null
+        private async Task<Cv?> GetLoggedInUsersCvAsync() //Kan returnera null, och kan inte använda FindAsync, eftersom att entiteten håller komplexa objekt
         {
             if (!User.Identity!.IsAuthenticated)
                 return null;
@@ -811,7 +1165,7 @@ namespace CVBuddy.Controllers
 
                     string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
 
-                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImageshg", oldCvFileName);
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImage", oldCvFileName);
 
                     if (!System.IO.File.Exists(finalCvFilePath))
                         throw new ArgumentException("The old image could not be deleted since it was not found. " +
