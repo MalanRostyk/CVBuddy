@@ -135,7 +135,8 @@ namespace CVBuddy.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(500, "An issue occured while trying to remove the message.");//StatusCode 500 betyder internal error.
+                ModelState.AddModelError("", "Fel användarnam/lösenord.");
+                //return StatusCode(500, "An issue occured while trying to remove the message.");//StatusCode 500 betyder internal error.
                 throw;
             }
             

@@ -38,9 +38,13 @@ namespace CVBuddy.Models.CVInfo
                     {
                         return ValidationResult.Success;
                     }
+                    else//Har fel extension
+                    {
+                        return new ValidationResult($"Only filetypes allowed are: {extensionsString}");//Lägg till ett felmeddelande i ViewData.ModelState.Values 
+                    }
                 }
             }
-            return new ValidationResult($"Only filetypes allowed are: {extensionsString}");//Lägg till ett felmeddelande i ViewData.ModelState.Values 
+            return null;//Inget ValidationResult, för att vi vill tillåta att bara error message från [Required] ska skrivas ut om IFormFile är null
         }
     }
 }
