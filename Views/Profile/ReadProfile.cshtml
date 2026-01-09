@@ -155,11 +155,11 @@
             @foreach (var project in Model.Projects)
             {
                 <div class="mb-2 projects-in-profile-containers">
-                    <h5 class="mb-2">@project.Title</h5>
-                    <p class="mb-1">Description: @(project.Description ?? "")</p>
-                    <p class="mb-1">Start date: @project.StartDate.ToShortDateString()</p>
-                    <p class="mb-1">End date: @project.Enddate?.ToString("yyyy-mm-dd")</p>
-                    <p class="mb-1">Publish date: @project.PublishDate.ToShortDateString()</p>
+                    <h5 class="mb-2">@project.Project.Title</h5>
+                    <p class="mb-1">Description: @(project.Project.Description ?? "")</p>
+                    <p class="mb-1">Start date: @project.Project.StartDate.ToShortDateString()</p>
+                    <p class="mb-1">End date: @project.Project.Enddate?.ToString("yyyy-mm-dd")</p>
+                    <p class="mb-1">Publish date: @project.Project.PublishDate.ToShortDateString()</p>
                 </div>
             }
         </div>
