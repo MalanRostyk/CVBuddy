@@ -11,12 +11,12 @@ namespace CVBuddy.Controllers
         protected readonly UserManager<User> _userManager;
         protected readonly SignInManager<User> _signInManager;
         protected readonly CVBuddyContext _context;
-
         public BaseController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm)
         {
             _userManager = u;
             _context = c;
             _signInManager = sm;
+            
         }
 
 

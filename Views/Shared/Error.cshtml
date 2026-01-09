@@ -4,7 +4,6 @@
 }
 
 <h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
 
 @if (Model.ShowRequestId)
 {
@@ -13,7 +12,14 @@
     </p>
 }
 
-<h3>Development Mode</h3>
+<div>
+    <p><i>Something has gone wrong?</i></p>
+
+    <strong class="text text-danger">@Model.ErrorMessage</strong>
+</div>
+
+<a href="/Home/Index" class="btn btn-secondary">Home</a>
+@* <h3>Development Mode</h3>
 <p>
     Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
 </p>
@@ -22,4 +28,4 @@
     It can result in displaying sensitive information from exceptions to end users.
     For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
     and restarting the app.
-</p>
+</p> *@

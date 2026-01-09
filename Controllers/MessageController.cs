@@ -128,14 +128,26 @@ namespace CVBuddy.Controllers
             };
             return View(mVM);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> DeleteMessageConfirm(int mid)
         {
             var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mid);
+            try
+            {
+                if (message == null)
+                    throw new NullReferenceException("This message could not be found.");
+            }
+            catch (NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
 
-            if (message == null)
-                return NotFound("This message could not be found.");
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error deleting the message" });
+
+            }
 
             MessageVM mVM = new MessageVM
             {
@@ -153,18 +165,22 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteMessage(MessageVM mVM)
         {
+
             //Undantagshantering ska göras för exceptionella situationer, det ska inte funka som en if sats för att fånga null värden här och var
             //utan det ska hanteras med kontroller, alltså en if-sats. Och då skriver vi ut ett informativt felmeddelande som ska ses av användare.
             //Exempelvis som här nedan, kontroller ska användas för att validera inputs(bortse från att int mid är ett routeat id). Hittas inte det som efterfrågas
             //så meddelar vi användaren om det. Det är alltså FÖRVÄNTADE SCENARION. Men när det gäller undantagshantering så innebär det att
             //att man ska fånga verkliga fel och ge begripliga och beskrivande felmeddelanden istället för att låta applikationen krascha
+
+            //Hitta meddelandet med mid
+            var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mVM.Mid);
             try
             {
-                //Hitta meddelandet med mid
-                var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mVM.Mid);
+                
+                
 
-                if (message == null)
-                    return NotFound("The message you want to delete could not be found.");
+                if (message != null)
+                    throw new NullReferenceException("The message you want to delete could not be found.");
                 
                 //Radera
                 _context.Messages.Remove(message);
@@ -177,15 +193,22 @@ namespace CVBuddy.Controllers
                 //List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == mVM.RecieverId).ToListAsync();
 
                 //return RedirectToAction("Messages", usersMessages);
-                return RedirectToAction("Messages");
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+                //ModelState.AddModelError("", "Fel användarnam/lösenord.");
+                //return StatusCode(500, "An issue occured while trying to remove the message.");//StatusCode 500 betyder internal error.
+                
             }
             catch(Exception e)
             {
-                ModelState.AddModelError("", "Fel användarnam/lösenord.");
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error deleting the message" });
+                //ModelState.AddModelError("", "Fel användarnam/lösenord.");
                 //return StatusCode(500, "An issue occured while trying to remove the message.");//StatusCode 500 betyder internal error.
-                throw;
+                
             }
-            
+            return RedirectToAction("Messages");
         }
 
     }

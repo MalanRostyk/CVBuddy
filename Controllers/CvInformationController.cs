@@ -34,31 +34,42 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
-            var cv = await GetLoggedInUsersCvAsync();
-
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            CvVM cvVM = new CvVM
+            try
             {
-                Cid = cv.Cid,
-                Skills = cv.Skills,
-                Education = cv.Education,
-                Experiences = cv.Experiences,
-                Certificates = cv.Certificates,
-                PersonalCharacteristics = cv.PersonalCharacteristics,
-                PublishDate = cv.PublishDate,
-                Interests = cv.Interests,
-                ImageFilePath = cv.ImageFilePath,
-                ReadCount = cv.ReadCount,
-                UserId = cv.UserId
-            };
+                var cv = await GetLoggedInUsersCvAsync();
 
-            return View(cvVM);
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
+
+                CvVM cvVM = new CvVM
+                {
+                    Cid = cv.Cid,
+                    Skills = cv.Skills,
+                    Education = cv.Education,
+                    Experiences = cv.Experiences,
+                    Certificates = cv.Certificates,
+                    PersonalCharacteristics = cv.PersonalCharacteristics,
+                    PublishDate = cv.PublishDate,
+                    Interests = cv.Interests,
+                    ImageFilePath = cv.ImageFilePath,
+                    ReadCount = cv.ReadCount,
+                    UserId = cv.UserId
+                };
+
+                return View(cvVM);
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
         }
 
 
-        //---------------------Image---------------------Image---------------------Image---------------------
+        //---------------------Image---------------------Image---------------------Image---------------------HÄÄÄÄR !!!!!!!!!!!!!!!!!!!!!!!
 
 
         [HttpGet]
@@ -71,50 +82,70 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateImage(CvVM cvVM)
         {
-            var cv = await GetLoggedInUsersCvAsync();
-            if (cv == null)
-                return NotFound("Users Cv could not be found.");
-
-            cvVM.ImageFilePath = cv.ImageFilePath;
-
-            if (!ModelState.IsValid)
+            try
             {
-                //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
-                //foreach (var entry in ModelState)
-                //{
-                //    Console.WriteLine($"FIELD: {entry.Key}");
-                //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+                var cv = await GetLoggedInUsersCvAsync();
+                if (cv == null)
+                    throw new NullReferenceException("Users Cv could not be found.");
 
-                //    foreach (var error in entry.Value.Errors)
-                //    {
-                //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
-                //    }
-                //}
-                return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
-                                                               //Så vi måste returnera ett cvVM med värden för att förse
-                                                               //UpdateCv view model med värden
+                cvVM.ImageFilePath = cv.ImageFilePath;
+
+                if (!ModelState.IsValid)
+                {
+                    //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
+                    //foreach (var entry in ModelState)
+                    //{
+                    //    Console.WriteLine($"FIELD: {entry.Key}");
+                    //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
+
+                    //    foreach (var error in entry.Value.Errors)
+                    //    {
+                    //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
+                    //    }
+                    //}
+                    return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
+                                                                   //Så vi måste returnera ett cvVM med värden för att förse
+                                                                   //UpdateCv view model med värden
+                }
+
+                var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                Directory.CreateDirectory(uploadeFolder);
+
+                var ext = Path.GetExtension(cvVM.ImageFile!.FileName);//null
+
+                var fileName = Guid.NewGuid().ToString() + ext;
+
+                var filePath = Path.Combine(uploadeFolder, fileName);
+
+                DeleteOldImageLocally(cv);
+
+                cv.ImageFile = cvVM.ImageFile;
+                cv.ImageFilePath = "/CvImages/" + fileName;
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await cv.ImageFile!.CopyToAsync(stream);
+                }
+
+                await _context.SaveChangesAsync();
             }
-
-            var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-            Directory.CreateDirectory(uploadeFolder);
-
-            var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
-
-            var fileName = Guid.NewGuid().ToString() + ext;
-
-            var filePath = Path.Combine(uploadeFolder, fileName);
-
-            DeleteOldImageLocally(cv);
-
-            cv.ImageFile = cvVM.ImageFile;
-            cv.ImageFilePath = "/CvImages/" + fileName;
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            catch(ArgumentException e)
             {
-                await cv.ImageFile!.CopyToAsync(stream);
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
-
-            await _context.SaveChangesAsync();
+            catch(InvalidOperationException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(NullReferenceException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            catch(Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+            }
+            
 
             return RedirectToAction("Index", "Home");
         }
@@ -734,11 +765,13 @@ namespace CVBuddy.Controllers
         }
 
         
-        private async Task<Cv> GetLoggedInUsersCvAsync()
+        private async Task<Cv?> GetLoggedInUsersCvAsync() //Kan returnera null
         {
-            if (!(User.Identity!.IsAuthenticated))
-                return new();
+            if (!User.Identity!.IsAuthenticated)
+                return null;
+           
             var userId = _userManager.GetUserId(User); 
+            
             Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -750,8 +783,10 @@ namespace CVBuddy.Controllers
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
 
-            if (cv != null)
-                cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
+            if (cv == null)
+                return null;
+
+            cv.UsersProjects = await GetProjectsUserHasParticipatedIn(userId!);
 
             return cv;
         }
@@ -765,41 +800,30 @@ namespace CVBuddy.Controllers
                 p => p.Pid,
                 (pu, p) => p)
                 .ToListAsync(); ;
-            return projectList;
+            return projectList;           
         }
 
-        private bool DeleteOldImageLocally(Cv cvOld)
+        private void DeleteOldImageLocally(Cv cvOld)
         {
             string[]? cvOldFileImageNameArray = null;
-            try
+            if (cvOld.ImageFilePath != null)
             {
-                if (cvOld.ImageFilePath != null)
+                cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
+
+                if (cvOldFileImageNameArray.Length != 0)
                 {
-                    cvOldFileImageNameArray = cvOld.ImageFilePath.Split("/");
 
-                    if (cvOldFileImageNameArray.Length != 0)
-                    {
+                    string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
 
-                        string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImageshg", oldCvFileName);
 
-                        string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
-
-                        //Återskapar oldCvs gamla filepath för att den sparas med "c:\CvImages\Filnamn.Ext", Eftersom att sökvägen är relativ, så vi måste ge den CurrentDirectory och wwwroot för att den ska hittas för att raderas
-                        if (System.IO.File.Exists(finalCvFilePath))
-                        {
-                            System.IO.File.Delete(finalCvFilePath);
-                            Debug.WriteLine("Old image was found. Bör ha try catch oså!");
-                            return true;
-                        }
-                    }
+                    if (!System.IO.File.Exists(finalCvFilePath))
+                        throw new ArgumentException("The old image could not be deleted since it was not found. " +
+                            "Attempted too look for it at: " + finalCvFilePath);
+                    
+                        System.IO.File.Delete(finalCvFilePath);
                 }
             }
-            catch (Exception e)
-            {
-                throw;
-            }
-
-            return false;
         }
     }
 }
