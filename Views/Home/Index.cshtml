@@ -93,20 +93,20 @@
 @inject UserManager<User> _userManager
 
 @{
-    var currentUserId = _userManager.GetUserId(User);
+    var currentUserId = _userManager.GetUserId(User);//Hämtar nuvarande inloggad user id
 }
 
 <h2>Recent projects</h2>
-@if(Model.ProjectList.Count > 0)
+@if(Model.ProjectList.Count > 0)//Om det finns några projekt i listan
 {
-    @foreach (var project in Model.ProjectList)
+    @foreach (var project in Model.ProjectList)//Loopar igenom varje projekt
     {
-        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
-        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile  || User.Identity.IsAuthenticated).ToList();
-        var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
-        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-        @if (owner == null || owner.User.IsDeactivated)
+        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();//Hämtar alla users i projektet
+        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();//Filtrerar bort deaktiverade users
+        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile  || User.Identity.IsAuthenticated).ToList();//Filtrerar bort privata users om inte inloggad
+        var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);//Kollar om nuvarande inloggad user är med i projektet
+        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);//Hämtar ägaren av projektet
+        @if (owner == null || owner.User.IsDeactivated)//Om ägaren är null eller deaktiverad, hoppa över detta projekt
         {
             continue;
         }
@@ -148,13 +148,13 @@
                             }
                         }
                     </p>
-                    @if (!isUserInProject)
+                    @if (!isUserInProject)//Om nuvarande inloggad user inte är med i projektet
                     {//kraschar om man lyckades spara projekt utan user
                         <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
                             <button class="btn btn-primary">Join project!</button>
                         </form>
                     }
-                    else
+                    else//Om user är med i projektet
                     {
                         <button class="btn btn-info">Already joined</button>
                     }
@@ -165,7 +165,7 @@
         </div>
     }
 }
-else
+else//Om inga projekt finns
 {
     <p>No projects available.</p>
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260107183509_adad")]
-    partial class adad
+    [Migration("20260108221548_BörjanAvViews")]
+    partial class BörjanAvViews
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,23 +121,19 @@ namespace CVBuddy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HSProgram")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HighSchool")
-                        .HasMaxLength(95)
-                        .HasColumnType("nvarchar(95)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UniDate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UniProgram")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Univeristy")
-                        .HasMaxLength(95)
-                        .HasColumnType("nvarchar(95)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Eid");
 
@@ -157,15 +153,13 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Company")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("nvarchar(90)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
@@ -175,8 +169,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("nvarchar(90)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Exid");
 
@@ -198,8 +191,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("InterestName")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("nvarchar(90)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("InterestId");
 
@@ -218,8 +210,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("CharacteristicName")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("nvarchar(90)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");

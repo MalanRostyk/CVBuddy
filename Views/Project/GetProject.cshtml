@@ -4,27 +4,27 @@
 @inject UserManager<User> _userManager
 
 @{
-    var currentUserId = _userManager.GetUserId(User);
+    var currentUserId = _userManager.GetUserId(User);//hämta inloggad användares id
 }
-@if (User.Identity.IsAuthenticated)
+@if (User.Identity.IsAuthenticated)//kolla om användaren är inloggad,inte hoppa ner till else och visa andra projekt
 {
     <a asp-action="CreateProject" class="btn btn-primary mb-3">Create new Project</a>
     <h3>My projects</h3>
-    @if (Model.MyProjects.Any())
+    @if (Model.MyProjects.Any())//kolla om användaren äger några projekt, annars visa meddelande
     {
-        @foreach (var project in Model.MyProjects)
+        @foreach (var project in Model.MyProjects)//loopa igenom alla projekt som användaren äger
         {
-            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
-            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-            var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);
-            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();//hämta alla användare i projektet
+            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();//filtrera bort deaktiverade användare
+            var relation = project.ProjectUsers.First(pu => pu.UserId == currentUserId);//kolla relationen för den inloggade användaren i projektet
+            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);//kolla vem ägaren är
 
             <div class="min-vh-80 read-banner">
                 <div class="row">
                     <div class="col-12 text-center">
                         <p><strong>Title : </strong>@project.Title</p>
                     </div>
-                    @if (owner != null)
+                    @if (owner != null)//kolla om ägaren finns
                     {
                         <div class="col-12">
                             <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
@@ -43,10 +43,10 @@
                     </div>
                     <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                         <p class="mb-0">
-                            @if (activeUsers.Count > 0)
+                            @if (activeUsers.Count > 0)//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
                             {
                                 <strong>Participants : </strong>
-                                @for (int i = 0; i < activeUsers.Count; i++)
+                                @for (int i = 0; i < activeUsers.Count; i++)//loopa igenom deltagarna
                                 {
                                     @activeUsers[i].FirstName @activeUsers[i].LastName
                                     @if (i < activeUsers.Count - 1)
@@ -56,11 +56,11 @@
                                 }
                             }
                         </p>
-                        @if (relation.IsOwner)
+                        @if (relation.IsOwner)//om ägaren är inloggad, visa update knapp
                         {
                             <a asp-action="UpdateProject" asp-route-id="@project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
                         }
-                        else
+                        else//om deltagaren är inloggad, visa participant knapp
                         {
                             <button class="btn btn-info">Participant</button>
                         }
@@ -75,15 +75,15 @@
     }
 
     <h3>Other projects</h3>
-    @if (Model.OtherProjects.Any())
+    @if (Model.OtherProjects.Any())//kolla om det finns andra projekt
     {
-        @foreach (var project in Model.OtherProjects)
+        @foreach (var project in Model.OtherProjects)//loopa igenom andra projekt
         {
-            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
-            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-            var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);
-            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-            @if (owner == null || owner.User.IsDeactivated)
+            var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();//hämta alla användare i projektet
+            var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();//filtrera bort deaktiverade användare
+            var isUserInProject = project.ProjectUsers.Any(pu => pu.UserId == currentUserId);//kolla om den inloggade användaren är med i projektet
+            var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);//kolla vem ägaren är
+            @if (owner == null || owner.User.IsDeactivated)//om ägaren är deaktiverad, hoppa över projektet
             {
                 continue;
             }
@@ -93,7 +93,7 @@
                     <div class="col-12 text-center">
                         <p><strong>Title : </strong>@project.Title</p>
                     </div>
-                    @if (owner != null)
+                    @if (owner != null)//kolla om ägaren finns
                     {
                         <div class="col-12">
                             <p><strong>Owner : </strong>@owner.User.FirstName @owner.User.LastName</p>
@@ -112,7 +112,7 @@
                     </div>
                     <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                         <p class="mb-0">
-                            @if (activeUsers.Count > 0)
+                            @if (activeUsers.Count > 0)//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
                             {
                                 <strong>Participants : </strong>
                                 @for (int i = 0; i < activeUsers.Count; i++)
@@ -125,7 +125,7 @@
                                 }
                             }
                         </p>
-                        @if (!isUserInProject)
+                        @if (!isUserInProject)//om du har ingen relation till projektet, visa join knapp
                         {
                             <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@owner!.PUId">
                                 <button class="btn btn-primary">Join project!</button>
@@ -145,15 +145,18 @@
         <p>No other projects available.</p>
     }
 }
-else
+else//om användaren inte är inloggad, visa bara andra projekt
 {
-    @foreach (var project in Model.OtherProjects)
+    @foreach (var project in Model.OtherProjects)//loopa igenom andra projekt
     {
-        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();
-        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
-        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile || User.Identity.IsAuthenticated).ToList();
-        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
-
+        var usersInProject = project.ProjectUsers.Where(pu => pu.ProjId == project.Pid).Select(pu => pu.User).ToList();//hämta alla användare i projektet
+        var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();//filtrera bort deaktiverade användare
+        var userIsPrivate = activeUsers.Where(u => !u.HasPrivateProfile || User.Identity.IsAuthenticated).ToList();//filtrera bort användare med privat profil om inte inloggad
+        var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);//kolla vem ägaren är
+        @if (owner == null || owner.User.IsDeactivated)//om ägaren är deaktiverad, hoppa över projektet
+        {
+            continue;
+        }
         <div class="min-vh-80 read-banner">
             <div class="row">
                 <div class="col-12 text-center">
@@ -178,13 +181,13 @@ else
                 </div>
                 <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                     <p class="mb-0">
-                    @if (userIsPrivate.Count > 0)
+                        @if (userIsPrivate.Count > 0)//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
                         {
                             <strong>Participants : </strong>
-                        @for (int i = 0; i < userIsPrivate.Count; i++)
+                            @for (int i = 0; i < userIsPrivate.Count; i++)
                             {
-                            @userIsPrivate[i].FirstName @userIsPrivate[i].LastName
-                                @if (i < userIsPrivate.Count - 1)
+                                @userIsPrivate[i].FirstName @userIsPrivate[i].LastName
+                                @if (i < userIsPrivate.Count - 1)//lägg till komma om det inte är sista deltagaren
                                 {
                                     <span>, </span>
                                 }
@@ -197,7 +200,7 @@ else
     }
 }
 @* 
-    kom tillbaka, en förbättring finns, som user med et deaktiverat konto vill man kanske se sig själv i participants, 
-    dock skaandra inte se mig,
+    kom tillbaka, en förbättring finns, som user med ett deaktiverat konto vill man kanske se sig själv i participants, 
+    dock ska andra inte se mig,
     i en if sats komma på current user id om det är jag  skriv ut annars inte
 *@
