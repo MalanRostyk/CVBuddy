@@ -36,7 +36,7 @@ namespace CVBuddy.Models.CVInfo
 
                     if (extensionsArray.Contains(extension))//Vaidera om filens extension är rätt format som angetts i model klassen
                     {
-                        return ValidationResult.Success;
+                        return ValidationResult.Success;//Lyckades
                     }
                     else//Har fel extension
                     {
