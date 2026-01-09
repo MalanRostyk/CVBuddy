@@ -1,5 +1,4 @@
 ﻿using CVBuddy.Models;
-using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;

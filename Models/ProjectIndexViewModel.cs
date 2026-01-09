@@ -2,7 +2,8 @@
 {
     public class ProjectIndexViewModel
     {
-        public List<Project> MyProjects { get; set; } = new();
-        public List<Project> OtherProjects { get; set; } = new();
+        public List<ProjectVM> MyProjects { get; set; } = new();
+        public List<ProjectVM> OtherProjects { get; set; } = new();
+        public List<ProjectVM> PublicProjects { get; set; } = new();
     }
 }

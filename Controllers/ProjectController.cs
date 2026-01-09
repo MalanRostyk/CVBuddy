@@ -17,8 +17,7 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetProject()
+        public async Task<IActionResult> GetProject()//nytt metod för att erstta den gamla
         {
             var userId = _userManager.GetUserId(User);
 
@@ -27,20 +26,90 @@ namespace CVBuddy.Controllers
                 .ThenInclude(pu => pu.User)
                 .ToListAsync();
 
-            var myProjects = projects
-                .Where(p => p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+            var myProjects = new List<ProjectVM>();
+            var otherProjects = new List<ProjectVM>();
+            var publicProjects = new List<ProjectVM>();
 
-            var otherProjects = projects
-                .Where(p => !p.ProjectUsers.Any(pu => pu.UserId == userId)).ToList();
+            foreach (var project in projects)
+            {
+                var usersInProject = project.ProjectUsers
+                    .Select(pu => pu.User).ToList();
 
+                var activeUsers = usersInProject
+                    .Where(u => !u.IsDeactivated).ToList();
+
+                var owner = project.ProjectUsers
+                    .FirstOrDefault(pu => pu.IsOwner);
+
+                if (userId != null && project.ProjectUsers.Any(pu => pu.UserId == userId))
+                {
+                    var relation = project.ProjectUsers
+                        .FirstOrDefault(pu => pu.UserId == userId);
+
+                    if (owner == null)
+                        continue;
+
+                    if (!relation!.IsOwner && owner.User.IsDeactivated)
+                        continue;
+
+                    myProjects.Add(new ProjectVM
+                    {
+                        Project = project,
+                        UsersInProject = usersInProject,
+                        ActiveUsers = activeUsers,
+                        Relation = relation,
+                        Owner = owner
+                    });
+
+                    continue;
+                }
+                if (userId != null)
+                {
+                    if (owner == null || owner.User.IsDeactivated)
+                        continue;
+
+                    var isUserInProject = project.ProjectUsers
+                        .Any(pu => pu.UserId == userId);
+
+                    otherProjects.Add(new ProjectVM
+                    {
+                        Project = project,
+                        UsersInProject = usersInProject,
+                        ActiveUsers = activeUsers,
+                        Owner = owner,
+                        IsUserInProject = isUserInProject
+                    });
+
+                    continue;
+                }
+
+                if (owner == null || owner.User.IsDeactivated)
+                    continue;
+
+                if (owner.User.HasPrivateProfile)
+                    continue;
+
+                var publicUsers = activeUsers.Where(u => !u.HasPrivateProfile)
+                    .ToList();
+
+                publicProjects.Add(new ProjectVM
+                {
+                    Project = project,
+                    UsersInProject = usersInProject,
+                    ActiveUsers = publicUsers,
+                    Owner = owner
+                });
+            }
             var vm = new ProjectIndexViewModel
             {
                 MyProjects = myProjects,
-                OtherProjects = otherProjects
+                OtherProjects = otherProjects,
+                PublicProjects = publicProjects
             };
 
             return View(vm);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> CreateProject()

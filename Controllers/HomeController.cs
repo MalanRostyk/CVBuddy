@@ -57,7 +57,7 @@ namespace CVBuddy.Controllers
 
 
 
-            var usersCv = await GetLoggedInUsersCvAsync();
+            var usersCv = await GetLoggedInUsersCvAsync(); //HHHHHHHHÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄRRRRRRRRRRRRRRRRRRRRRRRR THROWA
             ViewBag.HasCv = usersCv != null;
 
 
@@ -92,19 +92,54 @@ namespace CVBuddy.Controllers
 
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
+            var userId = _userManager.GetUserId(User);//ändring av project utskriften enda ner
+            var isAuthenticated = User.Identity!.IsAuthenticated;
+
             var projList = await _context.Projects
-                .Where(p => p.Enddate == null)
                 .Include(p => p.ProjectUsers)
                 .ThenInclude(p => p.User)
-                .OrderByDescending(p => p.PublishDate)
-                .Take(10)
                 .ToListAsync();
 
+            var filteredProjects = new List<ProjectVM>();
+
+            foreach (var project in projList)
+            {
+                var owner = project.ProjectUsers.FirstOrDefault(pu => pu.IsOwner);
+                if (owner == null || owner.User.IsDeactivated)
+                    continue;
+
+                if (!isAuthenticated && owner.User.HasPrivateProfile)
+                    continue;
+
+                var usersInProject = project.ProjectUsers.Select(pu => pu.User).ToList();
+                var activeUsers = usersInProject.Where(u => !u.IsDeactivated).ToList();
+                var relation = userId == null
+                    ? null
+                    : project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+
+                filteredProjects.Add(new ProjectVM
+                {
+                    Project = project,
+                    UsersInProject = usersInProject,
+                    ActiveUsers = isAuthenticated
+                        ? activeUsers
+                        : activeUsers.Where(u => !u.HasPrivateProfile).ToList(),
+                    Owner = owner,
+                    Relation = relation,
+                    IsUserInProject = relation != null
+                });
+            }
+
+            filteredProjects = filteredProjects
+                .Where(pvm => pvm.Project.Enddate == null)
+                .OrderByDescending(pvm => pvm.Project.PublishDate)
+                .Take(10)
+                .ToList();
 
             var vm = new HomeIndexViewModel
             {
                 UserList = users,
-                ProjectList = projList,
+                ProjectList = filteredProjects,
             };
 
             return View(vm);
@@ -128,7 +163,7 @@ namespace CVBuddy.Controllers
                    .Include(cv => cv.Interests)
                    .Include(cv => cv.OneUser)
                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
-                   .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+                   .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå ----------------------HÄÄÄÄÄÄÄÄÄRRRRRRR----------------------------------------
                     return cv;
             }
             //Cv? cv = await _context.Cvs----------------------------- byttes ut mot den nedan vid MANUAL MERGE

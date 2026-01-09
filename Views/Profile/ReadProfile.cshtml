@@ -54,7 +54,6 @@
                     <p class="mb-0">Graduation: @(Model.Cv!.Education.HSDate ?? "Ongoing")</p>
                 </div>
             }
-
             @if (ViewBag.HasUniveristy)
             {
                 <div class="mb-4 content-item">
@@ -64,7 +63,7 @@
                     <p class="mb-0">Graduation: @(Model.Cv!.Education.UniDate ?? "Ongoing")</p>
                 </div>
             }
-            
+
             <div>
                 @if (ViewBag.HasSkills)
                 {
@@ -94,7 +93,6 @@
                         </ul>
                     </div>
                 }
-                
                 @if (ViewBag.HasCertificates)
                 {
                     <div class="content-item">
@@ -122,12 +120,11 @@
                                     </li>
                                 }
                             </ul>
-                            
+
                         </div>
                     </div>
                 }
             </div>
-            
             <div>
                 @if (ViewBag.HasPersonalCharacteristics)
                 {
@@ -142,10 +139,10 @@
                             }
                         </ul>
                     </div>
-                    
+
                 }
             </div>
-            
+
         </div>
     }
     @if (ViewBag.HasJoinedProjects)
@@ -155,11 +152,11 @@
             @foreach (var project in Model.Projects)
             {
                 <div class="mb-2 projects-in-profile-containers">
-                    <h5 class="mb-2">@project.Title</h5>
-                    <p class="mb-1">Description: @(project.Description ?? "")</p>
-                    <p class="mb-1">Start date: @project.StartDate.ToShortDateString()</p>
-                    <p class="mb-1">End date: @project.Enddate?.ToString("yyyy-mm-dd")</p>
-                    <p class="mb-1">Publish date: @project.PublishDate.ToShortDateString()</p>
+                    <h5 class="mb-2">@project.Project.Title</h5>
+                    <p class="mb-1">Description: @(project.Project.Description ?? "")</p>
+                    <p class="mb-1">Start date: @project.Project.StartDate.ToShortDateString()</p>
+                    <p class="mb-1">End date: @project.Project.Enddate?.ToString("yyyy-mm-dd")</p>
+                    <p class="mb-1">Publish date: @project.Project.PublishDate.ToShortDateString()</p>
                 </div>
             }
         </div>

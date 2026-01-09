@@ -66,14 +66,16 @@ namespace CVBuddy.Controllers
 
         private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
         {
-            List<Project> projectList = await _context.ProjectUsers
-                .Where(pu => pu.UserId == userId)
-                .Join(
-                _context.Projects,
-                pu => pu.ProjId,
-                p => p.Pid,
-                (pu, p) => p)
-                .ToListAsync(); ;
+            var IsAuthenticated = User.Identity!.IsAuthenticated;
+
+            List<Project> projectList = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                .Where(p =>
+                    p.ProjectUsers.Any(pu => pu.UserId == userId) &&
+                    p.ProjectUsers.Any(pu => pu.IsOwner && !pu.User.IsDeactivated) &&
+                    (IsAuthenticated || !p.ProjectUsers.FirstOrDefault(pu => pu.IsOwner)!.User.HasPrivateProfile))
+                .ToListAsync();
 
             return projectList;
         }
@@ -221,7 +223,7 @@ namespace CVBuddy.Controllers
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
-                    if(cv != null && User.Identity!.IsAuthenticated) //Måste vara inloggad för att se projekt i cv-sida
+                    if(cv != null) //Måste vara inloggad för att se projekt i cv-sida
                         cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
 
                     var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
