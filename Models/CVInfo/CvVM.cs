@@ -43,7 +43,7 @@ namespace CVBuddy.Models.CVInfo
         public string? UserId { get; set; } //Vart null
 
         //[NotMapped]
-        [ForeignKey(nameof(UserId))]
+        //[ForeignKey(nameof(UserId))] --------------------------KOMMENTERADE BORT FÖR VAD GÖR DEN HÄR FÖR HAHAH
         public User? OneUser { get; set; } //varför nullable, ett cv måste ha en ägare
                                            //public ICollection<CvProject> CvProjects { get; set; } = new List<CvProject>();
 

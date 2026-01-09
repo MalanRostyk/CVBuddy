@@ -27,6 +27,104 @@ namespace CVBuddy.Controllers
             return View(new CvVM());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> BuildCv(CvVM cvVM)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(cvVM);
+                Cv cv = new Cv
+                {
+                    ImageFilePath = cvVM.ImageFile.Name,
+                    UserId = _userManager.GetUserId(User)
+                };
+
+                cv.Education = new();
+
+                //if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
+                //{
+                //    ModelState.AddModelError("ImageFile", "Please upload an image");
+                //    ViewBag.eror = "Please upload an image";
+                //    return View(cvVM);
+                //}
+
+                var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
+                Directory.CreateDirectory(uploadeFolder);
+
+                var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
+
+                //if (!IsValidExtension(ext))
+                //    return View(cv);
+
+                var fileName = Guid.NewGuid().ToString() + ext;
+
+                var filePath = Path.Combine(uploadeFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await cvVM.ImageFile.CopyToAsync(stream);
+                }
+                cv.ImageFilePath = "/CvImages/" + fileName;
+
+                await _context.Cvs.AddAsync(cv);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not create Cv, encountered an error while saving to database" });
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while trying to create your Cv." });
+            }
+        }
+
+        //---------------------DeleteCv------------------------------------------DeleteCv---------------------
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteCv(int Cid)
+        {
+
+            ViewBag.Headline = "Delete Cv";
+            ViewBag.WarningMessage = "Are you sure you wan't to delete your Cv? This will permanently delete your Cv but" +
+                ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
+            //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
+            Cv? cv = await GetLoggedInUsersCvAsync();
+
+
+            return View(cv);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> DeleteCv(Cv cv)
+        {
+            try
+            {
+                _context.Cvs.Remove(cv);
+                DeleteOldImageLocally(cv);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
+            }
+            catch (ArgumentNullException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not find Cv." });
+
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed." });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+    
 
         //---------------------UpdateCv------------------------------------------UpdateCv---------------------
 
@@ -149,79 +247,6 @@ namespace CVBuddy.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-
-        //---------------------BuildCv------------------------------------------BuildCv---------------------
-
-        [HttpPost]
-        public async Task<IActionResult> BuildCv(CvVM cvVM)
-        {
-            if (!ModelState.IsValid)
-                return View(cvVM);
-            
-
-            try
-            {
-                Cv cv = new Cv
-                {
-                    ImageFilePath = cvVM.ImageFile.Name,
-                    UserId = _userManager.GetUserId(User)
-                };
-
-                cv.Education = new();
-
-                //if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
-                //{
-                //    ModelState.AddModelError("ImageFile", "Please upload an image");
-                //    ViewBag.eror = "Please upload an image";
-                //    return View(cvVM);
-                //}
-
-                var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
-                Directory.CreateDirectory(uploadeFolder);
-
-                var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
-
-                //if (!IsValidExtension(ext))
-                //    return View(cv);
-
-                var fileName = Guid.NewGuid().ToString() + ext;
-
-                var filePath = Path.Combine(uploadeFolder, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await cvVM.ImageFile.CopyToAsync(stream);
-                }
-                cv.ImageFilePath = "/CvImages/" + fileName;
-
-                await _context.Cvs.AddAsync(cv);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (DbUpdateException e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = "Could not create Cv, encountered an error while saving to database" });
-            }
-            catch (Exception e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error while trying to create your Cv." });
-            }
-        }
-
-
-
-
-
-        
-
-        
-
-        
-
-        
-
-        
 
         //---------------------Education------------------------------------------Education---------------------
 
@@ -1198,7 +1223,7 @@ namespace CVBuddy.Controllers
 
                     string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
 
-                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImage", oldCvFileName);
+                    string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);
 
                     if (!System.IO.File.Exists(finalCvFilePath))
                         throw new ArgumentException("The old image could not be deleted since it was not found. " +

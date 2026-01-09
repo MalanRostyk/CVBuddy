@@ -64,7 +64,7 @@ namespace CVBuddy.Controllers
             return cv;
         }
 
-        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
+        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)//MED READCV!!!!!!!
         {
             var IsAuthenticated = User.Identity!.IsAuthenticated;
 
@@ -384,8 +384,8 @@ namespace CVBuddy.Controllers
 
                 var extension = Path.GetExtension(cv.ImageFile.FileName);
 
-                if (!IsValidExtension(extension))
-                    return View(cv);
+                //if (!IsValidExtension(extension))
+                //    return View(cv);
                
                 var newFileName = Guid.NewGuid() + extension;
                 var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
@@ -498,9 +498,15 @@ namespace CVBuddy.Controllers
                 _context.Cvs.Remove(cv);
                 DeleteOldImageLocally(cv);
                 await _context.SaveChangesAsync();
-            }catch(Exception e)
+            }
+            catch (ArgumentNullException e)
             {
-                return NotFound(e);
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not find Cv." });
+
+            }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while trying to delete your cv, saving the changes failed."});
             }
             
             return RedirectToAction("Index", "Home");
