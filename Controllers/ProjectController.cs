@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Threading.Tasks;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CVBuddy.Controllers
 {
@@ -15,298 +17,299 @@ namespace CVBuddy.Controllers
         {
 
         }
-
+//--------------------------------------------------READ PROJECTS--------------------------------------------------
         [HttpGet]
-        public async Task<IActionResult> GetProject()//nytt metod för att erstta den gamla
+        public async Task<IActionResult> GetProject()
         {
-            var userId = _userManager.GetUserId(User);
-
-            var projects = await _context.Projects
-                .Include(p => p.ProjectUsers)
-                .ThenInclude(pu => pu.User)
-                .ToListAsync();
-
-            var myProjects = new List<ProjectVM>();
-            var otherProjects = new List<ProjectVM>();
-            var publicProjects = new List<ProjectVM>();
-
-            foreach (var project in projects)
+            try
             {
-                var usersInProject = project.ProjectUsers
-                    .Select(pu => pu.User).ToList();
+                var userId = _userManager.GetUserId(User);
+                if (userId == null)
+                    throw new NullReferenceException("User could not be found.");
 
-                var activeUsers = usersInProject
-                    .Where(u => !u.IsDeactivated).ToList();
+                var projects = await _context.Projects
+                    .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                    .ToListAsync();
+                if(projects == null)
+                    throw new NullReferenceException("Projects could not be found.");
 
-                var owner = project.ProjectUsers
-                    .FirstOrDefault(pu => pu.IsOwner);
+                var myProjects = new List<ProjectVM>();
+                var otherProjects = new List<ProjectVM>();
+                var publicProjects = new List<ProjectVM>();
 
-                if (userId != null && project.ProjectUsers.Any(pu => pu.UserId == userId))
+                foreach (var project in projects)
                 {
-                    var relation = project.ProjectUsers
-                        .FirstOrDefault(pu => pu.UserId == userId);
+                    var usersInProject = project.ProjectUsers
+                        .Select(pu => pu.User).ToList();
 
-                    if (owner == null)
-                        continue;
+                    var activeUsers = usersInProject
+                        .Where(u => !u.IsDeactivated).ToList();
 
-                    if (!relation!.IsOwner && owner.User.IsDeactivated)
-                        continue;
+                    var owner = project.ProjectUsers
+                        .FirstOrDefault(pu => pu.IsOwner);
 
-                    myProjects.Add(new ProjectVM
+                    if (userId != null && project.ProjectUsers.Any(pu => pu.UserId == userId))
                     {
-                        Project = project,
-                        UsersInProject = usersInProject,
-                        ActiveUsers = activeUsers,
-                        Relation = relation,
-                        Owner = owner
-                    });
+                        var relation = project.ProjectUsers
+                            .FirstOrDefault(pu => pu.UserId == userId);
 
-                    continue;
-                }
-                if (userId != null)
-                {
+                        if (owner == null)
+                            continue;
+
+                        if (!relation!.IsOwner && owner.User.IsDeactivated)
+                            continue;
+
+                        myProjects.Add(new ProjectVM
+                        {
+                            Project = project,
+                            UsersInProject = usersInProject,
+                            ActiveUsers = activeUsers,
+                            Relation = relation,
+                            Owner = owner
+                        });
+
+                        continue;
+                    }
+                    if (userId != null)
+                    {
+                        if (owner == null || owner.User.IsDeactivated)
+                            continue;
+
+                        var isUserInProject = project.ProjectUsers
+                            .Any(pu => pu.UserId == userId);
+
+                        otherProjects.Add(new ProjectVM
+                        {
+                            Project = project,
+                            UsersInProject = usersInProject,
+                            ActiveUsers = activeUsers,
+                            Owner = owner,
+                            IsUserInProject = isUserInProject
+                        });
+
+                        continue;
+                    }
+
                     if (owner == null || owner.User.IsDeactivated)
                         continue;
 
-                    var isUserInProject = project.ProjectUsers
-                        .Any(pu => pu.UserId == userId);
+                    if (owner.User.HasPrivateProfile)
+                        continue;
 
-                    otherProjects.Add(new ProjectVM
+                    var publicUsers = activeUsers.Where(u => !u.HasPrivateProfile)
+                        .ToList();
+
+                    publicProjects.Add(new ProjectVM
                     {
                         Project = project,
                         UsersInProject = usersInProject,
-                        ActiveUsers = activeUsers,
-                        Owner = owner,
-                        IsUserInProject = isUserInProject
+                        ActiveUsers = publicUsers,
+                        Owner = owner
                     });
-
-                    continue;
                 }
-
-                if (owner == null || owner.User.IsDeactivated)
-                    continue;
-
-                if (owner.User.HasPrivateProfile)
-                    continue;
-
-                var publicUsers = activeUsers.Where(u => !u.HasPrivateProfile)
-                    .ToList();
-
-                publicProjects.Add(new ProjectVM
+                var vm = new ProjectIndexViewModel
                 {
-                    Project = project,
-                    UsersInProject = usersInProject,
-                    ActiveUsers = publicUsers,
-                    Owner = owner
-                });
+                    MyProjects = myProjects,
+                    OtherProjects = otherProjects,
+                    PublicProjects = publicProjects
+                };
+
+                return View(vm);
             }
-            var vm = new ProjectIndexViewModel
+            catch (NullReferenceException ex)
             {
-                MyProjects = myProjects,
-                OtherProjects = otherProjects,
-                PublicProjects = publicProjects
-            };
-
-            return View(vm);
+                return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "An unexpected error occured while getting projects." });
+            }
         }
-
-
+//--------------------------------------------------CREATE PROJECT--------------------------------------------------
         [HttpGet]
-        public async Task<IActionResult> CreateProject()
+        public IActionResult CreateProject()
         {
             ViewBag.ProjectCreateHeadline = "Create a Project";
+            
+            ProjectViewModel projectVM = new();
 
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return NotFound("inte jaag");
-            //var userId = _userManager.GetUserId(User);
-
-            //Lägga till sig själv i projektet som deltagare innan det skapas
-            Project newProj = new();
-
-            newProj.UsersInProject.Add(user);
-            return View(newProj); //Att lägga till sig själv isom participant i ett projekt när det skapas funkar inte eftersom att Project.UsersInproject inte Serialiseras
-                                  //Vill ej ändra model innan vi har mergeat tillsammans
+            return View(projectVM); 
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProject(Project proj)
+        public async Task<IActionResult> CreateProject(ProjectViewModel projectVM)
         {
-
-            if (!ModelState.IsValid)
-                return View(proj);
-
-            var userId = _userManager.GetUserId(User); //Hämtar användarens id
-
-
-            await _context.Projects.AddAsync(proj);
-            await _context.SaveChangesAsync();
-
-            await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
+            try
             {
-                ProjId = proj.Pid,
-                UserId = userId!,
-                IsOwner = true
-            });
+                if (!ModelState.IsValid)
+                    return View(projectVM);
 
-            await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
+                var userId = _userManager.GetUserId(User); //Hämtar användarens id
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    throw new NullReferenceException("User could not be found.");
 
-            return RedirectToAction("Index", "Home");
+                Project newProj = new Project
+                {
+                    Title = projectVM.Title,
+                    Description = projectVM.Description,
+                    StartDate = projectVM.StartDate ?? new DateTime(19000101),
+                    Enddate = projectVM.Enddate,
+                    PublishDate = projectVM.PublishDate
+                };
 
-            #region maanual-merge-andra-versionen-inte-fullt-testad
-            //if (!ModelState.IsValid)
-            //    return View(proj);
+                newProj.UsersInProject.Add(user);
+                await _context.Projects.AddAsync(newProj);
+                await _context.SaveChangesAsync();
 
-            //User? user = await _userManager.GetUserAsync(User);
-
-
-            //await _context.Projects.AddAsync(proj);//Lägg till proj i projects i snapshot
-            //await _context.SaveChangesAsync(); //Serialisera snapshot, proj läggs till i Db innan vi använder dess proj.Pid, eftersom att den är 0 oavsett vad, 
-            //                                   //eftersom att Pid tilldelas först när den har serialiserats till Db
-
-            //var userId = _userManager.GetUserId(User); //Hämtar användarens id
-            ////HÄR
-            ////var cvId = await _context.Cvs.Where(cvs => cvs.UserId == userId).Select(cv => cv.Cid).FirstOrDefaultAsync(); //Hämtar användarens Cv via användarens id
-            //var projId = await _context.Projects.Where(createdProject => createdProject.Pid == proj.Pid).Select(project => project.Pid).FirstOrDefaultAsync(); //Hämtar tillbaka proj som skapades
-
-
-
-
-            //await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
-            //{
-            //    ProjId = projId,
-            //    UserId = userId!,
-            //    IsOwner = true
-            //});
-
-            //await _context.SaveChangesAsync();//Sista serialiseringen, och nu ska allt ha värden i rätt ordning
-            //#region comments
-            ////FUNKAR, najs. Felet var, Ändringarna som gjordes var, att allt behövde göra i en speciell ordning. Tilldela värden till proj innan Post metod.
-            ////I Post metod har inte proj ett Pid än. Lägg till proj i Dbset. Serialiser via save changes. Ett Pid tilldelas. 
-            ////Hämta användares id som samt cvs id som förr. Men hämta även samma projs Pid som serialiserades nyss.
-            ////Nu har alla variabler som behövs värden och kan därmed tilldelas till nya mellantabell objekt direkt i sina respektive DbSet tabeller, (save changes emellan dem för säkerhets skull)
-            ////Till sist save changes för resterande Dbset tabell. Allt sparat. Fungerar perfekt.
-
-            ////var userId = _userManager.GetUserId(User);
-            ////var cvId = _context.Cvs.Where(u => u.UserId == userId).Select(u => u.Cid).FirstOrDefault();
-            ////Console.WriteLine($"cvId: {cvId}, userId: {userId.ToString()}, proj.ProjId: {proj.Pid}, proj.PublisDate: {proj.PublisDate}, proj.StartDate: {proj.StartDate}, proj.Enddate: {proj.Enddate}, ");
-            ////proj.CvProjects.Add(new CvProject
-            ////{
-
-            ////    CvId = cvId,
-            ////    ProjId = proj.Pid
-            ////});
-            ////Console.WriteLine($"cvId: {cvId}, userId: {userId.ToString()}, proj.ProjId: {proj.Pid}, proj.PublisDate: {proj.PublisDate}, proj.StartDate: {proj.StartDate}, proj.Enddate: {proj.Enddate}, ");
-            ////proj.ProjectUsers.Add(new ProjectUser
-            ////{
-            ////    UserId = userId,
-            ////    ProjId = proj.Pid
-            ////});
-            ////Console.WriteLine($"cvId: {cvId}, userId: {userId.ToString()}, proj.ProjId: {proj.Pid}, proj.PublisDate: {proj.PublisDate}, proj.StartDate: {proj.StartDate}, proj.Enddate: {proj.Enddate}, ");
-
-
-            ////await _context.Projects.AddAsync(proj);
-            ////Console.WriteLine($"cvId: {cvId}, userId: {userId.ToString()}, proj.ProjId: {proj.Pid}, proj.PublisDate: {proj.PublisDate}, proj.StartDate: {proj.StartDate}, proj.Enddate: {proj.Enddate}, ");
-
-            ////Måste ha transaktion här annars kan det bli fel i databasen
-
-
-            ////await _context.Projects.AddAsync(proj);
-            ////await _context.SaveChangesAsync();
-
-            ////var cvProject = new CvProject
-            ////{
-            ////    CvId = cvId,
-            ////    ProjId = proj.Pid
-            ////};
-            ////await _context.CvProjects.AddAsync(cvProject);
-            ////await _context.SaveChangesAsync();
-
-            ////var userProject = new ProjectUser
-            ////{
-            ////    ProjId = proj.Pid,
-            ////    UserId = userId
-            ////};
-            ////await _context.ProjectUsers.AddAsync(userProject);
-            ////await _context.SaveChangesAsync();
-            //#endregion
-
-            //return RedirectToAction("Index", "Home");
-            #endregion
+                await _context.ProjectUsers.AddAsync(new ProjectUser //Lägg till ProjectUsers direkt i DbSet
+                {
+                    ProjId = newProj.Pid,
+                    UserId = userId!,
+                    IsOwner = true
+                });
+                await _context.SaveChangesAsync();
+                
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while creating your project." });
+            }
+            catch (NullReferenceException ex)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "An unexpected error occured while creating a project." });
+            }
         }
-
+//--------------------------------------------------UPDATE PROJECT--------------------------------------------------
         [HttpGet]
         public async Task<IActionResult> UpdateProject(int id)
         {
-            var userId = _userManager.GetUserId(User);
+            try
+            {
+                var userId = _userManager.GetUserId(User);
 
-            var project = await _context.Projects
-                .Include(p => p.ProjectUsers)
-                .FirstOrDefaultAsync(p => p.Pid == id && p.ProjectUsers.Any(pu => pu.UserId == userId));
+                var project = await _context.Projects
+                    .Include(p => p.ProjectUsers)
+                    .FirstOrDefaultAsync(p => p.Pid == id && p.ProjectUsers.Any(pu => pu.UserId == userId));
+                if (project == null)
+                    throw new NullReferenceException("Project could not be found.");
 
-            if (project == null)
-                return NotFound();
+                ProjectViewModel projectVM = new ProjectViewModel
+                {
+                    Pid = project.Pid,
+                    Title = project.Title,
+                    Description = project.Description,
+                    StartDate = project.StartDate,
+                    Enddate = project.Enddate,
+                    UsersInProject = project.UsersInProject,
+                    PublishDate = project.PublishDate
+                };
 
-            return View(project);
+                return View(projectVM);
+            }
+            catch (NullReferenceException ex)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "An unexpected error occured while getting a project." });
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProject(Project toUpdate)
+        public async Task<IActionResult> UpdateProject(ProjectViewModel projectToUpdate)
         {
-            if (!ModelState.IsValid)
-                return View(toUpdate);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(projectToUpdate);
 
-            var userId = _userManager.GetUserId(User);
+                var userId = _userManager.GetUserId(User);
 
-            var newProj = await _context.Projects
-                .Include(pu => pu.ProjectUsers)
-                .FirstOrDefaultAsync(p => p.Pid == toUpdate.Pid && p.ProjectUsers.Any(pu => pu.UserId == userId));
+                var project = await _context.Projects
+                    .Include(pu => pu.ProjectUsers)
+                    .FirstOrDefaultAsync(p => p.Pid == projectToUpdate.Pid && p.ProjectUsers.Any(pu => pu.UserId == userId));
+                if (project == null)
+                    throw new NullReferenceException("Project could not be found.");
 
-            if (newProj == null)
-                return NotFound();
+                project.Title = projectToUpdate.Title;
+                project.Description = projectToUpdate.Description;
+                project.StartDate = projectToUpdate.StartDate ?? new DateTime(19000101);
+                project.Enddate = projectToUpdate.Enddate;
+                project.UsersInProject = projectToUpdate.UsersInProject;
+                project.PublishDate = projectToUpdate.PublishDate;
 
-            newProj.Title = toUpdate.Title;
-            newProj.Description = toUpdate.Description;
-            newProj.StartDate = toUpdate.StartDate;
-            newProj.Enddate = toUpdate.Enddate;
-            newProj.UsersInProject = toUpdate.UsersInProject;
-            newProj.PublishDate = toUpdate.PublishDate;
+                await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while updating your project." });
+            }
+            catch (NullReferenceException ex)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "An unexpected error occured while updating a project." });
+            }
         }
-
+//--------------------------------------------------JOIN PROJECT--------------------------------------------------
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> ProjectDetails(int PUId)
         {
-            var userId = _userManager.GetUserId(User);
-
-            var projectuser = await _context.ProjectUsers
-                .Include(pu => pu.Project)
-                .FirstOrDefaultAsync(pu => pu.PUId == PUId);
-
-            if (projectuser == null) return NotFound();
-
-            bool alreadyJoined = await _context.ProjectUsers
-                .AnyAsync(pu => pu.ProjId == projectuser.ProjId && pu.UserId == userId);
-
-            if (alreadyJoined)
-                return RedirectToAction("GetProject");
-
-
-
-            await _context.ProjectUsers.AddAsync(new ProjectUser
+            try
             {
-                ProjId = projectuser.ProjId,
-                UserId = userId,
-                IsOwner = false
-            });
+                var userId = _userManager.GetUserId(User);
+                if (userId == null)
+                    throw new NullReferenceException("User could not be found.");
 
-            await _context.SaveChangesAsync();
+                var projectuser = await _context.ProjectUsers
+                    .Include(pu => pu.Project)
+                    .FirstOrDefaultAsync(pu => pu.PUId == PUId);
 
-            return RedirectToAction("Index", "Home");
+                if (projectuser == null)
+                    throw new NullReferenceException("Your relation to project could not be found.");
+
+                bool alreadyJoined = await _context.ProjectUsers
+                    .AnyAsync(pu => pu.ProjId == projectuser.ProjId && pu.UserId == userId);
+
+                if (alreadyJoined)
+                    return RedirectToAction("GetProject");
+
+                await _context.ProjectUsers.AddAsync(new ProjectUser
+                {
+                    ProjId = projectuser.ProjId,
+                    UserId = userId,
+                    IsOwner = false
+                });
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateException)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error while creating your relation to a project." });
+            }
+            catch (NullReferenceException ex)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = ex.Message });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "An unexpected error occured while creating your relation to a project." });
+            }
         }
     }
 }
