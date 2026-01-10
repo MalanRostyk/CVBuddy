@@ -92,7 +92,7 @@ namespace CVBuddy.Controllers
             {
                 if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
                 {
-                    
+
                     cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -104,8 +104,10 @@ namespace CVBuddy.Controllers
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
                     .FirstOrDefaultAsync(cv => cv.Cid == Cid);
 
-                    if (cv != null) //Måste vara inloggad för att se projekt i cv-sida
-                        cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
+                    if (cv == null)
+                        throw new NullReferenceException("Could not find Cv");
+
+                    cv.UsersProjects = await GetProjectsUserHasParticipatedIn(cv.UserId!);
 
                     var usersCv = await GetLoggedInUsersCvAsync();//Hämtar eget cv för att det ska användas för att jämföra om det är den inloggade användares cv
                     ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
@@ -119,13 +121,15 @@ namespace CVBuddy.Controllers
                 {
                     if (!User.Identity!.IsAuthenticated)
                     {
-                        return RedirectToAction("Login", "Account");
+                        return RedirectToAction("Login", "Account");//För att både inloggade och utloggade ska använder samma action metod
                     }
                     else
                     {
                         cv = await GetLoggedInUsersCvAsync();
-                        if (cv?.OneUser == null)
-                            return RedirectToAction("CreateCv", "Cv");
+                        //if (cv?.OneUser == null) <---- Var osäker på om OneUser va onödig att ha med här 
+                        //    throw new NullReferenceException(""); 
+                        if (cv == null)
+                            throw new NullReferenceException("Could not find Cv");
                     }
 
                 }
@@ -196,13 +200,23 @@ namespace CVBuddy.Controllers
                     ViewBag.HeadlineProjects = "Projects";
                     ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
                 }
+
+                return View(cv);
             }
-            catch (Exception e)
+            catch (NullReferenceException e)
             {
-                return NotFound(e);
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+            catch (OperationCanceledException)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "A database operation was canceled while incrementing this Cvs read counter" });
+            }
+            catch (Exception)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error retrieving Cv and additional information. " });
             }
 
-            return View(cv);
+
         }
 
         //---------------------UpdateCv------------------------------------------UpdateCv---------------------
@@ -407,9 +421,9 @@ namespace CVBuddy.Controllers
 
                 return View(eduVM);
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
 
             }
             catch (Exception e)
@@ -417,7 +431,7 @@ namespace CVBuddy.Controllers
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error processing your request." });
 
             }
-            
+
         }
 
         [HttpPost]
@@ -443,19 +457,20 @@ namespace CVBuddy.Controllers
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Home");
-            }catch(DbUpdateException e)
-            {
-                return View("Error", new ErrorViewModel { ErrorMessage = "Could not save changes to database!"});
             }
-            catch(NullReferenceException e)
+            catch (DbUpdateException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = "Could not save changes to database!" });
             }
-            catch(Exception e)
+            catch (NullReferenceException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
+
         }
 
         //---------------------Certificate------------------------------------------Certificate---------------------
@@ -495,13 +510,13 @@ namespace CVBuddy.Controllers
             }
             catch (NullReferenceException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to add a certificate."});
+                return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to add a certificate." });
             }
-            
+
         }
 
         [HttpGet]
@@ -540,7 +555,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
-            
+
         }
 
         [HttpPost]
@@ -566,7 +581,7 @@ namespace CVBuddy.Controllers
             }
             catch (DbUpdateException e)
             {
-                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes to the database"});
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes to the database" });
             }
             catch (NullReferenceException e)
             {
@@ -576,7 +591,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
- 
+
         }
 
         [HttpGet]
@@ -615,7 +630,7 @@ namespace CVBuddy.Controllers
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
 
-            
+
         }
 
 
@@ -637,7 +652,7 @@ namespace CVBuddy.Controllers
 
             try
             {
-                
+
                 PersonalCharacteristic persChar = new PersonalCharacteristic
                 {
                     CharacteristicName = pvm.CharacteristicName
@@ -665,7 +680,7 @@ namespace CVBuddy.Controllers
             }
         }
 
-       
+
         [HttpGet]
         public async Task<IActionResult> UpdatePersonalCharacteristic(int pcId)
         {
@@ -744,7 +759,7 @@ namespace CVBuddy.Controllers
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
 
-            
+
         }
 
 
@@ -768,22 +783,22 @@ namespace CVBuddy.Controllers
                 await _context.SaveChangesAsync();
                 return View("UpdateCv", await UsersCvToCvVM());
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Could not delete personal characteristic due to an error saving changes to database." });
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error deleting personal characteristic" });
             }
         }
 
 
-        
+
 
         //---------------------Experience------------------------------------------Experience---------------------
 
@@ -800,7 +815,7 @@ namespace CVBuddy.Controllers
             if (!ModelState.IsValid)
                 return View(evm);
 
-            
+
             try
             {
                 Experience exp = new Experience
@@ -820,15 +835,15 @@ namespace CVBuddy.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Home");
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Could not add experience due to an error saving changes to database." });
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error adding experience." });
             }
@@ -870,7 +885,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to process your request." });
             }
-            
+
 
         }
 
@@ -916,11 +931,11 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error updating experience." });
             }
-            
+
         }
 
         [HttpGet]
-        public async Task<IActionResult> DeleteExperience(int exid) 
+        public async Task<IActionResult> DeleteExperience(int exid)
         {
             try
             {
@@ -952,7 +967,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
             }
-            
+
         }
 
 
@@ -1000,7 +1015,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
             }
-                
+
         }
 
         [HttpGet]
@@ -1037,7 +1052,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
             }
-            
+
         }
 
         [HttpPost]
@@ -1077,7 +1092,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
             }
-            
+
         }
 
         [HttpGet]
@@ -1193,7 +1208,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update interest, changes could not be saved." });
             }
-            
+
         }
 
         [HttpPost]
@@ -1268,7 +1283,7 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to delete interest, changes could not be saved." });
             }
-            
+
         }
 
         //--------------------PRIVATE HELPERS---------------------------------------------------
@@ -1295,14 +1310,14 @@ namespace CVBuddy.Controllers
             return cvVM;
         }
 
-        
+
         private async Task<Cv?> GetLoggedInUsersCvAsync() //Kan returnera null, och kan inte använda FindAsync, eftersom att entiteten håller komplexa objekt
         {
             if (!User.Identity!.IsAuthenticated)
                 return null;
-           
-            var userId = _userManager.GetUserId(User); 
-            
+
+            var userId = _userManager.GetUserId(User);
+
             Cv? cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -1331,7 +1346,7 @@ namespace CVBuddy.Controllers
                 p => p.Pid,
                 (pu, p) => p)
                 .ToListAsync(); ;
-            return projectList;           
+            return projectList;
         }
 
         private void DeleteOldImageLocally(Cv cvOld)
@@ -1351,8 +1366,8 @@ namespace CVBuddy.Controllers
                     if (!System.IO.File.Exists(finalCvFilePath))
                         throw new ArgumentException("The old image could not be deleted since it was not found. " +
                             "Attempted too look for it at: " + finalCvFilePath + " Did you move it?");
-                    
-                        System.IO.File.Delete(finalCvFilePath);
+
+                    System.IO.File.Delete(finalCvFilePath);
                 }
             }
         }

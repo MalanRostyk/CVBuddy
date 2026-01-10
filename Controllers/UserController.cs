@@ -56,7 +56,6 @@ namespace CVBuddy.Controllers
 
                 if (user == null)
                     throw new NullReferenceException("User could not be found.");
-
                 var userVm = new UserViewModel
                 {
                     UserId = user.Id,
