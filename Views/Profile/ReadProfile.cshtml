@@ -1,164 +1,180 @@
 ﻿@model CVBuddy.Models.ProfileViewModel
 
-<div class="p-2 d-flex read-banner">
-    <div class="pe-2">
-        @if (ViewBag.HasOneCv)
-        {
-            <img src="@Model.Cv!.ImageFilePath" alt="Cv Image" />
-        }
-    </div>
-    <div class="pl-2 d-flex flex-column">
-        <h3><i class="fa-solid fa-user"></i> @Model.ViewUser!.FirstName @Model.ViewUser!.LastName - <i class="fa-solid fa-eye"></i> @Model.Cv!.ReadCount</h3>
-        <p><i class="fa-solid fa-globe"></i> @Model.ViewUser!.Email</p>
-        <p><i class="fa-solid fa-phone"></i> @Model.ViewUser!.PhoneNumber</p>
 
-        @if (ViewBag.HasOneAdress)
-        {
-            <p><i class="fa-solid fa-thumbtack"></i>@Model.ViewUser!.OneAddress!.Country, @Model.ViewUser!.OneAddress!.City</p>
-        }
-    </div>
-    <div class="px-2 d-flex flex-column gap-2 justify-content-center interactions-read-banner">
-        @if (ViewBag.IsMyProfile != true)
-        {
-            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.ViewUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
-        }
+
+<div class="d-flex justify-content-center align-content-center min-vh-90">
+    <div class="col-md-6 col-lg-10">
+
     </div>
 </div>
-<div class="content-in-profile my-4 d-flex gap-3">
-    @if (ViewBag.HasOneCv && ViewBag.HasCvWithOnlyImage)
-    {
-        <div id="cv-info-in-profile">
-            <h2>Cv</h2>
-            @if (ViewBag.HasExperience)
+<div class="d-flex justify-content-center align-content-center min-vh-90">
+    <div class="col-md-6 col-lg-10">
+        <div class="d-flex flex-row justify-content-center gap-4 mb-4">
+            <a asp-controller="CvInformation" asp-action="ReadCv" asp-route-cid="@Model.Cv.Cid" class="btn btn-outline-primary"><i class="fa-regular fa-address-card"></i>See Cv</a> @* bugg *@
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-house"></i>Home</a>
+        </div>
+        <div class="p-2 d-flex read-banner">
+            <div class="pe-2">
+                @if (ViewBag.HasOneCv)
+                {
+                    <img src="@Model.Cv!.ImageFilePath" alt="Cv Image" />
+                }
+            </div>
+            <div class="pl-2 d-flex flex-column">
+                <h3><i class="fa-solid fa-user"></i> @Model.ViewUser!.FirstName @Model.ViewUser!.LastName - <i class="fa-solid fa-eye"></i> @Model.Cv!.ReadCount</h3>
+                <p><i class="fa-solid fa-globe"></i> @Model.ViewUser!.Email</p>
+                <p><i class="fa-solid fa-phone"></i> @Model.ViewUser!.PhoneNumber</p>
+
+                @if (ViewBag.HasOneAdress)
+                {
+                    <p><i class="fa-solid fa-thumbtack"></i>@Model.ViewUser!.OneAddress!.Country, @Model.ViewUser!.OneAddress!.City</p>
+                }
+            </div>
+            <div class="px-2 d-flex flex-column gap-2 justify-content-center interactions-read-banner">
+                @if (ViewBag.IsMyProfile != true)
+                {
+                    <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.ViewUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
+                }
+            </div>
+        </div>
+        <div class="content-in-profile my-4 d-flex gap-3">
+            @if (ViewBag.HasOneCv && ViewBag.HasCvWithOnlyImage)
             {
-                <h2 class="d-block">Experiences</h2>
-                <div class="mb-4">
-                    @foreach (var experience in Model.Cv!.Experiences)
+                <div id="cv-info-in-profile">
+                    <h2 class="text-center">Cv</h2>
+                    @if (ViewBag.HasExperience)
                     {
-                        <div class="mb-2 content-item">
-                            <b class="mb-2">@experience.Title</b>
-                            <p class="mb-1">Description: @experience.Description</p>
-                            <p class="mb-1">Company: @experience.Company</p>
-                            <p class="mb-1">Start date: @experience.StartDate.ToShortDateString()</p>
-                            <p class="mb-1">End date: @experience.EndDate?.ToString("yyyy-mm-dd")</p>
+                        <h2 class="d-block">Experiences</h2>
+                        <div class="mb-4">
+                            @foreach (var experience in Model.Cv!.Experiences)
+                            {
+                                <div class="mb-2 content-item">
+                                    <b class="mb-2">@experience.Title</b>
+                                    <p class="mb-1">Description: @experience.Description</p>
+                                    <p class="mb-1">Company: @experience.Company</p>
+                                    <p class="mb-1">Start date: @experience.StartDate.ToShortDateString()</p>
+                                    <p class="mb-1">End date: @experience.EndDate?.ToString("yyyy-mm-dd")</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (ViewBag.HasHighSchool)
+                    {
+                        <div class="mb-4 content-item">
+                            <h5>High School</h5>
+                            <p class="mb-0">High School: @Model.Cv!.Education.HighSchool</p>
+                            <p class="mb-0">Program: @(Model.Cv!.Education.HSProgram ?? "")</p>
+                            <p class="mb-0">Graduation: @(Model.Cv!.Education.HSDate ?? "Ongoing")</p>
+                        </div>
+                    }
+                    @if (ViewBag.HasUniveristy)
+                    {
+                        <div class="mb-4 content-item">
+                            <h5>University</h5>
+                            <p class="mb-0">University: @Model.Cv!.Education.Univeristy</p>
+                            <p class="mb-0">Program: @(Model.Cv!.Education.UniProgram ?? "")</p>
+                            <p class="mb-0">Graduation: @(Model.Cv!.Education.UniDate ?? "Ongoing")</p>
+                        </div>
+                    }
+
+                    <div>
+                        @if (ViewBag.HasSkills)
+                        {
+                            <h2>Skills</h2>
+                            <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
+                                @foreach (var skill in Model.Cv!.Skills)
+                                {
+                                    <div class="flex-grow-2 content-item">
+                                        <p class="mb-0"><b>@skill.ASkill</b></p>
+                                        <p class="mb-0">@skill.Description</p>
+                                        <p class="mb-0">@skill.Date</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div class="mb-4 d-flex gap-3">
+                        @if (ViewBag.HasInterests)
+                        {
+                            <div class="content-item">
+                                <h2 class="d-block">Interests</h2>
+                                <ul>
+                                    @foreach (var interest in Model.Cv!.Interests)
+                                    {
+                                        <li class="mb-0">@interest.InterestName</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        @if (ViewBag.HasCertificates)
+                        {
+                            <div class="content-item">
+                                <h2>Certificates</h2>
+                                <ul>
+                                    @foreach (var certificate in Model.Cv!.Certificates)
+                                    {
+                                        <li>
+                                            <p class="mb-0">@certificate.CertName</p>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        @if (ViewBag.HasPersonalCharacteristics)
+                        {
+                            <div class="content-item">
+                                <h2>Personal Characteristics</h2>
+                                <div class="d-flex flex-column gap-3">
+                                    <ul>
+                                        @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
+                                        {
+                                            <li>
+                                                <p class="mb-0">@persChar.CharacteristicName</p>
+                                            </li>
+                                        }
+                                    </ul>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        @if (ViewBag.HasPersonalCharacteristics)
+                        {
+                            <div class="content-item">
+                                <h2>Personal Characteristics</h2>
+                                <ul>
+                                    @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
+                                    {
+                                        <li>
+                                            <p class="mb-0">@persChar.CharacteristicName</p>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                        }
+                    </div>
+
+                </div>
+            }
+            @if (ViewBag.HasJoinedProjects)
+            {
+                <div id="project-in-profile">
+                    <h2 class="d-flex">Projects</h2>
+                    @foreach (var project in Model.Projects)
+                    {
+                        <div class="mb-2 projects-in-profile-containers">
+                            <h5 class="mb-2">@project.Project.Title</h5>
+                            <p class="mb-1">Description: @(project.Project.Description ?? "")</p>
+                            <p class="mb-1">Start date: @project.Project.StartDate.ToShortDateString()</p>
+                            <p class="mb-1">End date: @(project.Project.Enddate?.ToString("yyyy-mm-dd") ?? "Ongoing")</p>
+                            <p class="mb-1">Publish date: @project.Project.PublishDate.ToShortDateString()</p>
                         </div>
                     }
                 </div>
             }
-            @if (ViewBag.HasHighSchool)
-            {
-                <div class="mb-4 content-item">
-                    <h5>High School</h5>
-                    <p class="mb-0">High School: @Model.Cv!.Education.HighSchool</p>
-                    <p class="mb-0">Program: @(Model.Cv!.Education.HSProgram ?? "")</p>
-                    <p class="mb-0">Graduation: @(Model.Cv!.Education.HSDate ?? "Ongoing")</p>
-                </div>
-            }
-            @if (ViewBag.HasUniveristy)
-            {
-                <div class="mb-4 content-item">
-                    <h5>University</h5>
-                    <p class="mb-0">University: @Model.Cv!.Education.Univeristy</p>
-                    <p class="mb-0">Program: @(Model.Cv!.Education.UniProgram ?? "")</p>
-                    <p class="mb-0">Graduation: @(Model.Cv!.Education.UniDate ?? "Ongoing")</p>
-                </div>
-            }
-
-            <div>
-                @if (ViewBag.HasSkills)
-                {
-                    <h2>Skills</h2>
-                    <div class="mb-4 d-flex justify-content-center flex-wrap gap-1">
-                        @foreach (var skill in Model.Cv!.Skills)
-                        {
-                            <div class="flex-grow-2 content-item">
-                                <p class="mb-0"><b>@skill.ASkill</b></p>
-                                <p class="mb-0">@skill.Description</p>
-                                <p class="mb-0">@skill.Date</p>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-            <div class="mb-4 d-flex gap-3">
-                @if (ViewBag.HasInterests)
-                {
-                    <div class="content-item">
-                        <h2 class="d-block">Interests</h2>
-                        <ul>
-                            @foreach (var interest in Model.Cv!.Interests)
-                            {
-                                <li class="mb-0">@interest.InterestName</li>
-                            }
-                        </ul>
-                    </div>
-                }
-                @if (ViewBag.HasCertificates)
-                {
-                    <div class="content-item">
-                        <h2>Certificates</h2>
-                        <ul>
-                            @foreach (var certificate in Model.Cv!.Certificates)
-                            {
-                                <li>
-                                    <p class="mb-0">@certificate.CertName</p>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                }
-                @if (ViewBag.HasPersonalCharacteristics)
-                {
-                    <div class="content-item">
-                        <h2>Personal Characteristics</h2>
-                        <div class="d-flex flex-column gap-3">
-                            <ul>
-                                @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
-                                {
-                                    <li>
-                                        <p class="mb-0">@persChar.CharacteristicName</p>
-                                    </li>
-                                }
-                            </ul>
-
-                        </div>
-                    </div>
-                }
-            </div>
-            <div>
-                @if (ViewBag.HasPersonalCharacteristics)
-                {
-                    <div class="content-item">
-                        <h2>Personal Characteristics</h2>
-                        <ul>
-                            @foreach (var persChar in Model.Cv!.PersonalCharacteristics)
-                            {
-                                <li>
-                                    <p class="mb-0">@persChar.CharacteristicName</p>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-
-                }
-            </div>
-
         </div>
-    }
-    @if (ViewBag.HasJoinedProjects)
-    {
-        <div id="project-in-profile">
-            <h2 class="d-flex">Projects</h2>
-            @foreach (var project in Model.Projects)
-            {
-                <div class="mb-2 projects-in-profile-containers">
-                    <h5 class="mb-2">@project.Project.Title</h5>
-                    <p class="mb-1">Description: @(project.Project.Description ?? "")</p>
-                    <p class="mb-1">Start date: @project.Project.StartDate.ToShortDateString()</p>
-                    <p class="mb-1">End date: @project.Project.Enddate?.ToString("yyyy-mm-dd")</p>
-                    <p class="mb-1">Publish date: @project.Project.PublishDate.ToShortDateString()</p>
-                </div>
-            }
-        </div>
-    }
+    </div>
 </div>
+

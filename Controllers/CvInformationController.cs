@@ -69,7 +69,7 @@ namespace CVBuddy.Controllers
                 await _context.Cvs.AddAsync(cv);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -128,8 +128,11 @@ namespace CVBuddy.Controllers
                         cv = await GetLoggedInUsersCvAsync();
                         //if (cv?.OneUser == null) <---- Var osäker på om OneUser va onödig att ha med här 
                         //    throw new NullReferenceException(""); 
+
                         if (cv == null)
-                            throw new NullReferenceException("Could not find Cv");
+                                return RedirectToAction("BuildCv");
+
+
                     }
 
                 }
@@ -319,6 +322,7 @@ namespace CVBuddy.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -338,7 +342,7 @@ namespace CVBuddy.Controllers
             }
 
 
-            return RedirectToAction("Index", "Home");
+            
         }
 
         //---------------------DeleteCv------------------------------------------DeleteCv---------------------
@@ -458,7 +462,7 @@ namespace CVBuddy.Controllers
                 cv.Education.HSDate = evm.HSDate;
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -504,7 +508,7 @@ namespace CVBuddy.Controllers
 
                 cv.Certificates.Add(certificate);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -666,7 +670,7 @@ namespace CVBuddy.Controllers
 
                 cv.PersonalCharacteristics.Add(persChar);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -835,7 +839,7 @@ namespace CVBuddy.Controllers
                     throw new NullReferenceException("Users Cv could not be found.");
                 cv.Experiences.Add(exp);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -919,7 +923,7 @@ namespace CVBuddy.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -955,7 +959,7 @@ namespace CVBuddy.Controllers
 
                 _context.Experiences.Remove(experience);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1003,7 +1007,7 @@ namespace CVBuddy.Controllers
 
                 cv.Skills.Add(skill);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1080,7 +1084,7 @@ namespace CVBuddy.Controllers
                 skill.Date = sVM.Date;
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction("UpdateCv", sVM);
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1115,7 +1119,7 @@ namespace CVBuddy.Controllers
                     throw new NullReferenceException("Skill could not be found.");
                 _context.Skills.Remove(skill);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1161,7 +1165,7 @@ namespace CVBuddy.Controllers
 
                 cv.Interests.Add(interest);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1271,7 +1275,7 @@ namespace CVBuddy.Controllers
                     throw new NullReferenceException("Interest could not be found");
                 _context.Interests.Remove(interest);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("UpdateCv", await UsersCvToCvVM());
+                return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
             {
@@ -1338,19 +1342,33 @@ namespace CVBuddy.Controllers
 
             return cv;
         }
-        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
+        //private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
+        //{
+        //    List<Project> projectList = await _context.ProjectUsers
+        //        .Where(pu => pu.UserId == userId)
+        //        .Join(
+        //        _context.Projects,
+        //        pu => pu.ProjId,
+        //        p => p.Pid,
+        //        (pu, p) => p)
+        //        .ToListAsync(); ;
+        //    return projectList;
+        //}
+        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)//MED READCV!!!!!!!
         {
-            List<Project> projectList = await _context.ProjectUsers
-                .Where(pu => pu.UserId == userId)
-                .Join(
-                _context.Projects,
-                pu => pu.ProjId,
-                p => p.Pid,
-                (pu, p) => p)
-                .ToListAsync(); ;
+            var IsAuthenticated = User.Identity!.IsAuthenticated;
+
+            List<Project> projectList = await _context.Projects
+                .Include(p => p.ProjectUsers)
+                    .ThenInclude(pu => pu.User)
+                .Where(p =>
+                    p.ProjectUsers.Any(pu => pu.UserId == userId) &&
+                    p.ProjectUsers.Any(pu => pu.IsOwner && !pu.User.IsDeactivated) &&
+                    (IsAuthenticated || !p.ProjectUsers.FirstOrDefault(pu => pu.IsOwner)!.User.HasPrivateProfile))
+                .ToListAsync();
+
             return projectList;
         }
-
         private void DeleteOldImageLocally(Cv cvOld)
         {
             string[]? cvOldFileImageNameArray = null;

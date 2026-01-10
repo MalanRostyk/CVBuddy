@@ -2,176 +2,186 @@
 
 @using Microsoft.AspNetCore.Identity
 
-@if (User.Identity.IsAuthenticated)//kolla om användaren är inloggad,inte hoppa ner till else och visa andra projekt
-{
-    <a asp-action="CreateProject" class="btn btn-primary mb-3">Create new Project</a>
-    <h3>My projects</h3>
-    @if (Model.MyProjects.Count == 0)//kolla om användaren äger några projekt, annars visa meddelande
-    {
-        <p>You don´t own any projects.</p>
-    }
-    @foreach (var project in Model.MyProjects)//loopa igenom alla projekt som användaren äger
-    {
-        <div class="min-vh-80 read-banner">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p><strong>Title : </strong>@project.Project.Title</p>
-                </div>
-                @if (project.Owner != null)//kolla om ägaren finns
-                {
-                    <div class="col-12">
-                        <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
-                    </div>
-                }
-                <div class="col-12">
-                    <p><strong>Project description : </strong>@project.Project.Description</p>
-                </div>
-                <div class="col-12">
-                    <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
-                    <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
-                    <span>
-                        <strong>Status : </strong>
-                        @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
-                    </span>
-                </div>
-                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
-                    <p class="mb-0">
-                        @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
-                        {
-                            <strong>Participants : </strong>
-                            @for (int i = 0; i < project.ActiveUsers.Count; i++)//loopa igenom deltagarna
-                            {
-                                @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
-                                @if (i < project.ActiveUsers.Count - 1)
-                                {
-                                    <span>, </span>
-                                }
-                            }
-                        }
-                    </p>
-                    @if (project.Relation?.IsOwner == true)//om ägaren är inloggad, visa update knapp
-                    {
-                        <a asp-action="UpdateProject" asp-route-id="@project.Project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
-                    }
-                    else//om deltagaren är inloggad, visa participant knapp
-                    {
-                        <button class="btn btn-info">Participant</button>
-                    }
-                </div>
+<div class="d-flex justify-content-center align-content-center min-vh-90">
+    <div class="col-md-6 col-lg-10">
+        @if (User.Identity.IsAuthenticated)//kolla om användaren är inloggad,inte hoppa ner till else och visa andra projekt
+        {
+            <div class="gap-4">
+                <a clas="btn btn-primary" asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-house"></i>Home</a>
+                <a asp-action="CreateProject" class="btn btn-primary">Create new Project</a>
             </div>
-        </div>
-    }
-
-    <h3>Other projects</h3>
-    @if (Model.OtherProjects.Count == 0)//kolla om det finns andra projekt
-    {
-        <p>No other projects available.</p>
-    }
-    @foreach (var project in Model.OtherProjects)//loopa igenom andra projekt
-    {
-        <div class="min-vh-80 read-banner">
-
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p><strong>Title : </strong>@project.Project.Title</p>
-                </div>
-                @if (project.Owner != null)//kolla om ägaren finns
-                {
-                    <div class="col-12">
-                        <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
-                    </div>
-                }
-                <div class="col-12">
-                    <p><strong>Project description : </strong>@project.Project.Description</p>
-                </div>
-                <div class="col-12">
-                    <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
-                    <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
-                    <span>
-                        <strong>Status : </strong>
-                        @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
-                    </span>
-                </div>
-                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
-                    <p class="mb-0">
-                        @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
+            
+            <h3>My projects</h3>
+            @if (Model.MyProjects.Count == 0)//kolla om användaren äger några projekt, annars visa meddelande
+            {
+                <p>You don´t own any projects.</p>
+            }
+            @foreach (var project in Model.MyProjects)//loopa igenom alla projekt som användaren äger
+            {
+                <div class="col-10 read-banner">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p><strong>Title : </strong>@project.Project.Title</p>
+                        </div>
+                        @if (project.Owner != null)//kolla om ägaren finns
                         {
-                            <strong>Participants : </strong>
-                            @for (int i = 0; i < project.ActiveUsers.Count; i++)
-                            {
-                                @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
-                                @if (i < project.ActiveUsers.Count - 1)
-                                {
-                                    <span>, </span>
-                                }
-                            }
+                            <div class="col-12">
+                                <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
+                            </div>
                         }
-                    </p>
-                    @if (!project.IsUserInProject)//om du har ingen relation till projektet, visa join knapp
-                    {
-                        <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@project.Owner!.PUId">
-                            <button class="btn btn-primary">Join project!</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <button class="btn btn-info">Already joined</button>
-                    }
-                </div>
-            </div>
-        </div>
-    }
-}
-
-else//om användaren inte är inloggad, visa bara andra projekt
-{
-    <h3>Public projects</h3>
-    @if (Model.PublicProjects.Count == 0)
-    {
-        <p>No projects available.</p>
-    }
-    @foreach (var project in Model.PublicProjects)//loopa igenom andra projekt
-    {
-        <div class="min-vh-80 read-banner">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p><strong>Title : </strong>@project.Project.Title</p>
-                </div>
-                @if (project.Owner != null)
-                {
-                    <div class="col-12">
-                        <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
+                        <div class="col-12">
+                            <p><strong>Project description : </strong>@project.Project.Description</p>
+                        </div>
+                        <div class="col-12">
+                            <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
+                            <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
+                            <span>
+                                <strong>Status : </strong>
+                                @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
+                            </span>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                            <p class="mb-0">
+                                @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
+                                {
+                                    <strong>Participants : </strong>
+                                    @for (int i = 0; i < project.ActiveUsers.Count; i++)//loopa igenom deltagarna
+                                    {
+                                        @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
+                                        @if (i < project.ActiveUsers.Count - 1)
+                                        {
+                                            <span>, </span>
+                                        }
+                                    }
+                                }
+                            </p>
+                            @if (project.Relation?.IsOwner == true)//om ägaren är inloggad, visa update knapp
+                            {
+                                <a asp-action="UpdateProject" asp-route-id="@project.Project.Pid" class="btn btn-primary"><i class="fa-solid fa-pencil"></i>Update a project</a>
+                            }
+                            else//om deltagaren är inloggad, visa participant knapp
+                            {
+                                <button class="btn btn-info">Participant</button>
+                            }
+                        </div>
                     </div>
-                }
-                <div class="col-12">
-                    <p><strong>Project description : </strong>@project.Project.Description</p>
                 </div>
-                <div class="col-12">
-                    <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
-                    <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
-                    <span>
-                        <strong>Status : </strong>
-                        @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
-                    </span>
-                </div>
-                <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
-                    <p class="mb-0">
-                        @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
-                        {
-                            <strong>Participants : </strong>
-                            @for (int i = 0; i < project.ActiveUsers.Count; i++)
-                            {
-                                @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
-                                @if (i < project.ActiveUsers.Count - 1)//lägg till komma om det inte är sista deltagaren
-                                {
-                                    <span>, </span>
-                                }
-                            }
-                        }
-                    </p>
-                </div>
-            </div>
-        </div>
-    }
+            }
 
-}
+            <h3>Other projects</h3>
+            @if (Model.OtherProjects.Count == 0)//kolla om det finns andra projekt
+            {
+                <p>No other projects available.</p>
+            }
+            @foreach (var project in Model.OtherProjects)//loopa igenom andra projekt
+            {
+                <div class="min-vh-80 read-banner">
+
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p><strong>Title : </strong>@project.Project.Title</p>
+                        </div>
+                        @if (project.Owner != null)//kolla om ägaren finns
+                        {
+                            <div class="col-12">
+                                <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
+                            </div>
+                        }
+                        <div class="col-12">
+                            <p><strong>Project description : </strong>@project.Project.Description</p>
+                        </div>
+                        <div class="col-12">
+                            <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
+                            <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
+                            <span>
+                                <strong>Status : </strong>
+                                @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
+                            </span>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                            <p class="mb-0">
+                                @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
+                                {
+                                    <strong>Participants : </strong>
+                                    @for (int i = 0; i < project.ActiveUsers.Count; i++)
+                                    {
+                                        @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
+                                        @if (i < project.ActiveUsers.Count - 1)
+                                        {
+                                            <span>, </span>
+                                        }
+                                    }
+                                }
+                            </p>
+                            @if (!project.IsUserInProject)//om du har ingen relation till projektet, visa join knapp
+                            {
+                                <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@project.Owner!.PUId">
+                                    <button class="btn btn-primary">Join project!</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-info">Already joined</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        else//om användaren inte är inloggad, visa bara andra projekt
+        {
+            <h3>Public projects</h3>
+            @if (Model.PublicProjects.Count == 0)
+            {
+                <p>No projects available.</p>
+            }
+            @foreach (var project in Model.PublicProjects)//loopa igenom andra projekt
+            {
+                <div class="min-vh-80 read-banner">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p><strong>Title : </strong>@project.Project.Title</p>
+                        </div>
+                        @if (project.Owner != null)
+                        {
+                            <div class="col-12">
+                                <p><strong>Owner : </strong>@project.Owner.User.FirstName @project.Owner.User.LastName</p>
+                            </div>
+                        }
+                        <div class="col-12">
+                            <p><strong>Project description : </strong>@project.Project.Description</p>
+                        </div>
+                        <div class="col-12">
+                            <span><strong>Started : </strong>@project.Project.StartDate.ToShortDateString()</span>
+                            <span><strong>Published : </strong>@project.Project.PublishDate.ToShortDateString()</span>
+                            <span>
+                                <strong>Status : </strong>
+                                @(project.Project.Enddate == null ? "Ongoing project" : $"Ended: {project.Project.Enddate:yyyy-mm-dd}")
+                            </span>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
+                            <p class="mb-0">
+                                @if (project.ActiveUsers.Any())//kontrollera om det finns några deltagare att visa, om inte ska texten Participants inte skrivas ut
+                                {
+                                    <strong>Participants : </strong>
+                                    @for (int i = 0; i < project.ActiveUsers.Count; i++)
+                                    {
+                                        @project.ActiveUsers[i].FirstName @project.ActiveUsers[i].LastName
+                                        @if (i < project.ActiveUsers.Count - 1)//lägg till komma om det inte är sista deltagaren
+                                        {
+                                            <span>, </span>
+                                        }
+                                    }
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+    </div>
+</div>
+
+

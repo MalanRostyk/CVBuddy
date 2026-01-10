@@ -1,139 +1,132 @@
 ﻿@model CVBuddy.Models.CVInfo.CvVM
 
+<div class="d-flex justify-content-center align-content-center min-vh-90">
+    <div class="col-md-6 col-lg-10">
+        <h2>Update your Cv</h2>
 
-<h2>Update your Cv</h2>
+        <div class="d-flex justify-content-center gap-3 test">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Home</a>
+            <a asp-controller="CvInformation" asp-action="DeleteCv" asp-route-cid="@Model.Cid" class="btn btn-danger">Delete</a>
+        </div>
 
-<div class="mb-4">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Home</a>
-    <a asp-controller="CvInformation" asp-action="DeleteCv" asp-route-cid="@Model.Cid" class="btn btn-danger">Delete</a>
-</div>
+        
 
-<img src="@Model.ImageFilePath" alt="Profile Image" />
-<h3>Upload your image</h3>
->
+        <img src="@Model.ImageFilePath" alt="Profile Image" />
+        <h3>Update your image</h3>
 
-<form method="post" asp-action="UpdateImage" enctype="multipart/form-data">
-    <div>
-        <label>Update Cv Image</label>
-        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
-        <span asp-validation-for="ImageFile" class="text-danger"></span>
-    </div>
-    <button type="submit" asp-action="UpdateImage" class="d-block btn btn-primary">Update Image</button>
-</form>
-
--------------------
-
-<h2>Edit Education <a asp-action="AddEducation" asp-route-eid="@Model.Education!.Eid" class="btn btn-primary">Edit</a></h2>
-<div class="mb-2 content-item">
-    <h5>HighSchool</h5>
-    <p class="mb-0">High School: @(Model.Education!.HighSchool ?? "Not entered")</p>
-    <p class="mb-0">Program: @(Model.Education.HSProgram ?? "Not entered")</p>
-    <p class="mb-0">Date: @(Model.Education.HSDate ?? "Not entered")</p>
-</div>
-
-<div class="mb-2 content-item">
-    <h5>University</h5>
-    <p class="mb-0">University: @(Model.Education.Univeristy ?? "Not entered")</p>
-    <p class="mb-0">Program: @(Model.Education.UniProgram ?? "Not entered")</p>
-    <p class="mb-0">Date: @(Model.Education.UniDate ?? "Not entered")</p>
-</div>
-
--------------------
-
-<div>
-    <h2>Edit Certificate <a asp-action="AddCertificate" class="btn btn-primary">Add</a></h2>
-    <div class="d-flex flex-row">
-        @foreach (var certificate in Model.Certificates)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">Certificate: @certificate.CertName</p>
-                <div class="d-flex gap-1">
-                    <a asp-action="UpdateCertificate" asp-route-certId="@certificate.CertId" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteCertificate" asp-route-certId="@certificate.CertId" class="btn btn-primary">Delete</a>
-                </div>
+        <form method="post" asp-action="UpdateImage" enctype="multipart/form-data" class="mb-4">
+            <div>
+                <input asp-for="ImageFile" type="file" accept="image/*" class="mb-2 form-control img-file-picker" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
-        }
-    </div>
-</div>
+            <button type="submit" asp-action="UpdateImage" class="d-block btn btn-primary">Update Image</button>
+        </form>
 
--------------------
+        <h2>Edit Education <a asp-action="AddEducation" asp-route-eid="@Model.Education!.Eid" class="btn btn-primary">Edit</a></h2>
+        <div class="mb-2 content-item">
+            <h5>HighSchool</h5>
+            <p class="mb-0">High School: @(Model.Education!.HighSchool ?? "Not entered")</p>
+            <p class="mb-0">Program: @(Model.Education.HSProgram ?? "Not entered")</p>
+            <p class="mb-0">Date: @(Model.Education.HSDate ?? "Not entered")</p>
+        </div>
 
-<div>
-    <h2>Edit Skills <a asp-action="AddSkill" class="btn btn-primary">Add</a></h2>
-    <div class="d-flex flex-row">
-        @foreach (var skill in Model.Skills)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">Skill: @skill.ASkill</p>
-                <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
-                <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
-                <div class="d-flex gap-1">
-                    <a asp-action="UpdateSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Delete</a>
-                </div>
+        <div class="mb-4 content-item">
+            <h5>University</h5>
+            <p class="mb-0">University: @(Model.Education.Univeristy ?? "Not entered")</p>
+            <p class="mb-0">Program: @(Model.Education.UniProgram ?? "Not entered")</p>
+            <p class="mb-0">Date: @(Model.Education.UniDate ?? "Not entered")</p>
+        </div>
+
+        <div class="mb-4">
+            <h2>Edit Certificate <a asp-action="AddCertificate" class="btn btn-primary">Add</a></h2>
+            <div class="d-flex flex-row">
+                @foreach (var certificate in Model.Certificates)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">Certificate: @certificate.CertName</p>
+                        <div class="d-flex gap-1">
+                            <a asp-action="UpdateCertificate" asp-route-certId="@certificate.CertId" class="btn btn-primary">Update</a>
+                            <a asp-action="DeleteCertificate" asp-route-certId="@certificate.CertId" class="btn btn-primary">Delete</a>
+                        </div>
+                    </div>
+                }
             </div>
-        }
-    </div>
-</div>
+        </div>
 
--------------------
-
-<div class="mb-4">
-    <h2>Edit Experience <a asp-action="AddExperience" class="btn btn-primary">Add</a></h2>
-
-    <div class="d-flex flex-row">
-        @foreach (var experience in Model.Experiences)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">Title: @experience.Title</p>
-                <p class="mb-0">Company: @experience.Company</p>
-                <p class="mb-0">Description: @experience.Description</p>
-                <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
-                <div class="d-flex gap-1">
-                    <a asp-action="UpdateExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Delete</a>
-                </div>
+        <div class="mb-4">
+            <h2>Edit Skills <a asp-action="AddSkill" class="btn btn-primary">Add</a></h2>
+            <div class="d-flex flex-row">
+                @foreach (var skill in Model.Skills)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">Skill: @skill.ASkill</p>
+                        <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
+                        <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
+                        <div class="d-flex gap-1">
+                            <a asp-action="UpdateSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Update</a>
+                            <a asp-action="DeleteSkill" asp-route-sid="@skill.Sid" class="btn btn-primary">Delete</a>
+                        </div>
+                    </div>
+                }
             </div>
-        }
-    </div>
-    
-</div>
+        </div>
 
--------------------
+        <div class="mb-4">
+            <h2>Edit Experience <a asp-action="AddExperience" class="btn btn-primary">Add</a></h2>
 
-<div>
-    <h2>Edit PersonalCharacteristics <a asp-action="AddPersonalCharacteristic" class="btn btn-primary">Add</a></h2>
-    <div class="d-flex flex-row">
-        @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
-                <div class="d-flex gap-1">
-                    <a asp-action="UpdatePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Update</a>
-                    <a asp-action="DeletePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Delete</a>
-                </div>
+            <div class="d-flex flex-row">
+                @foreach (var experience in Model.Experiences)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">Title: @experience.Title</p>
+                        <p class="mb-0">Company: @experience.Company</p>
+                        <p class="mb-0">Description: @experience.Description</p>
+                        <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
+                        <div class="d-flex gap-1">
+                            <a asp-action="UpdateExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Update</a>
+                            <a asp-action="DeleteExperience" asp-route-exid="@experience.Exid" class="btn btn-primary">Delete</a>
+                        </div>
+                    </div>
+                }
             </div>
 
-        }
-    </div>
-</div>
+        </div>
 
--------------------
+        <div class="mb-4">
+            <h2>Edit Personal Characteristics <a asp-action="AddPersonalCharacteristic" class="btn btn-primary">Add</a></h2>
+            <div class="d-flex flex-row">
+                @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
+                        <div class="d-flex gap-1">
+                            <a asp-action="UpdatePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Update</a>
+                            <a asp-action="DeletePersonalCharacteristic" asp-route-pcId="@personalCharacteristics.PCId" class="btn btn-primary">Delete</a>
+                        </div>
+                    </div>
 
-<div class="mb-4">
-    <h2>Edit Interest <a asp-action="AddInterest" class="btn btn-primary">Add</a></h2>
-    <div class="d-flex flex-row">
-        @foreach (var interest in Model.Interests)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">@interest.InterestName</p>
-                <div class="d-flex gap-1">
-                    <a asp-action="UpdateInterest" asp-route-interestId="@interest.InterestId" class="btn btn-primary">Update</a>
-                    <a asp-action="DeleteInterest" asp-route-interestId="@interest.InterestId" class="btn btn-primary">Delete</a>
-                </div>
+                }
             </div>
-        }
+        </div>
+
+        <div class="mb-4">
+            <h2>Edit Interest <a asp-action="AddInterest" class="btn btn-primary">Add</a></h2>
+            <div class="d-flex flex-row">
+                @foreach (var interest in Model.Interests)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">@interest.InterestName</p>
+                        <div class="d-flex gap-1">
+                            <a asp-action="UpdateInterest" asp-route-interestId="@interest.InterestId" class="btn btn-primary">Update</a>
+                            <a asp-action="DeleteInterest" asp-route-interestId="@interest.InterestId" class="btn btn-primary">Delete</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
     </div>
 </div>
-
 

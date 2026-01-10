@@ -87,7 +87,7 @@ namespace CVBuddy.Models
                 .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //Cv > Education  1:1 - utan DBSet<Education>
+            //Cv > Education  1:1
             builder.Entity<Education>()
                 .HasOne(p => p.Cv)
                 .WithOne(p => p.Education)

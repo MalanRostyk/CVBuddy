@@ -1,18 +1,5 @@
 ﻿@model CVBuddy.Models.CVInfo.ExperienceVM
 
-@if (!ViewData.ModelState.IsValid)
-{
-    <h4 class="text-danger">You need to make some changes:</h4>
-    <ul class="text-danger">
-        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <li>
-                @err.ErrorMessage
-            </li>
-        }
-    </ul>
-}
-
 <form asp-action="UpdateExperience" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">

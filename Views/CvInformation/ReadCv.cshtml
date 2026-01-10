@@ -6,160 +6,176 @@
 <div class="d-flex flex-row justify-content-center gap-4">
     @if (ViewBag.NotLoggedInUsersCv != true) @* bolean uttrycket använder inte !bool för att det är inte ett uttryck tydligen så jag körde bool != true *@
     {
-        <a clas="btn-primary ml-1" asp-controller="Cv" asp-action="UpdateCv"><i class="fa-solid fa-pencil"></i>Update My Cv</a>
-        <a asp-controller="Cv" asp-action="DeleteCv" asp-route-Cid="@Model.Cid"><i class="fa-solid fa-x"></i>DELETE</a>
+        <a asp-controller="CvInformation" asp-action="UpdateCv" class="btn btn-primary"><i class="fa-solid fa-pencil"></i> Update cv</a>
+
+        <a asp-controller="CvInformation" asp-action="DeleteCv" asp-route-Cid="@Model.Cid" class="btn btn-danger">DELETE</a>
     }
-    <a clas="btn btn-primary" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i>Home</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-house"></i> Home</a>
     
 </div>
 
 
-<h1 class="mb-4">@ViewBag.Headline@ViewBag.CvOwnerFullName  - <i class="fa-regular fa-eye"></i> @Model.ReadCount</h1>
 
-<div class="mb-4 shadow read-banner">
 
-    <div class="Cv-image">
-        <img src="@Model.ImageFilePath" class="img-thumbnail"/>
-    </div>
 
-    <div class="ml-2 contact-info-read-banner">
-        <h3>Contact</h3>
-        <p>@("Email:  " + Model.OneUser?.Email ?? "")</p>
-        <p>@("Phone number:  " + Model.OneUser?.PhoneNumber ?? "")</p>
-    </div>
 
-    <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
-        @if (ViewBag.HasSetPrivateProfile != true || User.Identity!.IsAuthenticated)
-        {
-            <a asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@Model.OneUser!.Id" class="btn btn-primary btn-sm">
-                <i class="fa-regular fa-address-card"></i>
-                @if (ViewBag.NotLoggedInUsersCv != true)
+<div class="d-flex justify-content-center align-content-center min-vh-90">
+    <div class="col-md-6 col-lg-10">
+        <h1 class="mb-4">@ViewBag.Headline@ViewBag.CvOwnerFullName  - <i class="fa-regular fa-eye"></i> @Model.ReadCount</h1>
+
+        <div class="mb-4 shadow read-banner">
+
+            <div class="Cv-image">
+                <img src="@Model.ImageFilePath" />
+            </div>
+
+            <div class="ml-2 contact-info-read-banner">
+                <h3>Contact</h3>
+                <p>@("Email:  " + Model.OneUser?.Email ?? "")</p>
+                <p>@("Phone number:  " + Model.OneUser?.PhoneNumber ?? "")</p>
+            </div>
+
+            <div class="d-flex flex-column gap-2 justify-content-center interactions-read-banner">
+                @if (ViewBag.HasSetPrivateProfile != true || User.Identity!.IsAuthenticated)
                 {
-                    <span>My</span>
+                    <a asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@Model.OneUser!.Id" class="btn btn-primary btn-sm">
+                        <i class="fa-regular fa-address-card"></i>
+                        @if (ViewBag.NotLoggedInUsersCv != true)
+                        {
+                            <span>My</span>
+                        }
+                        Profile
+                    </a>
                 }
-                Profile
-            </a>
-        }
-        @if (ViewBag.NotLoggedInUsersCv == true)
-        {
-            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
-        }
-    </div>
-</div>
-
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineExperiences</h2>
-
-    @foreach (var experience in Model.Experiences)
-    {
-        <div class="mb-2 content-item">
-            <p class="mb-0">Title: @experience.Title</p>
-            <p class="mb-0">Company: @experience.Company</p>
-            <p class="mb-0">Description: @experience.Description</p>
-            <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
+                @if (ViewBag.NotLoggedInUsersCv == true)
+                {
+                    <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@Model.OneUser!.Id" class="btn btn-outline-light btn-sm"><i class="fa-regular fa-message"></i>Send Message</a>
+                }
+            </div>
         </div>
-    }
-</div>
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineExperiences</h2>
 
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineEducation</h2>
-    @if (Model.Education.HighSchool != null)
-    {
-        <div class="mb-2 content-item">
-            <h5>HighSchool</h5>
-            <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
-            <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
-            <p class="mb-0">Date: @(Model.Education.HSDate ?? "Ongoing")</p>
+            @foreach (var experience in Model.Experiences)
+            {
+                <div class="mb-2 content-item">
+                    <p class="mb-0">Title: @experience.Title</p>
+                    <p class="mb-0">Company: @experience.Company</p>
+                    <p class="mb-0">Description: @experience.Description</p>
+                    <p class="mb-0">@experience.StartDate.ToShortDateString() <b>-</b> @(experience.EndDate?.ToShortDateString() ?? "Ongoing")</p>
+                </div>
+            }
         </div>
-    }
-    @if (Model.Education.Univeristy != null)
-    {
-        <div class="mb-2 content-item">
-            <h5>University</h5>
-            <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
-            <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
-            <p class="mb-0">Date: @(Model.Education.UniDate ?? "Ongoing")</p>
+
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineEducation</h2>
+            @if (Model.Education.HighSchool != null)
+            {
+                <div class="mb-2 content-item">
+                    <h5>HighSchool</h5>
+                    <p class="mb-0">High School: @(Model.Education.HighSchool ?? "")</p>
+                    <p class="mb-0">Program: @(Model.Education.HSProgram ?? "")</p>
+                    <p class="mb-0">Date: @(Model.Education.HSDate ?? "Ongoing")</p>
+                </div>
+            }
+            @if (Model.Education.Univeristy != null)
+            {
+                <div class="mb-2 content-item">
+                    <h5>University</h5>
+                    <p class="mb-0">University: @(Model.Education.Univeristy ?? "")</p>
+                    <p class="mb-0">Program: @(Model.Education.UniProgram ?? "")</p>
+                    <p class="mb-0">Date: @(Model.Education.UniDate ?? "Ongoing")</p>
+                </div>
+            }
+
         </div>
-    }
-    
-</div>
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineSkill</h2>
-    <div class="d-flex justify-content-lg-start">
-        @foreach (var skill in Model.Skills)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">Skill: @skill.ASkill</p>
-                <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
-                <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineSkill</h2>
+            <div class="d-flex justify-content-lg-start">
+                @foreach (var skill in Model.Skills)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">Skill: @skill.ASkill</p>
+                        <p class="mb-0">Description of skill: @(skill.Description ?? "")</p>
+                        <p class="mb-0">Skill since: @(skill.Date?.ToShortDateString() ?? "Unspecified")</p>
+                    </div>
+                }
             </div>
-        }
-    </div>
-    
-</div>
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineCertificates</h2>
-    <h5>@ViewBag.HeadlineCertificates</h5>
-    <div class="d-flex justify-content-lg-start">
-        @foreach (var certificate in Model.Certificates)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">Certificate: @certificate.CertName</p>
+
+        </div>
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineCertificates</h2>
+            <h5>@ViewBag.HeadlineCertificates</h5>
+            <div class="d-flex justify-content-lg-start">
+                @foreach (var certificate in Model.Certificates)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">Certificate: @certificate.CertName</p>
+                    </div>
+                }
             </div>
-        }
+
+        </div>
+
+        <div class="mb-4" ">
+            <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
+            <h5>@ViewBag.HeadlinePersonalCharacteristicsSmall</h5>
+            <div class="d-flex justify-content-lg-start">
+                @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineInterest</h2>
+            <h5>@ViewBag.HeadlineInterestSmall</h5>
+            <div class="d-flex justify-content-lg-start">
+                @foreach (var interest in Model.Interests)
+                {
+                    <div class="mb-2 content-item">
+                        <p class="mb-0">@interest.InterestName</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h2>@ViewBag.HeadlineProjects</h2>
+            <h5>@ViewBag.HeadlineProjectsSmall</h5>
+            <div class="d-flex justify-content-lg-start">
+                @foreach (var project in Model.UsersProjects)
+                {
+                    <div class="mb-0 content-item">
+                        <p class="mb-0">Title: @project.Title</p>
+                        <p class="mb-0">Description: @(project.Description ?? "Not described")</p>
+                        <p class="mb-0">Date: @project.StartDate.ToShortDateString() <b>-</b> @(project.Enddate?.ToShortDateString() ?? "Ongoing")</p>
+                        @* @if (project.ProjectUsers.Count > 0)
+                {
+                    <p class="mb-0">
+                        Participants:
+                        @foreach (var participant in project.UsersInProject)
+                        {
+                            @project.UsersInProject.Count
+                            <ul><li>@participant.FirstName @participant.LastName</li></ul>
+                        }
+                    </p>
+                } *@
+
+                    </div>
+                }
+            </div>
+        </div>
     </div>
-    
 </div>
 
-<div class="mb-4"">
-    <h2>@ViewBag.HeadlinePersonalCharacteristics</h2>
-    <h5>@ViewBag.HeadlinePersonalCharacteristicsSmall</h5>
-    <div class="d-flex justify-content-lg-start">
-        @foreach (var personalCharacteristics in Model.PersonalCharacteristics)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">@personalCharacteristics.CharacteristicName</p>
-            </div>
-        }
-    </div>
 
-</div>
 
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineInterest</h2>
-    <h5>@ViewBag.HeadlineInterestSmall</h5>
-    <div class="d-flex justify-content-lg-start">
-        @foreach (var interest in Model.Interests)
-        {
-            <div class="mb-2 content-item">
-                <p class="mb-0">@interest.InterestName</p>
-            </div>
-        }
-    </div>
-</div>
 
-<div class="mb-4">
-    <h2>@ViewBag.HeadlineProjects</h2>
-    <h5>@ViewBag.HeadlineProjectsSmall</h5>
-    <div class="d-flex justify-content-lg-start">
-        @foreach (var project in Model.UsersProjects)
-        {
-            <div class="mb-0 content-item">
-                <p class="mb-0">Title: @project.Title</p>
-                <p class="mb-0">Description: @(project.Description ?? "Not described")</p>
-                <p class="mb-0">Date: @project.StartDate.ToShortDateString() <b>-</b> @(project.Enddate?.ToShortDateString() ?? "Ongoing")</p>
-                <p class="mb-0">Participants:
-                    @foreach (var participant in project.UsersInProject)
-                    {
-                        <div class="mb-2" content-item>
-                            <p class="mb-0'">@participant.UserName</p>
-                        </div>
-                    }
-                </p>
-                <p class="mb-0">Participant count: @project.UsersInProject.Count</p>
-                
-            </div>
-        }
-    </div>
-</div>
+
+
 

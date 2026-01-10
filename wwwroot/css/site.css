@@ -90,7 +90,7 @@ select {
     border-radius: 0 2em 2em 0;
     background-color: #36045c;
     color: aliceblue;
-    padding-right: 1em;
+    padding: 1em;
 }
 
 .interactions-read-banner {
@@ -99,7 +99,7 @@ select {
 }
 
 .contact-info-read-banner {
-    padding: 1em 0 0 1em;
+    padding: 0 0 0 1em;
     flex-grow: 2;
 }
 
@@ -141,5 +141,9 @@ select {
     border-radius: 2em;
     padding: inherit;
     border: 1px solid white;
+}
+
+.test{
+    background-color: lightblue;
 }
 
