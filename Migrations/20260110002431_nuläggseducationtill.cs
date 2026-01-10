@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class adad : Migration
+    public partial class nuläggseducationtill : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -321,11 +321,11 @@ namespace CVBuddy.Migrations
                 {
                     Eid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    HighSchool = table.Column<string>(type: "nvarchar(95)", maxLength: 95, nullable: true),
-                    HSProgram = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    HighSchool = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HSProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HSDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Univeristy = table.Column<string>(type: "nvarchar(95)", maxLength: 95, nullable: true),
-                    UniProgram = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Univeristy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UniProgram = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UniDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -346,9 +346,9 @@ namespace CVBuddy.Migrations
                 {
                     Exid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
-                    Company = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Company = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CvId = table.Column<int>(type: "int", nullable: false)
@@ -370,7 +370,7 @@ namespace CVBuddy.Migrations
                 {
                     InterestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InterestName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
+                    InterestName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -390,7 +390,7 @@ namespace CVBuddy.Migrations
                 {
                     PCId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CharacteristicName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
+                    CharacteristicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

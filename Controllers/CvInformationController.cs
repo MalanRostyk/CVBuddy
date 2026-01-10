@@ -36,7 +36,7 @@ namespace CVBuddy.Controllers
                     return View(cvVM);
                 Cv cv = new Cv
                 {
-                    ImageFilePath = cvVM.ImageFile.Name,
+                    ImageFilePath = cvVM.ImageFile!.Name, //ImageFile kan inte vara null, eftersom att den är [Required], stoppas av Modelstate.IsValid
                     UserId = _userManager.GetUserId(User)
                 };
 

@@ -25,3 +25,4 @@ namespace CVBuddy.Models.CVInfo
         public Cv? Cv { get; set; }
     }
 }
+§

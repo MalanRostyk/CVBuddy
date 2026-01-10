@@ -22,6 +22,7 @@ namespace CVBuddy.Models
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Education> Education { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -90,6 +91,7 @@ namespace CVBuddy.Models
             builder.Entity<Education>()
                 .HasOne(p => p.Cv)
                 .WithOne(p => p.Education)
+                .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             //Cv > Certificate 1:M
