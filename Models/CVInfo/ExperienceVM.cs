@@ -27,7 +27,7 @@ namespace CVBuddy.Models.CVInfo
         //[DisplayFormat(DataFormatString = "{0:yyyy-mm-dd}", ApplyFormatInEditMode = true)]
         public DateTime? StartDate { get; set; }
         
-        [DisplayName("Start Date")]
+        [DisplayName("End Date")]
         [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
         public DateTime? EndDate { get; set; }
 

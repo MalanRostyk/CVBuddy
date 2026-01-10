@@ -401,22 +401,24 @@ namespace CVBuddy.Controllers
             /*var cv = await _context.Cvs.FindAsync(eid);*/ //Funkar ej, cv håller komplexa objekt
             try
             {
-                var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
+                //var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
 
-                if (cv == null)
+                var education = await _context.Education.FindAsync(eid);
+
+                if (education == null)
                     throw new NullReferenceException("No Cv was found");
 
-                var edu = cv.Education;
+                //var edu = cv.Education;
 
                 EducationVM eduVM = new EducationVM
                 {
-                    Univeristy = cv.Education.Univeristy,
-                    UniProgram = cv.Education.UniProgram,
-                    UniDate = cv.Education.UniDate,
+                    Univeristy = education.Univeristy,
+                    UniProgram = education.UniProgram,
+                    UniDate = education.UniDate,
 
-                    HighSchool = cv.Education.HighSchool,
-                    HSProgram = cv.Education.HSProgram,
-                    HSDate = cv.Education.HSDate
+                    HighSchool = education.HighSchool,
+                    HSProgram = education.HSProgram,
+                    HSDate = education.HSDate
                 };
 
                 return View(eduVM);
