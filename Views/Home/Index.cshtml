@@ -20,10 +20,10 @@
                 <a asp-controller="Project" asp-action="CreateProject">Create a project</a>
 
                 }
-                else
+                @* else
                 {
                     <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
-                }
+                } *@
             @if(User.Identity.IsAuthenticated)
             {
                 @if (ViewBag.HasCv != true)

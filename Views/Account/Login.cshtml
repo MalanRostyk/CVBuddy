@@ -3,6 +3,7 @@
     <div class="d-flex justify-content-center align-content-center min-vh-90">
         <div class="col-md-6 col-lg-4">
             <h3 class="text-center mb-4">Login</h3>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="UserName" class="form-label"></label>
                 <input asp-for="UserName" class="form-control" />

@@ -1,6 +1,7 @@
 ﻿using CVBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 
 
@@ -22,11 +23,13 @@ namespace CVBuddy.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel lvm)
         {
-            if (_userManager.Users.Any(u => u.UserName != lvm.UserName))//validering har lagts till
-                ModelState.AddModelError(nameof(lvm.UserName), "Invalid user name.");
+            
 
-            if (_userManager.Users.Any(u => u.PasswordHash != lvm.Password))
-                ModelState.AddModelError(nameof(lvm.Password), "Invalid password.");
+            //if (_userManager.Users.Any(u => u.UserName != lvm.UserName))//validering har lagts till
+            //    ModelState.AddModelError(nameof(lvm.UserName), "Invalid user name.");
+           
+            //if (_userManager.Users.Any(u => u.PasswordHash != lvm.Password))
+            //    ModelState.AddModelError(nameof(lvm.Password), "Invalid password.");
 
             if (ModelState.IsValid)
             {
@@ -34,7 +37,14 @@ namespace CVBuddy.Controllers
                     lvm.UserName, lvm.Password, isPersistent: lvm.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
+                {
                     return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Username or password is incorrect.");
+                }
+                    
             }
 
             return View(lvm);

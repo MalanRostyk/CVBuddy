@@ -24,8 +24,6 @@ namespace CVBuddy.Controllers
             try
             {
                 var userId = _userManager.GetUserId(User);
-                if (userId == null)
-                    throw new NullReferenceException("User could not be found.");
 
                 var projects = await _context.Projects
                     .Include(p => p.ProjectUsers)
