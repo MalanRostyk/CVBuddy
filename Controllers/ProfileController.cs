@@ -140,7 +140,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
-            
         }
     }
 }

@@ -1,11 +1,8 @@
 using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Security.Cryptography;
 
 namespace CVBuddy.Controllers
 {

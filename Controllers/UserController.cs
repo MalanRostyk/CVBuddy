@@ -11,6 +11,7 @@ namespace CVBuddy.Controllers
         public UserController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm)
         {
         }
+
         [HttpGet]
         public async Task<IActionResult> GetUser()
         {
