@@ -8,34 +8,34 @@
         <h5>Personal information</h5>
 
         <div class="mb-3">
-            <label asp-for="@Model.UserName" class="form-label"><b>User name: </b></label>
+            <label asp-for="UserName" class="form-label"><b>User name: </b>@Model.UserName</label>
         </div>
 
         <div class="mb-3">
-            <label asp-for="@Model.FirstName" class="form-label"><b>First name: </b></label>
+            <label asp-for="FirstName" class="form-label"><b>First name: </b>@Model.FirstName</label>
         </div>
 
         <div class="mb-3">
-            <label asp-for="@Model.LastName" class="form-label"><b>Last name: </b></label>
+            <label asp-for="LastName" class="form-label"><b>Last name: </b>@Model.LastName</label>
         </div>
 
         <label class="form-label">Contact information</label>
 
         <div class="mb-3">
-            <label asp-for="@Model.Email" class="form-label"><b>Email: </b></label>
+            <label asp-for="Email" class="form-label"><b>Email: </b>@Model.Email</label>
         </div>
 
         <div class="mb-3">
-            <label asp-for="@Model.PhoneNumber" class="form-label"><b>Phone number: </b></label>
+            <label asp-for="PhoneNumber" class="form-label"><b>Phone number: </b>@Model.PhoneNumber</label>
         </div>
 
         <div class="mb-3">
             <h5>Address information</h5>
             @if (Model.OneAddress != null)
             {
-                <label asp-for="@Model.OneAddress.Country" class="form-label"><b>Country: </b></label>
-                <label asp-for="@Model.OneAddress.City" class="form-label"><b>City: </b></label>
-                <label asp-for="@Model.OneAddress.Street" class="form-label"><b>Street: </b></label>
+                <label asp-for="OneAddress.Country" class="form-label"><b>Country: </b>@Model.OneAddress.Country</label>
+                <label asp-for="OneAddress.City" class="form-label"><b>City: </b>@Model.OneAddress.City</label>
+                <label asp-for="OneAddress.Street" class="form-label"><b>Street: </b>@Model.OneAddress.Street</label>
             }
             else
             {

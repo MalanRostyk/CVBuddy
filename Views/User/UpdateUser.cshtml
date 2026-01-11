@@ -7,51 +7,51 @@
     <input type="hidden" asp-for="UserId" />    @* skapar gömd fält med users id, som binder fältet till UserId i UserViewModel *@
     <div class="d-flex justify-content-center align-items-center min-vh-90">
 
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-6">
 
             <h2>Edit your personal information</h2>
             
             <div class="mb-3">
                 <h3>Login information</h3>
-                <label asp-for="UserName">User name</label><br />
-                <input asp-for="UserName" type="Text" /><br />
+                <label asp-for="UserName" class="form-label">User name</label><br />
+                <input asp-for="UserName" type="Text" class="form-control" /><br />
                 <span asp-validation-for="UserName" class="text-danger"></span><br />
             </div>
 
             <div class="mb-3">
                 <h3>Your name</h3>
-                <label asp-for="FirstName">First name</label><br />
-                <input asp-for="FirstName" type="Text" /><br />
+                <label asp-for="FirstName" class="form-label">First name</label><br />
+                <input asp-for="FirstName" type="Text" class="form-control" /><br />
                 <span asp-validation-for="FirstName" class="text-danger"></span><br />
 
-                <label asp-for="LastName">Last name</label><br />
-                <input asp-for="LastName" type="Text" /><br />
+                <label asp-for="LastName" class="form-label">Last name</label><br />
+                <input asp-for="LastName" type="Text" class="form-control" /><br />
                 <span asp-validation-for="LastName" class="text-danger"></span><br />
             </div>
 
             <div class="mb-3">
                 <h3>Contact information</h3>
-                <label asp-for="Email">Email</label><br />
-                <input asp-for="Email" type="Text" /><br />
+                <label asp-for="Email" class="form-label">Email</label><br />
+                <input asp-for="Email" type="Text" class="form-control" /><br />
                 <span asp-validation-for="Email" class="text-danger"></span><br />
 
-                <label asp-for="PhoneNumber">Phone number</label><br />
-                <input asp-for="PhoneNumber" type="Text" /><br />
+                <label asp-for="PhoneNumber" class="form-label">Phone number</label><br />
+                <input asp-for="PhoneNumber" type="Text" class="form-control" /><br />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span><br />
             </div>
 
             <div class="mb-3">
                 <h3>Your address information</h3>
-                <label asp-for="AddressVm.Country">Country</label><br />
-                <input asp-for="AddressVm.Country" type="Text" /><br />
+                <label asp-for="AddressVm.Country" class="form-label">Country</label><br />
+                <input asp-for="AddressVm.Country" type="Text" class="form-control" /><br />
                 <span asp-validation-for="AddressVm.Country" class="text-danger"></span><br />
 
-                <label asp-for="AddressVm.City">City </label><br />
-                <input asp-for="AddressVm.City" type="Text" /><br />
+                <label asp-for="AddressVm.City" class="form-label">City </label><br />
+                <input asp-for="AddressVm.City" type="Text" class="form-control" /><br />
                 <span asp-validation-for="AddressVm.City" class="text-danger"></span><br />
 
-                <label asp-for="AddressVm.Street">Street</label><br />
-                <input asp-for="AddressVm.Street" type="Text" /><br />
+                <label asp-for="AddressVm.Street" class="form-label">Street</label><br />
+                <input asp-for="AddressVm.Street" type="Text" class="form-control" /><br />
                 <span asp-validation-for="AddressVm.Street" class="text-danger"></span><br />
             </div>
 
