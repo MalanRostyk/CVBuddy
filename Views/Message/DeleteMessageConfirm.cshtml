@@ -3,12 +3,15 @@
 <div class="d-flex justify-content-center align-items-center min-vh-90">
     <div class="col-md-6 col-lg-4">
         <div class="mb-3 text-center mt-4">
+
             <h2>Are you sure?</h2>
             <div class="mb-3 text-center mt-4">
                 <q><i>Are you sure you would like to permanently delete this message?</i></q>
             </div>
+
             <div class="mb-3 text-center mt-4">
                 <table class="w-100 table table-dark">
+
                     <thead>
                         <tr>
                             <td>Sender</td>
@@ -16,6 +19,7 @@
                             <td>Read Status</td>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr>
                             <td>
@@ -34,7 +38,6 @@
                                     <b>Not Read</b>
                                 }
                             </td>
-
                         </tr>
                     </tbody>
                 </table>
@@ -44,6 +47,7 @@
                 <q>@Model.MessageString</q>
             </div>
         </div>
+
         <div class="mb-3 text-center mt-4">
             <a asp-action="Messages" asp-route-mid="@Model.Mid" class="btn btn-outline-secondary">Back</a>
             <a asp-action="DeleteMessage" asp-route-mid="@Model.Mid" class="btn btn-danger">Confirm</a>

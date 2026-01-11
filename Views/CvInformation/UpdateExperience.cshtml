@@ -3,28 +3,34 @@
 <form asp-action="UpdateExperience" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">
+
             <h3 class="text-center mb-4">Experience</h3>
             <input type="hidden" asp-for="@Model.Exid" />
+
             <div class="mb-3">
                 <label asp-for="@Model.Title" class="form-label"></label>
                 <input type="text" asp-for="@Model.Title" value="@Model.Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.Description" class="form-label"></label>
                 <input type="text" asp-for="@Model.Description" value="@Model.Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.Company" class="form-label"></label>
                 <input type="text" asp-for="@Model.Company" value="@Model.Company" class="form-control" />
                 <span asp-validation-for="Company" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.StartDate" class="form-label"></label>
                 <input type="date" asp-for="@Model.StartDate" min="1900-01-01" max="2049-12-31" class="form-control" />
                 <span asp-validation-for="StartDate"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.EndDate" class="form-label"></label>
                 <input type="date" asp-for="@Model.EndDate" min="1900-01-01" max="2049-12-31" class="form-control" />

@@ -1,15 +1,9 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using CVBuddy.Models;
+﻿using CVBuddy.Models;
 using CVBuddy.Models.CVInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CVBuddy.Controllers
 {
@@ -17,12 +11,10 @@ namespace CVBuddy.Controllers
     {
         public CvInformationController(UserManager<User> u, CVBuddyContext c, SignInManager<User> sm) : base(u, c, sm) { }
 
-
         //---------------------BuildCv------------------------------------------BuildCv---------------------
-
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> BuildCv()//TILL BUILD CV-SIDAN ----->>>>
+        public async Task<IActionResult> BuildCv()
         {
             return View(new CvVM());
         }
@@ -42,28 +34,20 @@ namespace CVBuddy.Controllers
 
                 cv.Education = new();
 
-                //if (cvVM.ImageFile == null || cvVM.ImageFile.Length == 0)
-                //{
-                //    ModelState.AddModelError("ImageFile", "Please upload an image");
-                //    ViewBag.eror = "Please upload an image";
-                //    return View(cvVM);
-                //}
-
                 var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 Directory.CreateDirectory(uploadeFolder);
 
-                var ext = Path.GetExtension(cvVM.ImageFile.FileName);//null
-
-                //if (!IsValidExtension(ext))
-                //    return View(cv);
+                var ext = Path.GetExtension(cvVM.ImageFile.FileName);
 
                 var fileName = Guid.NewGuid().ToString() + ext;
 
                 var filePath = Path.Combine(uploadeFolder, fileName);
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await cvVM.ImageFile.CopyToAsync(stream);
                 }
+
                 cv.ImageFilePath = "/CvImages/" + fileName;
 
                 await _context.Cvs.AddAsync(cv);
@@ -82,17 +66,14 @@ namespace CVBuddy.Controllers
         }
 
         //---------------------ReadCv------------------------------------------ReadCv---------------------
-
-
         [HttpGet]
         public async Task<IActionResult> ReadCv(int? Cid) //måste heta exakt samma som asp-route-Cid="@item.OneCv.Cid". Detta Cid är Cid från det Cv som man klickar på i startsidan
         {
             Cv? cv;
             try
             {
-                if (Cid.HasValue)//Om man klickade på ett cv i Index, följer ett Cid med via asp-route-Cid, men om man klickar på My Cv(har ej asp-route...) så körs else blocket, eftersom inget Cid följer med
+                if (Cid.HasValue)
                 {
-
                     cv = await _context.Cvs
                     .Include(cv => cv.Education)
                     .Include(cv => cv.Experiences)
@@ -113,7 +94,8 @@ namespace CVBuddy.Controllers
                     ViewBag.NotLoggedInUsersCv = cv?.UserId != usersCv?.UserId; //bool för att gömma Delete på cvs som inte är den inloggade användaren
                     if (ViewBag.NotLoggedInUsersCv)
                     {
-                        //Ingen transaktion behövd, Enskild Update-statements är atomära, sätter Row lock. Applikationen använder en lokal databas, alltså inga samtidiga updates kommer göras här. EJ ett problem
+                        //Ingen transaktion behövd, Enskild Update-statements är atomära, sätter Row lock.
+                        //Applikationen använder en lokal databas, alltså inga samtidiga updates kommer göras här. EJ ett problem
                         await _context.Database.ExecuteSqlRawAsync("UPDATE Cvs SET ReadCount = ReadCount + 1 WHERE Cid = " + Cid); //Inkrementera ReadCount varje gång See Cv klickas
                     }
                 }
@@ -126,22 +108,15 @@ namespace CVBuddy.Controllers
                     else
                     {
                         cv = await GetLoggedInUsersCvAsync();
-                        //if (cv?.OneUser == null) <---- Var osäker på om OneUser va onödig att ha med här 
-                        //    throw new NullReferenceException(""); 
-
                         if (cv == null)
-                                return RedirectToAction("BuildCv");
-
-
+                            return RedirectToAction("BuildCv");
                     }
-
                 }
 
                 ViewBag.HasSetPrivateProfile = cv?.OneUser!.HasPrivateProfile;
 
                 //För headlines om det finns något att visa under headlinen
                 ViewBag.Headline = "Cv";
-
 
                 ViewBag.CvOwnerFullName = " - " + cv?.OneUser.GetFullName();
 
@@ -182,7 +157,6 @@ namespace CVBuddy.Controllers
                 {
                     ViewBag.HeadlinePersonalCharacteristics = "Personal Characteristics";
                     ViewBag.HeadlinePersonalCharacteristicsSmall = "My personal characteristics";
-
                 }
 
                 //Interests
@@ -192,12 +166,6 @@ namespace CVBuddy.Controllers
                     ViewBag.HeadlineInterestSmall = "These are my interests";
                 }
 
-                //Projects
-                //if (cv?.CvProjects.Count > 0)
-                //{
-                //    ViewBag.HeadlineProjects = "Projects";
-                //    ViewBag.HeadlineProjectsSmall = "I have participated in these projects";
-                //}
                 if (cv?.UsersProjects.Count > 0)
                 {
                     ViewBag.HeadlineProjects = "Projects";
@@ -218,13 +186,9 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an error retrieving Cv and additional information. " });
             }
-
-
         }
 
         //---------------------UpdateCv------------------------------------------UpdateCv---------------------
-
-
         [HttpGet]
         public async Task<IActionResult> UpdateCv()
         {
@@ -262,10 +226,7 @@ namespace CVBuddy.Controllers
             }
         }
 
-
         //---------------------Image---------------------Image---------------------Image---------------------HÄÄÄÄR !!!!!!!!!!!!!!!!!!!!!!!
-
-
         [HttpGet]
         public async Task<IActionResult> UpdateImage()
         {
@@ -286,26 +247,13 @@ namespace CVBuddy.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    //ModelState.AddModelError(nameof(cvVM.ImageFile), "Please upload an image");
-                    //foreach (var entry in ModelState)
-                    //{
-                    //    Console.WriteLine($"FIELD: {entry.Key}");
-                    //    Console.WriteLine($"  AttemptedValue: {entry.Value.AttemptedValue}");
-
-                    //    foreach (var error in entry.Value.Errors)
-                    //    {
-                    //        Console.WriteLine($"  ❌ {error.ErrorMessage}");
-                    //    }
-                    //}
-                    return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null
-                                                                   //Så vi måste returnera ett cvVM med värden för att förse
-                                                                   //UpdateCv view model med värden
-                }
+                    return View("UpdateCv", await UsersCvToCvVM());//UsersCvToCvVM() eftersom att cvVMs properties är null, så vi måste returnera
+                }                                                  //ett cvVM med värden för att förse UpdateCv view model med värden
 
                 var uploadeFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages");
                 Directory.CreateDirectory(uploadeFolder);
 
-                var ext = Path.GetExtension(cvVM.ImageFile!.FileName);//null
+                var ext = Path.GetExtension(cvVM.ImageFile!.FileName);
 
                 var fileName = Guid.NewGuid().ToString() + ext;
 
@@ -340,31 +288,24 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-
-
-            
         }
 
         //---------------------DeleteCv------------------------------------------DeleteCv---------------------
-
-
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> DeleteCv(int Cid)
         {
-
             ViewBag.Headline = "Delete Cv";
             ViewBag.WarningMessage = "Are you sure you wan't to delete your Cv? This will permanently delete your Cv but" +
-                ", none of the projects you created will be automatically connected to your new Cvs. You will have to find them and participate in them again"; //I felmeddelandet visas vad planen för projekten är
-            //Cv cv = _context.Cvs.Find(Cid); //Ska inte använda Find för att annars får man inte med relaterade rader till Cv!!!!!!
-            Cv? cv = await GetLoggedInUsersCvAsync();
+                ", none of the projects you created will be automatically connected to your new Cvs. " +
+                "You will have to find them and participate in them again";
 
+            Cv? cv = await GetLoggedInUsersCvAsync();
 
             return View(cv);
         }
 
         [HttpPost]
-
         public async Task<IActionResult> DeleteCv(Cv cv)
         {
             try
@@ -380,7 +321,6 @@ namespace CVBuddy.Controllers
             catch (ArgumentNullException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Could not find Cv." });
-
             }
             catch (Exception e)
             {
@@ -390,36 +330,22 @@ namespace CVBuddy.Controllers
         }
 
         //---------------------Education------------------------------------------Education---------------------
-
-
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> AddEducation(int eid)//GLÖM EJ KNAPPAR BORT NÄR MAN SKAPOAR CV
+        public async Task<IActionResult> AddEducation(int eid)
         {
-
-            //Om model som håller properties med komplexa objekt, Include + FirstOrDefaultAsync + null check
-            //Om model med ej komplexa objekt som properties, FindAsync + null ckeck
-
-            //FINNS INGEN DBSET FÖR EDUCATION
-            //var edu = await _context.Education.FindAsync(eid); Annars ska detta funka
-            /*var cv = await _context.Cvs.FindAsync(eid);*/ //Funkar ej, cv håller komplexa objekt
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();//Funkar och är korrekt, metoden anvnder Include + FirstOrDefaultAsync och null ckeck görs här
-
                 var education = await _context.Education.FindAsync(eid);
 
                 if (education == null)
                     throw new NullReferenceException("No Cv was found");
-
-                //var edu = cv.Education;
 
                 EducationVM eduVM = new EducationVM
                 {
                     Univeristy = education.Univeristy,
                     UniProgram = education.UniProgram,
                     UniDate = education.UniDate,
-
                     HighSchool = education.HighSchool,
                     HSProgram = education.HSProgram,
                     HSDate = education.HSDate
@@ -430,14 +356,11 @@ namespace CVBuddy.Controllers
             catch (NullReferenceException e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
-
             }
             catch (Exception e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an unexpected error processing your request." });
-
             }
-
         }
 
         [HttpPost]
@@ -456,7 +379,6 @@ namespace CVBuddy.Controllers
                 cv.Education.Univeristy = evm.Univeristy;
                 cv.Education.UniProgram = evm.UniProgram;
                 cv.Education.UniDate = evm.UniDate;
-
                 cv.Education.HighSchool = evm.HighSchool;
                 cv.Education.HSProgram = evm.HSProgram;
                 cv.Education.HSDate = evm.HSDate;
@@ -476,15 +398,12 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
             }
-
         }
 
         //---------------------Certificate------------------------------------------Certificate---------------------
-
         [HttpGet]
         public async Task<IActionResult> AddCertificate()
         {
-
             return View(new CertificateVM());
         }
 
@@ -522,26 +441,13 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to add a certificate." });
             }
-
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateCertificate(int certId)
         {
-
             try
             {
-                //var userCv = await GetLoggedInUsersCvAsync();
-
-                //if (userCv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-                //if (certificate == null)
-                //{
-                //    return RedirectToAction("Index", "Home");
-                //}
-
                 var certificate = await _context.Certificates.FindAsync(certId);
                 if (certificate == null)
                     throw new NullReferenceException("Certificate could not be found.");
@@ -561,7 +467,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
-
         }
 
         [HttpPost]
@@ -597,23 +502,13 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
-
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteCertificate(int certId)
         {
-
-
             try
             {
-                //var userCv = await GetLoggedInUsersCvAsync();
-
-                //if (userCv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var certificate = userCv.Certificates.FirstOrDefault(c => c.CertId == certId);
-
                 var certificate = await _context.Certificates.FindAsync(certId);
 
                 if (certificate == null)
@@ -635,29 +530,22 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
-
-
         }
 
-
         //---------------------PersonalCharacteristic------------------------------------------PersonalCharacteristic---------------------
-
         [HttpGet]
         public async Task<IActionResult> AddPersonalCharacteristic()
         {
-
             return View(new PersonalCharacteristicVM());
         }
 
         [HttpPost]
         public async Task<IActionResult> AddPersonalCharacteristic(PersonalCharacteristicVM pvm)
         {
-
-            if (!ModelState.IsValid)
-                return View(pvm);
-
             try
             {
+                if (!ModelState.IsValid)
+                    return View(pvm);
 
                 PersonalCharacteristic persChar = new PersonalCharacteristic
                 {
@@ -686,20 +574,11 @@ namespace CVBuddy.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<IActionResult> UpdatePersonalCharacteristic(int pcId)
         {
             try
             {
-
-                //var userCv = await GetLoggedInUsersCvAsync();
-
-                //if (userCv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
-
                 var personalCharacteristic = await _context.PersonalCharacteristics.FindAsync(pcId);
 
                 if (personalCharacteristic == null)
@@ -710,6 +589,7 @@ namespace CVBuddy.Controllers
                     PCId = personalCharacteristic.PCId,
                     CharacteristicName = personalCharacteristic.CharacteristicName
                 };
+
                 return View(personalCharacteristicVm);
             }
             catch (NullReferenceException e)
@@ -722,14 +602,11 @@ namespace CVBuddy.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> UpdatePersonalCharacteristic(PersonalCharacteristicVM pvm)
         {
-
             try
             {
-
                 if (!ModelState.IsValid)
                     return View(pvm);
 
@@ -745,11 +622,6 @@ namespace CVBuddy.Controllers
                 personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
                 await _context.SaveChangesAsync();
 
-                //if (personalCharacteristic != null)
-                //{
-                //    personalCharacteristic.CharacteristicName = pvm.CharacteristicName;
-                //    await _context.SaveChangesAsync();
-                //}
                 return View("UpdateCv", await UsersCvToCvVM());
             }
             catch (DbUpdateException e)
@@ -764,22 +636,13 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Unexpected error while trying to process your request." });
             }
-
-
         }
-
 
         [HttpGet]
         public async Task<IActionResult> DeletePersonalCharacteristic(int pcId)
         {
             try
             {
-                //var userCv = await GetLoggedInUsersCvAsync();
-
-                //if (userCv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var personalCharacteristic = userCv.PersonalCharacteristics.FirstOrDefault(c => c.PCId == pcId);
                 var personalCharacteristic = await _context.PersonalCharacteristics.FindAsync(pcId);
 
                 if (personalCharacteristic == null)
@@ -803,27 +666,22 @@ namespace CVBuddy.Controllers
             }
         }
 
-
-
-
         //---------------------Experience------------------------------------------Experience---------------------
 
         [HttpGet]
         public async Task<IActionResult> AddExperience()
         {
-
             return View(new ExperienceVM());
         }
 
         [HttpPost]
         public async Task<IActionResult> AddExperience(ExperienceVM evm)
         {
-            if (!ModelState.IsValid)
-                return View(evm);
-
-
             try
             {
+                if (!ModelState.IsValid)
+                    return View(evm);
+
                 Experience exp = new Experience
                 {
                     Title = evm.Title,
@@ -837,8 +695,10 @@ namespace CVBuddy.Controllers
 
                 if (cv == null)
                     throw new NullReferenceException("Users Cv could not be found.");
+
                 cv.Experiences.Add(exp);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
@@ -860,13 +720,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
-
                 var experience = await _context.Experiences.FindAsync(exid);
 
                 if (experience == null)
@@ -881,6 +734,7 @@ namespace CVBuddy.Controllers
                     StartDate = experience.StartDate,
                     EndDate = experience.EndDate
                 };
+
                 return View(exVM);
             }
             catch (NullReferenceException e)
@@ -891,19 +745,15 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to process your request." });
             }
-
-
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateExperience(ExperienceVM exVM)
         {
-
             try
             {
                 if (!ModelState.IsValid)
                     return View(exVM);
-
 
                 var cv = await GetLoggedInUsersCvAsync();
 
@@ -937,7 +787,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error updating experience." });
             }
-
         }
 
         [HttpGet]
@@ -945,13 +794,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var experience = cv.Experiences.FirstOrDefault(e => e.Exid == exid);
-
                 var experience = await _context.Experiences.FindAsync(exid);
 
                 if (experience == null)
@@ -973,16 +815,13 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
             }
-
         }
-
 
         //---------------------Skill------------------------------------------Skill---------------------
 
         [HttpGet]
         public async Task<IActionResult> AddSkill()
         {
-
             return View(new SkillVM());
         }
 
@@ -1007,6 +846,7 @@ namespace CVBuddy.Controllers
 
                 cv.Skills.Add(skill);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction("UpdateCv");
             }
             catch (DbUpdateException e)
@@ -1021,7 +861,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error processing your request." });
             }
-
         }
 
         [HttpGet]
@@ -1029,13 +868,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var skill = cv.Skills.FirstOrDefault(s => s.Sid == sid);
-
                 var skill = await _context.Skills.FindAsync(sid);
 
                 if (skill == null)
@@ -1048,6 +880,7 @@ namespace CVBuddy.Controllers
                     Description = skill.Description,
                     Date = skill.Date
                 };
+
                 return View(sVM);
             }
             catch (NullReferenceException e)
@@ -1058,7 +891,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
             }
-
         }
 
         [HttpPost]
@@ -1098,7 +930,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update skill, changes could not be saved." });
             }
-
         }
 
         [HttpGet]
@@ -1106,13 +937,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var skill = cv.Skills.FirstOrDefault(e => e.Sid == sid);
-
                 var skill = await _context.Skills.FindAsync(sid);
 
                 if (skill == null)
@@ -1135,9 +959,7 @@ namespace CVBuddy.Controllers
             }
         }
 
-
         //---------------------Interest------------------------------------------Interest---------------------
-
 
         [HttpGet]
         public async Task<IActionResult> AddInterest()
@@ -1186,13 +1008,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-
                 var interest = await _context.Interests.FindAsync(interestId);
 
                 if (interest == null)
@@ -1214,7 +1029,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to update interest, changes could not be saved." });
             }
-
         }
 
         [HttpPost]
@@ -1260,15 +1074,6 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //var cv = await GetLoggedInUsersCvAsync();
-
-                //if (cv == null)
-                //    throw new NullReferenceException("Users Cv could not be found.");
-
-                //var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-                ////var cv = await GetLoggedInUsersCvAsync();
-                ////var interest = cv.Interests.FirstOrDefault(i => i.InterestId == interestId);
-
                 var interest = await _context.Interests.FindAsync(interestId);
 
                 if (interest == null)
@@ -1289,7 +1094,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an internal error trying to delete interest, changes could not be saved." });
             }
-
         }
 
         //--------------------PRIVATE HELPERS---------------------------------------------------
@@ -1316,8 +1120,7 @@ namespace CVBuddy.Controllers
             return cvVM;
         }
 
-
-        private async Task<Cv?> GetLoggedInUsersCvAsync() //Kan returnera null, och kan inte använda FindAsync, eftersom att entiteten håller komplexa objekt
+        private async Task<Cv?> GetLoggedInUsersCvAsync() 
         {
             if (!User.Identity!.IsAuthenticated)
                 return null;
@@ -1333,7 +1136,7 @@ namespace CVBuddy.Controllers
                     .Include(cv => cv.Interests)
                     .Include(cv => cv.OneUser)
                     .ThenInclude(oneUser => oneUser!.ProjectUsers)
-                    .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
+                    .FirstOrDefaultAsync(cv => cv.UserId == userId); 
 
             if (cv == null)
                 return null;
@@ -1342,19 +1145,7 @@ namespace CVBuddy.Controllers
 
             return cv;
         }
-        //private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
-        //{
-        //    List<Project> projectList = await _context.ProjectUsers
-        //        .Where(pu => pu.UserId == userId)
-        //        .Join(
-        //        _context.Projects,
-        //        pu => pu.ProjId,
-        //        p => p.Pid,
-        //        (pu, p) => p)
-        //        .ToListAsync(); ;
-        //    return projectList;
-        //}
-        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)//MED READCV!!!!!!!
+        private async Task<List<Project>> GetProjectsUserHasParticipatedIn(string userId)
         {
             var IsAuthenticated = User.Identity!.IsAuthenticated;
 
@@ -1378,7 +1169,6 @@ namespace CVBuddy.Controllers
 
                 if (cvOldFileImageNameArray.Length != 0)
                 {
-
                     string oldCvFileName = cvOldFileImageNameArray[cvOldFileImageNameArray.Length - 1];
 
                     string finalCvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CvImages", oldCvFileName);

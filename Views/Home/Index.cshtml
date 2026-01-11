@@ -9,31 +9,16 @@
 <form method="post" asp-controller="Account" asp-action="Logout">
 <AuthorizeView>
     <Authorized>
-            <h2>Welcome @User.Identity!.Name</h2>
-
-            @if (ViewBag.HasCv)//Visa rätt knappar beroende på om man har ett cv eller inte
-            {                
-                
-                
-
-                }
-                @* else
-                {
-                    <a asp-controller="Cv" asp-action="CreateCv">Create cv</a>
-                } *@
-            @if(User.Identity.IsAuthenticated)
-            {
-                @if (ViewBag.HasCv != true)
-                {
-                        
-                    <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a>
-                }
-               
-                @* <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a> FÖR TEST TYP*@
-                    <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Logout</a> <br>
-                    
+        <h2>Welcome @User.Identity!.Name</h2>
+        @if(User.Identity.IsAuthenticated)
+        {
+            @if (ViewBag.HasCv != true)
+            {  
+                <a asp-controller="CvInformation" asp-action="BuildCv" class="btn btn-primary">Create cv</a>
             }
-            </Authorized>
+            <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Logout</a> <br>  
+        }
+    </Authorized>
 </AuthorizeView>
 </form>
 
@@ -71,11 +56,6 @@
                             <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@user.Id" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-message me-1"></i>Send Message</a>
 
                         }
-                        @* @if (ViewBag.CanSend)
-                        {
-                            <a asp-controller="Message" asp-action="SendMsg" asp-route-userId="@user.Id" class="btn btn-outline-secondary btn-sm"><i class="fa-regular fa-message me-1"></i>Send Message</a>
-
-                        } *@
                     </div>
                 </div>
             }
@@ -88,7 +68,7 @@
 </div>
 
 @* -------------------------------------------------------Projects--------------------------------------------------------------------------- *@
-@using Microsoft.AspNetCore.Identity @* hela project delen är ändrat *@
+@using Microsoft.AspNetCore.Identity
 
 <h2>Recent projects</h2>
 @if(Model.ProjectList.Any())//Om det finns några projekt i listan
@@ -119,7 +99,7 @@
                 </div>
                 <div class="col-12 d-flex justify-content-between align-items-center flex-wrap">
                     <p class="mb-0">
-                        @if(project.ActiveUsers.Any())
+                        @if(project.ActiveUsers.Any())//Om det finns deltagare i projektet
                         {
                             <strong>Participants : </strong>
                             @for(int i = 0; i<project.ActiveUsers.Count; i++)
@@ -133,7 +113,7 @@
                         }
                     </p>
                     @if (!project.IsUserInProject)//Om nuvarande inloggad user inte är med i projektet
-                    {//kraschar om man lyckades spara projekt utan user
+                    {
                         <form method="post" asp-controller="Project" asp-action="ProjectDetails" asp-route-PUId="@project.Owner!.PUId">
                             <button class="btn btn-primary">Join project!</button>
                         </form>

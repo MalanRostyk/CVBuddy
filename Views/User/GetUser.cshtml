@@ -8,34 +8,34 @@
         <h5>Personal information</h5>
 
         <div class="mb-3">
-            <p><b>User name: </b>@Model.UserName</p>
+            <label asp-for="@Model.UserName" class="form-label"><b>User name: </b></label>
         </div>
 
         <div class="mb-3">
-            <p><b>First name: </b>@Model.FirstName</p>
+            <label asp-for="@Model.FirstName" class="form-label"><b>First name: </b></label>
         </div>
 
         <div class="mb-3">
-            <p><b>Last name: </b>@Model.LastName</p>
+            <label asp-for="@Model.LastName" class="form-label"><b>Last name: </b></label>
         </div>
 
-        <h5>Contact information</h5>
+        <label class="form-label">Contact information</label>
 
         <div class="mb-3">
-            <p><b>Email: </b>@Model.Email</p>
+            <label asp-for="@Model.Email" class="form-label"><b>Email: </b></label>
         </div>
 
         <div class="mb-3">
-            <p><b>Phone number: </b>@Model.PhoneNumber</p>
+            <label asp-for="@Model.PhoneNumber" class="form-label"><b>Phone number: </b></label>
         </div>
 
         <div class="mb-3">
             <h5>Address information</h5>
             @if (Model.OneAddress != null)
             {
-                <p><b>Country: </b>@Model.OneAddress.Country</p>
-                <p><b>City: </b>@Model.OneAddress.City</p>
-                <p><b>Street: </b>@Model.OneAddress.Street</p>
+                <label asp-for="@Model.OneAddress.Country" class="form-label"><b>Country: </b></label>
+                <label asp-for="@Model.OneAddress.City" class="form-label"><b>City: </b></label>
+                <label asp-for="@Model.OneAddress.Street" class="form-label"><b>Street: </b></label>
             }
             else
             {
@@ -47,6 +47,4 @@
             <a asp-action="UpdateUser" asp-route-id="@Model.Id" class="btn btn-primary">Edit personal information</a>
         </div>
     </div>
-
-
 </div>

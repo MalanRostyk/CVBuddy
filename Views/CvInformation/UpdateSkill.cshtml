@@ -1,39 +1,30 @@
 ﻿@model CVBuddy.Models.CVInfo.SkillVM
 
-@* @if (!ViewData.ModelState.IsValid)
-{
-    <h4 class="text-danger">You need to make some changes:</h4>
-    <ul class="text-danger">
-        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <li>
-                @err.ErrorMessage
-            </li>
-        }
-    </ul>
-} *@
-
 <form asp-action="UpdateSkill" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">
+
             <h3 class="text-center mb-4">Skill</h3>
             <input type="hidden" asp-for="@Model.Sid"/>
+
             <div class="mb-3">
                 <label asp-for="@Model.ASkill" class="form-label"></label> 
                 <input type="text" asp-for="@Model.ASkill" value="@Model.ASkill" class="form-control" />
                 <span asp-validation-for="ASkill" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.Description" class="form-label"></label>
                 <input type="text" asp-for="@Model.Description" value="@Model.Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="@Model.Date" class="form-label"></label>
                 <input type="date" asp-for="@Model.Date" min="1900-01-01" max="2049-12-31" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
-
             </div>
+
             <button type="submit" class="btn btn-primary w-100">Save Changes</button>
         </div>
     </div>

@@ -8,7 +8,6 @@ namespace CVBuddy.Models
     {
         public CVBuddyContext(DbContextOptions<CVBuddyContext> options):base(options)
         {
-            
         }
         public DbSet<User> Users { get; set; } //override för att kunna läggat till User entiteten
         public DbSet<Project> Projects { get; set; }
@@ -45,8 +44,6 @@ namespace CVBuddy.Models
                 .WithMany(pu => pu.ProjectUsers)
                 .HasForeignKey(u => u.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-
 
             //user > Cv
             builder.Entity<User>()
@@ -94,8 +91,6 @@ namespace CVBuddy.Models
                 .HasForeignKey<Education>(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
-
             //Cv > Certificate 1:M
             builder.Entity<Certificate>()
                 .HasOne(p => p.Cv)
@@ -110,6 +105,7 @@ namespace CVBuddy.Models
                 .HasForeignKey(p => p.CvId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //Cv > Interest 1:M
             builder.Entity<Interest>()
                 .HasOne(p => p.Cv)
                 .WithMany(p => p.Interests)
@@ -129,6 +125,6 @@ namespace CVBuddy.Models
                 .WithMany(r => r.MessageList)
                 .HasForeignKey(m => m.RecieverId)
                 .OnDelete(DeleteBehavior.Restrict);
-            }
+        }
     }
 }

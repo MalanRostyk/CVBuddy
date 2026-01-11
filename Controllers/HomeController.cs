@@ -16,22 +16,13 @@ namespace CVBuddy.Controllers
         }
 
         public async Task<IActionResult> Index()
-        {
-            //Ingen ska se, något från konton som är deactivated
-            var users = await _context.Users //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
-                                             //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
-                .Where(u => u.IsDeactivated != true)
+        {//Ingen ska se, något från konton som är deactivated
+            var users = await _context.Users            //Mindre kod gör samma utan valideringen, OM NÅGOT SAKNAS FÖR USER, SÅ MÅSTE DET INKLUDERAS
+                .Where(u => u.IsDeactivated != true)    //, IdentityUsers fält är inkluderade genom Arvet, men bara dem som är Mappade
                 .Include(u => u.OneCv)
                 .Include(u => u.ProjectUsers)
                 .ThenInclude(pu => pu.Project)
                 .ToListAsync();
-
-                                                                    //if (!User.Identity!.IsAuthenticated)
-                                                                    //{
-                                                                    //    users = users
-                                                                    //        .Where(u => u.OneCv?.IsPrivate != true)
-                                                                    //        .ToList();
-                                                                    //}
 
             //Om man är utloggad så ska man inte se privata profiler
             if (!User.Identity!.IsAuthenticated)
@@ -55,11 +46,8 @@ namespace CVBuddy.Controllers
                 }
             }
 
-
-
-            var usersCv = await GetLoggedInUsersCvAsync(); //HHHHHHHHÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄRRRRRRRRRRRRRRRRRRRRRRRR THROWA
+            var usersCv = await GetLoggedInUsersCvAsync();
             ViewBag.HasCv = usersCv != null;
-
 
             //Behövde göra kontrollen i view istället eftersom att kontrollen
             //görs en gång här, måste ha 1 kontroll för varje cv mot 1 userId
@@ -68,31 +56,9 @@ namespace CVBuddy.Controllers
 
             ViewBag.userId = _userManager.GetUserId(User);
 
-
-            //if (User.Identity!.IsAuthenticated)//Om användaren är inloggad
-            //{
-            //    if (ViewBag.HasCv)//och har ett cv
-            //    {
-            //        var userId = _userManager.GetUserId(User);
-            //        if(usersCv!.OneUser!.Id == userId)//kolla om det är inloggade användarens cv
-            //            ViewBag.CanSend = false;
-
-            //    }
-            //}
-
-            //if (User.Identity!.IsAuthenticated)
-            //{
-            //    var userId = _userManager.GetUserId(User);
-            //    if (ViewBag.HasCv)
-            //    {
-            //        if (userId != usersCv!.UserId)
-            //            ViewBag.CanSend = false;
-            //    }
-            //}
-
             ViewBag.CvIndexHeadline = "Recent Cvs";
 
-            var userId = _userManager.GetUserId(User);//ändring av project utskriften enda ner
+            var userId = _userManager.GetUserId(User);
             var isAuthenticated = User.Identity!.IsAuthenticated;
 
             var projList = await _context.Projects
@@ -147,7 +113,6 @@ namespace CVBuddy.Controllers
 
         private async Task<Cv> GetLoggedInUsersCvAsync()
         {
-
             var userId = "";
             Cv? cv;
             
@@ -163,27 +128,10 @@ namespace CVBuddy.Controllers
                    .Include(cv => cv.Interests)
                    .Include(cv => cv.OneUser)
                    .ThenInclude(oneUser => oneUser!.ProjectUsers)
-                   .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå ----------------------HÄÄÄÄÄÄÄÄÄRRRRRRR----------------------------------------
+                   .FirstOrDefaultAsync(cv => cv.UserId == userId);
                     return cv;
             }
-            //Cv? cv = await _context.Cvs----------------------------- byttes ut mot den nedan vid MANUAL MERGE
-            //        .Include(cv => cv.Education)
-            //        .Include(cv => cv.Experiences)
-            //        .Include(cv => cv.Skills)
-            //        .Include(cv => cv.Certificates)
-            //        .Include(cv => cv.PersonalCharacteristics)
-            //        .Include(cv => cv.Interests)
-            //        .Include(cv => cv.OneUser)
-            //        .Include(cv => cv.CvProjects)
-            //        .ThenInclude(cp => cp.OneProject)
-            //        .FirstOrDefaultAsync(cv => cv.UserId == userId); //Kan göra cv till null ändå
-
-
-            //if (cv == null)
-            //    NotFound();
             return null;
-            
         }
-
     }
 }

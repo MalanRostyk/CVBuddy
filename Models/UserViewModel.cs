@@ -9,7 +9,6 @@ namespace CVBuddy.Models
         [Required(ErrorMessage = "User name is Required")]
         public string UserName { get; set; } = string.Empty;
 
-
         [Required(ErrorMessage = "First name is Required")]
         public string FirstName { get; set; } = string.Empty;
 
@@ -17,7 +16,7 @@ namespace CVBuddy.Models
         public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email is Required")]
-        [EmailAddress(ErrorMessage = "Invalid email formaat")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; } = string.Empty;
 
         [Phone(ErrorMessage = "Invalid phone number")]

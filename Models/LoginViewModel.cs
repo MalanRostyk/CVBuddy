@@ -11,6 +11,7 @@ namespace CVBuddy.Models
         [Required(ErrorMessage = "Password can not be empty")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
         public bool RememberMe { get; set; } = false;
     }
 }

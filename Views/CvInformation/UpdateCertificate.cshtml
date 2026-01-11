@@ -1,10 +1,9 @@
 ﻿@model CVBuddy.Models.CVInfo.CertificateVM
 
-
-
 <form asp-action="UpdateCertificate" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">
+
             <h3 class="text-center mb-4">Certificate</h3>
 
             <div class="mb-3">
@@ -13,6 +12,7 @@
                 <input type="text" asp-for="@Model.CertName" class="form-control" />
                 <span asp-validation-for="@Model.CertName" class="text-danger"></span>
             </div>
+
             <button type="submit" class="btn btn-primary w-100">Save changes</button>
         </div>
     </div>

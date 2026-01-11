@@ -2,7 +2,6 @@
 
 <a asp-action="Index" asp-controller="Home"></a>
 
-@* <h1>@ViewBag.Headline</h1> *@
 <h1>Create your Cv</h1>
 
 @if (!ViewData.ModelState.IsValid)
@@ -19,24 +18,16 @@
 }
 
 <form method="post" asp-action="CreateCv" enctype="multipart/form-data">
-                                                                                                    @*ImageFile*@
-    <h3>Upload your image</h3>
+                                                                                                   
+    <h3>Upload your image</h3> @*ImageFile*@
     <div>
         <label>Cv Image</label>
-        @* <input asp-for="ImageFilePath" type="hidden" value="pic.png"/> *@
         <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
     </div>
-                                                                                                    @*IsPrivate *@
-    @* <div class="mb-2">
-        <b>Private profile - </b>
-        <select asp-for="@Model.IsPrivate">
-            <option selected value="false">Public</option>
-            <option value="true">Private</option>
-        </select>
-    </div> *@
-
-    @* <h3>@ViewBag.HeadlineEducation</h3>  *@                                                       @*Education*@
-    <h3>Education</h3> @* Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i samma view via samma action metod men ViewBag sätts inte i sådanna fall *@
+                                                                                                    
+    <h3>Education</h3>@*Education*@ 
+    @* Ej ViewBags för att när man inte skapar cv korrekts så hamnar vi i 
+        samma view via samma action metod men ViewBag sätts inte i sådanna fall *@
 
     <p class="mb-1 mt-3"><b>High School</b> - Can be left empty</p>
     <div class="mb-3">
@@ -58,7 +49,6 @@
 
     </div>
 
-
     <p class="mb-1 mt-3"><b>University</b> - Can be left empty</p>
     <div class="mb-3">
         <div class="mb-2">
@@ -76,43 +66,28 @@
             <input type="date" asp-for="@Model.Education.UniDate" class="border-primary" />
         </div>
     </div>
-  
-
-
-    @* <h3>@ViewBag.HeadlineSkill</h3> *@                                               @*Skills*@
-    <div id="Skill-Container" data-skill-index = "@Model.Skills.Count"> @* <------ *@
-    </div>
+    @*Skills*@                                                                             
+    <div id="Skill-Container" data-skill-index = "@Model.Skills.Count"></div>
     <button type="button" onclick="addSkill()">Add Skill</button>
-                                                                                  @*Experiences*@
-    @* <h3>@ViewBag.HeadlineExperiences</h3> *@ 
-    <h3>Experiences</h3> 
-    <div id="Experience-Container" data-experience-index = "@Model.Experiences.Count">
+                                                                                 
+    <h3>Experiences</h3>  @*Experiences*@ 
+    <div id="Experience-Container" data-experience-index = "@Model.Experiences.Count"></div>
+    <button type="button" onclick="addExperience()">Add Experience</button>       
 
-    </div>
-    <button type="button" onclick="addExperience()">Add Experience</button>       @*Certificates*@
-
-    @* <h3>@ViewBag.HeadlineCertificates</h3>  *@
-    <h3>Certificates</h3> 
-    <div id="Certificates-Container" data-certificates-index = "@Model.Certificates.Count">
-    </div>
+    <h3>Certificates</h3> @*Certificates*@
+    <div id="Certificates-Container" data-certificates-index = "@Model.Certificates.Count"></div>
     <button type="button" onclick="addCertificates()">Add Certificate</button>
 
-    @* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV REPRESENTERAS MED "-a", EXEMPELVIS "PersonalCharacteristics" blir "Personal-characteristics". *@
-                                                                                  @*PersonalCharacteristics*@
-    @* <h3>@ViewBag.HeadlinePersonalCharacteristics</h3>  *@
-    <h3>Personal Characteristics</h3> 
-    <div id="PersonalCharacteristics-Container"  data-personalcharacteristics-index = "@Model.PersonalCharacteristics.Count">
-    </div>
-    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                     @*PersonalCharacteristics*@
+    @* I VIEW FILER SÅ ANVÄNDS INTE CAMELCASEING UTAN KEBAB-CASEING, VILKET INEBÄR ATT EN STOR BOKSTAV
+        REPRESENTERAS MED "-a", EXEMPELVIS "PersonalCharacteristics" blir "Personal-characteristics". *@ 
+        
+    <h3>Personal Characteristics</h3> @*PersonalCharacteristics*@
+    <div id="PersonalCharacteristics-Container"  data-personalcharacteristics-index = "@Model.PersonalCharacteristics.Count"></div>
+    <button type="button" onclick="addPersonalCharacteristic()">Add Personal Characteristic</button>                                                                                     
        
-    @* <h3>@ViewBag.HeadlineInterest</h3>  *@
-    <h3>Interest</h3> 
-    <div id="Interests-Container"  data-interests-index = "@Model.Interests.Count">
-    </div>
-    <button type="button" onclick="addInterests()">Add an interest</button>        @*ImageFile*@
-    
-    
+    <h3>Interest</h3> @*Interests*@
+    <div id="Interests-Container"  data-interests-index = "@Model.Interests.Count"></div>
+    <button type="button" onclick="addInterests()">Add an interest</button>        
 
-    <button type="submit" class="d-block btn btn-primary">Create Cv</button>                @*Button*@
-    
+    <button type="submit" class="d-block btn btn-primary">Create Cv</button>@*Button*@
 </form>

@@ -18,9 +18,9 @@ namespace CVBuddy.Models
         [Required(ErrorMessage = "Please choose projects start date")]
         [DataType(DataType.Date)]
         [Range(typeof(DateTime), "1900-01-01", "2049-12-31", ErrorMessage = "Date can only be after year 1900 and before year 2050.")]
-        public DateTime? StartDate { get; set; } //= DateTime.MinValue;/
+        public DateTime? StartDate { get; set; } 
 
-        public DateTime? Enddate { get; set; } //Ändra till stort D, glöm ej att även ändra i view också
+        public DateTime? Enddate { get; set; } 
 
         public DateTime PublishDate { get; set; } = DateTime.Now;
 

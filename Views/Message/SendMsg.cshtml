@@ -3,6 +3,7 @@
 <div>
     <h2>Send a message</h2>
     <form asp-controller="Message" asp-action="SendMsg" method="post">
+
         <div>
             @if (!User.Identity!.IsAuthenticated)
             {
@@ -16,10 +17,12 @@
                 @User.Identity!.Name
             }
         </div>
+
         <div>
             <p class="mb-0">Message <span asp-validation-for="@Model.MessageString" class="text-danger"></span></p>
             <textarea type="text" asp-for="@Model.MessageString" class="mb-4"></textarea>
         </div>
+
         <input type="hidden" asp-for="@Model.SendDate" value="@Model.SendDate" />
         <input type="hidden" asp-for="@Model.IsRead" value="@Model.IsRead" />
         <input type="hidden" asp-for="@Model.RecieverId" value="@Model.RecieverId" />

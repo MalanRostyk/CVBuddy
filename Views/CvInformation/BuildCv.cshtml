@@ -1,43 +1,21 @@
 ﻿@model CVBuddy.Models.CVInfo.CvVM
 
-@* @if (!ViewData.ModelState.IsValid)
-{
-    <h4>You need to make some changes:</h4>
-    <ul class="text-danger">
-        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <li>
-                @err.ErrorMessage
-            </li>
-        }
-    </ul>
-} *@
-
 <h2>Build your Cv</h2>
 
 <form method="post" asp-action="BuildCv" enctype="multipart/form-data">
-    <h3>Upload your image</h3>
-    <div>
-        <label>Cv Image</label> 
-        @* <input asp-for="ImageFilePath" type="hidden" value="pic.png"/> *@
-        <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
-        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    <div class="d-flex justify-content-center align-content-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+
+            <h3>Upload your image</h3>
+
+            <div>
+                <label>Cv Image</label> 
+                <input asp-for="ImageFile" type="file" accept="image/*" class="form-control img-file-picker" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="d-block btn btn-primary">Create Cv</button>
+        </div>
     </div>
-    <button type="submit" class="d-block btn btn-primary">Create Cv</button>
 </form>
-
-@* <a asp-action="AddCertificate" class="btn btn-primary">Add Certificate</a>
-
-<a asp-action="AddSkill" class="btn btn-primary">Add Skill</a>
-
-<a asp-action="AddExperience" class="btn btn-primary">Add Experience</a>
-
-<a asp-action="AddEducation" class="btn btn-primary">Add Education</a>
-
-<a asp-action="AddPersonalCharacteristic" class="btn btn-primary">Add Personal Characteristic</a>
-
-<a asp-action="AddInterest" class="btn btn-primary">Add Interest</a>
- *@
-
-
  

@@ -30,13 +30,13 @@ namespace CVBuddy.Controllers
                                .ToListAsync();
 
 
-                if (User.Identity!.IsAuthenticated)//tagit bort ! inan User......
+                if (User.Identity!.IsAuthenticated)
                 {
                     users = users.Where(u => !u.IsDeactivated).ToList();
                 }
                 else
                 {
-                    users = users.Where(u => !u.IsDeactivated! && !u.HasPrivateProfile).ToList();//ändrat från && till 
+                    users = users.Where(u => !u.IsDeactivated! && !u.HasPrivateProfile).ToList(); 
                 }
 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -49,20 +49,16 @@ namespace CVBuddy.Controllers
                     {
                         if (u.OneCv != null)
                         {
-                            return cleanSearchTerms.All(t =>                                                           //All() alla stärngar som användaren skrev måste matcha
-                            (u.FirstName ?? "").ToLower().Contains(t) ||                                  //?? "" skyddar mot null om namnet angavs inte i sök strängen
-                            (u.LastName ?? "").ToLower().Contains(t) ||                                   //Contains() kollar om strängen finns i LastName
-                            u.OneCv.Experiences.Any(e => (e.Title ?? "").ToLower().Contains(t)));
+                            return cleanSearchTerms.All(t =>                                                //All() alla stärngar som användaren skrev måste matcha
+                            (u.FirstName ?? "").ToLower().Contains(t) ||                                    //?? "" skyddar mot null om namnet angavs inte i sök strängen
+                            (u.LastName ?? "").ToLower().Contains(t) ||                                     //Contains() kollar om strängen finns i LastName
+                            u.OneCv.Experiences.Any(e => (e.Title ?? "").ToLower().Contains(t)));           //|| om ett av de angivna fälten matchar, returnera true för den användaren
                         }
-                        return cleanSearchTerms.All(t =>                                                           //All() alla stärngar som användaren skrev måste matcha
-                            (u.FirstName ?? "").ToLower().Contains(t) ||                                  //?? "" skyddar mot null om namnet angavs inte i sök strängen
-                            (u.LastName ?? "").ToLower().Contains(t));                                 //Contains() kollar om strängen finns i LastName
+                        return cleanSearchTerms.All(t =>                                                    //All() alla stärngar som användaren skrev måste matcha
+                            (u.FirstName ?? "").ToLower().Contains(t) ||                                    //?? "" skyddar mot null om namnet angavs inte i sök strängen
+                            (u.LastName ?? "").ToLower().Contains(t));                                      //Contains() kollar om strängen finns i LastName
                     }).ToList();
-                        //cleanSearchTerms.All(t =>                                                           //All() alla stärngar som användaren skrev måste matcha
-                        //    (u.FirstName ?? "").ToLower().Contains(t) ||                                  //?? "" skyddar mot null om namnet angavs inte i sök strängen
-                        //    (u.LastName ?? "").ToLower().Contains(t) ||                                   //Contains() kollar om strängen finns i LastName
-                        //    u.OneCv.Experiences.Any(e => (e.Title ?? "").ToLower().Contains(t)))).ToList();//|| om något av de tre matchar returneras user objektet
-                }                                                                                           //Any() kollar igenm users experiences och kollar om minst en experience matchar
+                }
 
                 ViewBag.ResultCount = users.Count() == 0;
                 return View(users);

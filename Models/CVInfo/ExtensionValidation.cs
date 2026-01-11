@@ -2,7 +2,6 @@
 
 namespace CVBuddy.Models.CVInfo
 {
-
     //Skapar en egen DataAnnotation attribut för att validera vilken filtyp som får laddas upp.
     public class ExtensionValidation : ValidationAttribute//Ärver från en subklass av DataAnnotations
     {

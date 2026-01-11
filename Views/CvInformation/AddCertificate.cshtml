@@ -1,20 +1,9 @@
 ﻿@model CVBuddy.Models.CVInfo.CertificateVM
 
-@* @if (!ViewData.ModelState.IsValid)
-{
-    <h4 class="text-danger">You need to make some changes:</h4>
-    <ul class="text-danger">
-        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <li>
-                @err.ErrorMessage
-            </li>
-        }
-    </ul>
-} *@
 <form asp-action="AddCertificate" method="post">
     <div class="d-flex justify-content-center align-content-center min-vh-100">
         <div class="col-md-6 col-lg-4">
+
             <h3 class="text-center mb-4">Certificate</h3>
             
             <div class="mb-3">
@@ -22,6 +11,7 @@
                 <input type="text" asp-for="@Model.CertName" class="form-control" />
                 <span asp-validation-for="CertName" class="text-danger"></span>
             </div>
+
             <button type="submit" class="btn btn-primary w-100">Add</button>
         </div>
     </div>

@@ -3,11 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
 {
@@ -19,19 +14,17 @@ namespace CVBuddy.Controllers
         }
 
         [HttpGet]
-        public IActionResult SendMsg(string userId)//Får inte med userId till POST sedan, därför är modelstate invalid och reciever null
+        public IActionResult SendMsg(string userId)
         {
             MessageVM msg = new();
             msg.RecieverId = userId;
-            //ViewBag.WillEnterName = !User.Identity!.IsAuthenticated;
 
             return View(msg);
         }
+
         [HttpPost]
         public async Task<IActionResult> SendMsg(MessageVM msgVM)
         {
-            //ViewBag.WillEnterName = !User.Identity!.IsAuthenticated; 
-
             try
             {
                 if (!ModelState.IsValid)
@@ -59,30 +52,12 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
-
-            
         }
-
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> Messages()
-        //{
-        //    var userId = _userManager.GetUserId(User);
-        //    List<Message> msgList = await _context.Messages
-        //        .Where(m => m.RecieverId == userId)
-        //        .OrderByDescending(m => m.SendDate)
-        //        .ToListAsync();
-
-        //    ViewBag.HasMesseges = msgList.Count > 0;
-
-        //    return View(msgList);
-        //}
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Messages()
         {
-
             try
             {
                 var userId = _userManager.GetUserId(User);
@@ -107,7 +82,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "Internal error retrieveing your messages from the database."});
             }
-            
         }
 
         [HttpPost]
@@ -115,13 +89,11 @@ namespace CVBuddy.Controllers
         {
             try
             {
-                //Message? oldState = await _context.Messages
-                //    .Where(m => m.Mid == mid).FirstOrDefaultAsync();
-
                 var oldState = await _context.Messages.FindAsync(mid);
 
                 oldState!.IsRead = message.IsRead;
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction("Messages");
             }
             catch (DbUpdateException e)
@@ -140,8 +112,6 @@ namespace CVBuddy.Controllers
             
             try
             {
-                //var msg = await _context.Messages
-                //    .Where(m => m.Mid == mid).FirstOrDefaultAsync();
                 var msg = await _context.Messages
                     .FindAsync(mid);
 
@@ -172,12 +142,12 @@ namespace CVBuddy.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteMessageConfirm(int mid)
         {
-            
             try
             {
                 var message = await _context.Messages.FirstOrDefaultAsync(m => m.Mid == mid);
                 if (message == null)
                     throw new NullReferenceException("This message could not be found.");
+
                 MessageVM mVM = new MessageVM
                 {
                     Mid = message.Mid,
@@ -198,24 +168,12 @@ namespace CVBuddy.Controllers
             catch (Exception e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an error deleting the message" });
-
             }
-
-            
         }
 
         [HttpGet]
         public async Task<IActionResult> DeleteMessage(MessageVM mVM)
-        {
-
-            //Undantagshantering ska göras för exceptionella situationer, det ska inte funka som en if sats för att fånga null värden här och var
-            //utan det ska hanteras med kontroller, alltså en if-sats. Och då skriver vi ut ett informativt felmeddelande som ska ses av användare.
-            //Exempelvis som här nedan, kontroller ska användas för att validera inputs(bortse från att int mid är ett routeat id). Hittas inte det som efterfrågas
-            //så meddelar vi användaren om det. Det är alltså FÖRVÄNTADE SCENARION. Men när det gäller undantagshantering så innebär det att
-            //att man ska fånga verkliga fel och ge begripliga och beskrivande felmeddelanden istället för att låta applikationen krascha
-
-            //Hitta meddelandet med mid
-            
+        {            
             try
             {
 
@@ -230,11 +188,6 @@ namespace CVBuddy.Controllers
                 //Savechangesasync
                 await _context.SaveChangesAsync();
 
-                //return RedirectToAction IEnumerable<Message> som tillhör användaren
-                //var userId = _userManager.GetUserId(User);
-                //List<Message> usersMessages = await _context.Messages.Where(m => m.RecieverId == mVM.RecieverId).ToListAsync();
-
-                //return RedirectToAction("Messages", usersMessages);
                 return RedirectToAction("Messages");
             }
             catch(DbUpdateException e)
@@ -249,8 +202,6 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = "There was an error deleting the message" });
             }
-            
         }
-
     }
 }

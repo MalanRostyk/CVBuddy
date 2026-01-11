@@ -12,7 +12,6 @@ namespace CVBuddy.Models
         [ForeignKey(nameof(ProjId))]
         public Project Project { get; set; }
 
-
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }

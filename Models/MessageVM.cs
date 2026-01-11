@@ -7,10 +7,8 @@ namespace CVBuddy.Models
         public int Mid { get; set; }
 
         [Required(ErrorMessage = " A senders name is required")]
-        [RegularExpression(@"^[A-ZÅÄÖa-zåäö0-9 .-]+$",
-            ErrorMessage = " - Senders name can only contain " +
-            "upper/lower case letters, numbers, dots and dashes." +
-            "(Ex: Sender-me.1 or Sender Sendersson)")]
+        [RegularExpression(@"^[A-ZÅÄÖa-zåäö0-9 .-]+$", ErrorMessage = " - Senders name can only contain " +
+            "upper/lower case letters, numbers, dots and dashes. (Ex: Sender-me.1 or Sender Sendersson)")]
         [StringLength(50, MinimumLength = 2)]
         public string Sender { get; set; }
         

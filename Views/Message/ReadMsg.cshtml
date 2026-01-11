@@ -1,4 +1,5 @@
 ﻿@model CVBuddy.Models.MessageVM
+
 <div>
     <a asp-action="Messages" class="btn btn-primary">Back</a>
     <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Home</a>
@@ -7,6 +8,7 @@
 <div class="my-4">
     <h2 class="d-inline">Sent from <q>@Model.Sender</q><span class="tinify"> - <i class="fa-solid fa-calendar"></i>@Model.SendDate</span></h2>
 </div>
+
 <p>@Model.MessageString</p>
 
 
