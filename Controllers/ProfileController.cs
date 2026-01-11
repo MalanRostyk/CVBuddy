@@ -35,12 +35,12 @@ namespace CVBuddy.Controllers
 
 
 
-                if (user == null)
-                    return NotFound("Users Cv could not be found.");
+                if (user?.OneCv == null)
+                    return RedirectToAction("BuildCv", "CvInformation");
 
 
                 ViewBag.HasOneAdress = user.OneAddress != null;
-                ViewBag.HasOneCv = user.OneCv != null; //HasOneCv för att om vi planerar på att man
+                ViewBag.HasOneCv = user?.OneCv != null; //HasOneCv för att om vi planerar på att man
                                                        //ska kunna komma till Profil sidan inte bara från en persons cv
                                                        //så är det inte garanterat att de har cv
 

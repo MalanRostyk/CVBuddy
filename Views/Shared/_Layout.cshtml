@@ -73,7 +73,10 @@
                 <h6 class="text-uppercase">Meny</h6>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@currentUserId"><i class="fa-solid fa-shapes"></i>   Preview My profile</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="nav-link" asp-controller="Profile" asp-action="ReadProfile" asp-route-userId="@currentUserId"><i class="fa-solid fa-shapes"></i>   My profile</a>
+                        }
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="User" asp-action="GetUser"><i class="fa-solid fa-user"></i>   My Info</a>
