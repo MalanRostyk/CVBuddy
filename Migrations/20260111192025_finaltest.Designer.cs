@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVBuddy.Migrations
 {
     [DbContext(typeof(CVBuddyContext))]
-    [Migration("20260111141027_aaa")]
-    partial class aaa
+    [Migration("20260111192025_finaltest")]
+    partial class finaltest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,8 +64,7 @@ namespace CVBuddy.Migrations
 
                     b.Property<string>("CertName")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("nvarchar(90)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CvId")
                         .HasColumnType("int");
@@ -250,21 +249,6 @@ namespace CVBuddy.Migrations
                     b.HasIndex("CvId");
 
                     b.ToTable("Skills");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CvProject", b =>
-                {
-                    b.Property<int>("CvId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CvId", "ProjId");
-
-                    b.HasIndex("ProjId");
-
-                    b.ToTable("CvProjects");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.Message", b =>
@@ -654,25 +638,6 @@ namespace CVBuddy.Migrations
                         .IsRequired();
 
                     b.Navigation("Cv");
-                });
-
-            modelBuilder.Entity("CVBuddy.Models.CvProject", b =>
-                {
-                    b.HasOne("CVBuddy.Models.CVInfo.Cv", "OneCv")
-                        .WithMany()
-                        .HasForeignKey("CvId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CVBuddy.Models.Project", "OneProject")
-                        .WithMany()
-                        .HasForeignKey("ProjId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OneCv");
-
-                    b.Navigation("OneProject");
                 });
 
             modelBuilder.Entity("CVBuddy.Models.Message", b =>

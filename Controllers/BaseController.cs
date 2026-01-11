@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Threading.Tasks;
 
 namespace CVBuddy.Controllers
 {
@@ -16,9 +15,7 @@ namespace CVBuddy.Controllers
             _userManager = u;
             _context = c;
             _signInManager = sm;
-            
         }
-
 
         //BEHÖVE GÖRAS I DENNA CONTROLLER FÖR ATT GE VIEWBAG TILL LAYOUT.cshtml
         //Lägger till i Controller klassens OnActionMetod funktionaliteten att läsa antal olästa meddelanden

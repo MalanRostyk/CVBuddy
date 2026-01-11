@@ -9,7 +9,7 @@ namespace CVBuddy.Models
         public CVBuddyContext(DbContextOptions<CVBuddyContext> options):base(options)
         {
         }
-        public DbSet<User> Users { get; set; } //override för att kunna läggat till User entiteten
+        public DbSet<User> Users { get; set; } 
         public DbSet<Project> Projects { get; set; }
         public DbSet<Cv> Cvs { get; set; }
         public DbSet<Skill> Skills { get; set; }
@@ -17,7 +17,6 @@ namespace CVBuddy.Models
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<PersonalCharacteristic> PersonalCharacteristics { get; set; }
         public DbSet<Interest> Interests { get; set; }
-        public DbSet<CvProject> CvProjects { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -28,7 +27,6 @@ namespace CVBuddy.Models
         {
 
             base.OnModelCreating(builder);
-
 
             //User > Project (M-M via ProjectUser)
             builder.Entity<ProjectUser>().HasIndex(pu => new { pu.UserId, pu.ProjId }).IsUnique();
@@ -51,24 +49,6 @@ namespace CVBuddy.Models
                 .WithOne(p => p.OneUser)
                 .HasForeignKey<Cv>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            //Cv > Project (M-M via CvProject)
-            builder.Entity<CvProject>().HasKey(cp => new { cp.CvId, cp.ProjId });//CVProject har komposit PK(CvId, Pid)
-
-            //One Cv har många CvProjects
-            //builder.Entity<CvProject>()
-            //    .HasOne(cv => cv.OneCv)
-            //    .WithMany(cv => cv.CvProjects)
-            //    .HasForeignKey(cv => cv.CvId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-            //One Project har många CvProjects
-            //builder.Entity<CvProject>()
-            //    .HasOne(p => p.OneProject)
-            //    .WithMany(p => p.CvProjects)
-            //    .HasForeignKey(p => p.ProjId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
 
             //Cv > Skill 1:M
             builder.Entity<Skill>()

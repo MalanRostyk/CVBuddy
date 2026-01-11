@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVBuddy.Migrations
 {
     /// <inheritdoc />
-    public partial class aaa : Migration
+    public partial class finaltest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -277,7 +277,7 @@ namespace CVBuddy.Migrations
                 {
                     CertId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CertName = table.Column<string>(type: "nvarchar(90)", maxLength: 90, nullable: false),
+                    CertName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CvId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -288,30 +288,6 @@ namespace CVBuddy.Migrations
                         column: x => x.CvId,
                         principalTable: "Cvs",
                         principalColumn: "Cid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CvProjects",
-                columns: table => new
-                {
-                    CvId = table.Column<int>(type: "int", nullable: false),
-                    ProjId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CvProjects", x => new { x.CvId, x.ProjId });
-                    table.ForeignKey(
-                        name: "FK_CvProjects_Cvs_CvId",
-                        column: x => x.CvId,
-                        principalTable: "Cvs",
-                        principalColumn: "Cid",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CvProjects_Projects_ProjId",
-                        column: x => x.ProjId,
-                        principalTable: "Projects",
-                        principalColumn: "Pid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -477,11 +453,6 @@ namespace CVBuddy.Migrations
                 column: "CvId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CvProjects_ProjId",
-                table: "CvProjects",
-                column: "ProjId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cvs_UserId",
                 table: "Cvs",
                 column: "UserId",
@@ -554,9 +525,6 @@ namespace CVBuddy.Migrations
 
             migrationBuilder.DropTable(
                 name: "Certificates");
-
-            migrationBuilder.DropTable(
-                name: "CvProjects");
 
             migrationBuilder.DropTable(
                 name: "Education");

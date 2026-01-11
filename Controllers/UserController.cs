@@ -60,6 +60,10 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
+            catch (Exception e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = e.Message });
+            }
         }
 
         [HttpPost]
@@ -180,7 +184,11 @@ namespace CVBuddy.Controllers
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
-            catch(Exception e)
+            catch (DbUpdateException e)
+            {
+                return View("Error", new ErrorViewModel { ErrorMessage = "There was an error trying to save your changes." });
+            }
+            catch (Exception e)
             {
                 return View("Error", new ErrorViewModel { ErrorMessage = e.Message});
             }
